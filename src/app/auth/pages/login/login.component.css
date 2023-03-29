@@ -1,0 +1,17 @@
+:host ::ng-deep .p-message-custom {
+  background-color: #E1CFE7;
+  border: solid #8A427A;
+  border-width: 0 0 0 6px;
+  color: #2c1e30;
+}
+
+:host ::ng-deep .p-message-close-icon {
+  color: #2c1e30;
+}
+
+:host ::ng-deep .pi-eye,
+:host ::ng-deep .pi-eye-slash {
+    transform:scale(1.6);
+    margin-right: 1rem;
+    color: var(--primary-color) !important;
+}

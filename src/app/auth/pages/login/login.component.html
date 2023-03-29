@@ -1,0 +1,40 @@
+<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+  <div class="flex flex-column align-items-center justify-content-center">
+
+      <div style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+          <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
+
+            <p-message severity="error"
+              text="Usuario o contraseña invalidos, por favor verifique los datos ingresados"
+              styleClass="p-mr-2"
+              *ngIf="hayError"
+              showTransitionOptions=200ms>
+            </p-message>
+              <div class="text-center mb-5">
+
+                  <div class="text-900 text-3xl font-medium mb-3">¡Bienvenido(a)!</div>
+                  <span class="text-600 font-medium">Acceso</span>
+              </div>
+              <form autocomplete="off" [formGroup]="frmLogin" (ngSubmit)="verficarLogin()">
+                <div>
+                    <label for="usuario" class="block text-900 text-xl font-medium mb-2">Usuario</label>
+                    <input id="usuario" type="text" formControlName="usuario" placeholder="Usuario" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem" required >
+                    <p-message severity="error" text="* Usuario es requerido" *ngIf="esValido('usuario')"></p-message>
+
+                    <label for="password" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
+                    <p-password id="password" formControlName="password" placeholder="Contraseña" [toggleMask]="true" styleClass="mb-5"  inputStyleClass="w-full p-3 md:w-30rem" required>                    </p-password>
+                    <p-message severity="error" text="* Contraseña es requerida" *ngIf="esValido('password')"></p-message>
+
+                    <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                      <div class="flex align-items-center">
+
+                      </div>
+                  </div>
+
+                    <button pButton pRipple label="Iniciar Sesión" class="w-full p-3 text-xl"></button>
+                </div>
+            </form>
+          </div>
+      </div>
+  </div>
+</div>
