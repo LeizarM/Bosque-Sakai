@@ -1,8 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { MenuService } from '../../layout/app.menu.service';
-import { LayoutService } from '../../layout/service/app.layout.service';
-
-
+import { LayoutService } from "../service/app.layout.service";
+import { MenuService } from "../app.menu.service";
 
 @Component({
     selector: 'app-config',
