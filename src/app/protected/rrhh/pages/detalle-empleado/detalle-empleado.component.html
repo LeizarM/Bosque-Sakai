@@ -1,0 +1,47 @@
+<br>
+<div align="center">
+  <h2 class="font-bold w-10">
+    INFORMACIÓN EMPLEADO
+  </h2>
+</div>
+<br>
+
+<!-- DATOS PERSONALES -->
+<app-datos-personales *ngIf="regEmp && regPer" [regPer]="regPer" [regEmp]="regEmp"></app-datos-personales>
+
+<!-- FIN DATOS PERSONALES -->
+<hr />
+
+<!-- DATOS DE EMPLEADO -->
+<div class="grid">
+  <div class="col-12 md:col-8 lg:col-6 ">
+    <app-datos-empleado *ngIf="regEmp" [regEmp]="regEmp"></app-datos-empleado>
+  </div>
+
+  <div class="col-12 md:col-4 lg:col-3 ajustar-text">
+    <app-dato-email  *ngIf="regEmp" [regEmp]="regEmp"></app-dato-email>
+  </div>
+
+  <div class="col-12 md:col-4 lg:col-3">
+    <app-dato-telefonos *ngIf="regEmp" [regEmp]="regEmp"></app-dato-telefonos>
+  </div>
+</div>
+<!-- FIN DATOS EMPLEADO-->
+<hr>
+<!-- DATOS EXPERIENCIA LABORAL -->
+<div>
+  <app-dato-experiencia-laboral *ngIf="regEmp" [regEmp]="regEmp"></app-dato-experiencia-laboral>
+</div>
+<!-- FIN DATOS EXPERIENCIA LABORAL-->
+<hr>
+<!-- DATOS FORMACION -->
+<div>
+  <app-dato-formacion *ngIf="regEmp" [regEmp]="regEmp"></app-dato-formacion>
+</div>
+<!-- FIN DATOS FORMACION-->
+<hr>
+<!-- LICENCIAS DE CONDUCIR-->
+<div>
+  <app-dato-licencia-conducir *ngIf="regEmp" [regEmp]="regEmp"></app-dato-licencia-conducir>
+</div>
+<!-- FIN LICENCIAS DE CONDUCIR  -->

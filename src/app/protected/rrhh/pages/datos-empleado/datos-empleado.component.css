@@ -1,0 +1,11 @@
+.p-button {
+  margin: 0.2rem !important;
+}
+
+.p-dropdown-label {
+ white-space: pre-line !important;
+}
+
+.p-dropdown-item {
+  white-space: pre-line !important;
+}

@@ -1,0 +1,86 @@
+<p-toast></p-toast>
+<p-toast position="top-left" key="tl"></p-toast>
+<p-toast position="top-center" key="tc"></p-toast>
+<p-toast position="bottom-center" key="bc"></p-toast>
+<!-- <p-confirmPopup></p-confirmPopup> -->
+
+<p-panel header="DATOS EXPERIENCIA LABORAL">
+  <ng-template pTemplate="icons">
+    <button pButton icon="pi pi-plus" class="p-button-success" (click)="nuevoRegistro()" label="Nuevo Registro"></button>
+  </ng-template>
+  <p-table [value]="experienciaLaboral" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Empresa</th>
+        <th>Cargo</th>
+        <th>Descripcion</th>
+        <th>Fecha de Inicio</th>
+        <th>Fecha de Conclusion</th>
+        <th>Telefono Referencia</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-expLab>
+      <tr>
+        <td>{{expLab.nombreEmpresa}}</td>
+        <td>{{expLab.cargo}}</td>
+        <td>{{expLab.descripcion}}</td>
+        <td>{{expLab.fechaInicio | date: 'dd/MM/yyyy' }}</td>
+        <td>{{expLab.fechaFin | date: 'dd/MM/yyyy' }}</td>
+        <td>{{expLab.nroReferencia }}</td>
+        <td>
+          <button pButton type="button" label="Editar" (click)="capturarRegistro( expLab )" icon="pi pi-pencil"
+            class="p-button-warning"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-panel>
+
+<!--  DESPLEGAR EL MODAL PARA EDITAR LA INFORMACIÓN -->
+<p-dialog header="REGISTRO DE EXPERIENCIA LABORAL" [(visible)]="displayModal" [modal]="true" [draggable]="true"
+  [resizable]="true" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '60vw'}">
+  <form autocomplete="off" [formGroup]="formExpLab" (ngSubmit)="guardarExpLab()">
+    <br>
+    <div class="grid">
+
+      <div class="field col-12">
+        <label for="nombreEmpresa">Nombre Empresa: </label>
+        <input id="nombreEmpresa" type="text" formControlName="nombreEmpresa"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+      </div>
+
+      <div class="field col-12">
+        <label for="cargo">Cargo: </label>
+        <input id="cargo" type="text" formControlName="cargo"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+      </div>
+
+      <div class="field col-12">
+        <label for="descripcion">Descripcion: </label>
+        <input id="descripcion" type="text" formControlName="descripcion"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+      </div>
+
+      <div class="field col-12">
+        <label for="fechaInicio">Fecha Inicio: </label>
+        <p-calendar id="fechaInicio" formControlName="fechaInicio" dateFormat="dd/mm/yy"></p-calendar>
+      </div>
+
+      <div class="field col-12">
+        <label for="fechaFin">Fecha Conclusion: </label>
+        <p-calendar id="fechaFin" formControlName="fechaFin" dateFormat="dd/mm/yy"></p-calendar>
+      </div>
+
+      <div class="field col-12">
+        <label for="nroReferencia">Telefono Referencia: </label>
+        <input id="nroReferencia" type="text" formControlName="nroReferencia"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+      </div>
+    </div>
+    <div class="justify-content-center">
+      <button pButton class="p-button-success align-items-center justify-content-center" icon="pi pi-save" label="Guardar" [disabled]="!formExpLab.valid" type="submit" ></button>
+    </div>
+  </form>
+
+</p-dialog>

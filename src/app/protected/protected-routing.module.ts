@@ -37,10 +37,10 @@ import { LayoutComponent } from "./layout/layout.component";
         path: 'tbEmpleado/empleados/registro-empleado',
         component: RegistroEmpleadoComponent
       },
-      {
+      /*{
         path: 'tftFichaTrabajador/ficha',
         component: FichaTrabajadorComponent
-      }, */
+      },*/
       {
         path: '**',
         redirectTo: ''

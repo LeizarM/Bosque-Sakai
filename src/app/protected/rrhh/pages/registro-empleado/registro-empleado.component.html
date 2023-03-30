@@ -1,0 +1,427 @@
+<br />
+<div align="center">
+  <h1>REGISTRO EMPLEADOS</h1>
+</div>
+<br />
+<hr>
+
+<div class="grid">
+  <p-panel class="col-12 md:col-4 lg:col-4" header="EMPLEADO">
+    <p-card class="box shadow-none m-3">
+      <ng-template pTemplate="header">
+        <div class="bg-image">
+        </div>
+      </ng-template>
+      <div align="center" class="perfil-info">
+        <img src="https://logos-marcas.com/wp-content/uploads/2021/11/User-Interviews-Logo.jpg" alt="user"
+          class="posicion-imagen">
+      </div>
+      <br />
+
+      <div align="center">
+        <button pButton icon="pi pi-camera" label="Foto"></button>
+      </div>
+    </p-card>
+  </p-panel>
+
+
+  <p-panel class="col-12 md:col-8 lg:col-8" header="DATOS PERSONALES">
+    <ng-template pTemplate="icons">
+    </ng-template>
+    <div class="grid p-flex-column-reverse">
+      <div class="col-12">
+        <form autocomplete="off" [formGroup]="formDatosPersona">
+
+          <div class="formgrid grid">
+
+            <div class="field col-12 md:col-6">
+              <label for="nombres" class="col-12  text-orange-500  ajustar-text">Nombres: </label>
+              <input id="nombres" pInputText class="p-inputtext-sm ajustar-text" type="text"
+                formControlName="nombres" />
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label for="apPaterno" class="col-12 text-orange-500  ajustar-text">Apellido Paterno: </label>
+              <input id="apPaterno" pInputText class="p-inputtext-sm ajustar-text" type="text"
+                formControlName="apPaterno" />
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label for="apMaterno" class="col-12 text-orange-500  ajustar-text">Apellido Materno: </label>
+              <input id="apMaterno" pInputText class="p-inputtext-sm ajustar-text" type="text"
+                formControlName="apMaterno" />
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label class="col-12 text-orange-500  ajustar-text">Sexo:</label>
+              <p-dropdown class="col-4 md:col-6 lg:col-3" [options]="lstGenero" placeholder="-Seleccione-"
+                optionLabel="nombre" optionValue="codTipos" formControlName="sexo"></p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label for="ci" class="col-12 text-orange-500  ajustar-text">Cedula de Identidad:</label>
+              <div id="ci" class="grid flex">
+                <input class="col-8 md:col-6 lg:col-3" pInputText class="p-inputtext-sm ajustar-text" type="text"
+                  formControlName="ciNumero" />
+                <p-dropdown class="col-4 md:col-6 lg:col-3" [options]="lstExpedido" placeholder="-Seleccione-"
+                  class="p-dropdown-trigger" optionLabel="nombre" optionValue="codTipos" formControlName="ciExpedido">
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label for="vencimientoCI" class="col-12 text-orange-500 ajustar-text">Vencimiento CI:</label>
+              <p-calendar id="vencimientoCI" [showIcon]="true" inputId="icon" formControlName="ciFechaVencimiento">
+              </p-calendar>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label for="fechaNacimiento" class="col-12 text-orange-500  ajustar-text">Fecha Nacimiento:</label>
+              <p-calendar id="fechaNacimiento" [showIcon]="true" inputId="icon" formControlName="fechaNacimiento">
+              </p-calendar>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label class="col-12 text-orange-500  ajustar-text">Pais de Nacimiento:</label>
+              <p-dropdown [options]="lstPais" placeholder="-Seleccione-" optionLabel="pais" optionValue="codPais"
+                formControlName="nacionalidad">
+              </p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label class="col-12 text-orange-500  ajustar-text">Lugar de Nacimiento:</label>
+              <input id="lugarNacimiento" pInputText class="p-inputtext-sm ajustar-text" type="text"
+                formControlName="lugarNacimiento" />
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label class="col-12 text-orange-500  ajustar-text">Pais de Residencia:</label>
+              <p-dropdown [options]="lstPaisResi" placeholder="-Seleccione-" optionLabel="pais" optionValue="codPais"
+                (onChange)="cargarCiudades($event)"></p-dropdown>
+            </div>
+
+            <div *ngIf="lstCiudad.length > 0" class="field col-12 md:col-6">
+              <label class="col-12 text-orange-500  ajustar-text">Ciudad Residencia: </label>
+              <p-dropdown [options]="lstCiudad" placeholder="-Seleccione-" optionLabel="ciudad" optionValue="codCiudad"
+                (onChange)="cargarZonas($event)"></p-dropdown>
+            </div>
+
+            <div *ngIf="lstZona.length > 0" class="field col-12 md:col-6">
+              <label for="zona" class="col-12  text-orange-500  ajustar-text">Zona
+                Residencia:
+              </label>
+              <p-dropdown [options]="lstZona" placeholder="-Seleccione-" optionLabel="zona" optionValue="codZona"
+                formControlName="codZona">
+              </p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label for="direccion" class="col-12  text-orange-500  ajustar-text">Direccion: </label>
+              <textarea id="direccion" rows="5" cols="20" pInputTextarea class="w-full inputfield"
+                formControlName="direccion"></textarea>
+            </div>
+
+            <div class="field col-12 md:col-6">
+              <label class="col-12 text-orange-500  ajustar-text">Estado Civil:</label>
+              <p-dropdown [options]="lstEstCivil" placeholder="-Seleccione-" optionLabel="nombre"
+                formControlName="estadoCivil" optionValue="codTipos"></p-dropdown>
+            </div>
+
+          </div>
+        </form>
+      </div>
+
+
+      <div class="z-0 align-items-center justify-content-center  green-container col-12 md:col-12">
+        <label> CROQUIS </label>
+        <br>
+        <button pButton class="mx-1" label="+"></button>
+
+        <button pButton class="mx-1" label="-"></button>
+
+        <button pButton class="mx-1 p-button-success" icon="pi pi-plus" label="Agregar Marcardor"></button>
+
+        <div class="my-5 border-round bg-green-100  font-bold p-3 flex align-items-center justify-content-center">
+          <div #mapReg class="col-12" style="height: 250px;">
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </p-panel>
+
+  {{formDatosPersona.value | json}}
+</div>
+<!-- FIN DATOS PERSONALES-->
+
+
+<!-- INICIO DATOS EMPLEADOS -->
+<p-panel header="DATOS DE EMPLEADO">
+
+  <form autocomplete="off" [formGroup]="formDatosEmpleado">
+    <div class="grid">
+
+      <div class="field col-12 md:col-6">
+        <label class="col-12 md:col-3 lg:col-3 text-orange-500  ajustar-text">Nro.Cuenta Bancaria:</label>
+        <input type="text" pInputText formControlName="numCuenta" />
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label class="col-12 md:col-3 lg:col-3 text-orange-500 ajustar-text">Empresa:</label>
+        <p-dropdown [options]="lstEmpresas" placeholder="-Seleccione-" optionLabel="nombre" optionValue="codEmpresa"
+          (onChange)="cargarSucursales( $event )" formControlName="codEmpresa"></p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label class="col-12 md:col-3 lg:col-3 text-orange-500 ajustar-text">Sucursal:</label>
+        <p-dropdown [options]="lstSucursales" placeholder="-Seleccione-" optionLabel="nombre" optionValue="codSucursal"
+          (onChange)="cargarCargoXSucursal( $event )" formControlName="codSucursal"></p-dropdown>
+      </div>
+      <div class="field col-12 md:col-6">
+        <label class="col-12 md:col-3 lg:col-3 text-orange-500 ajustar-text">Cargo:</label>
+        <p-dropdown [options]="lstCargoSucursales" placeholder="-Seleccione-" optionLabel="datoCargo"
+          optionValue="codCargo" formControlName="codCargo"></p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label class="col-12 md:col-3 lg:col-3 text-orange-500 ajustar-text">Tipo Relacion:</label>
+        <p-dropdown [options]="lstRelacionLaboral" placeholder="-Seleccione-" optionLabel="nombre"
+          optionValue="codTipos" formControlName="tipoRel">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label class="col-12 md:col-3 lg:col-3 text-orange-500 ajustar-text">Inicio de Funciones:</label>
+        <p-calendar [showIcon]="true" dateFormat="dd/mm/yy" formControlName="fechaInicio">
+        </p-calendar>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label class="col-12 md:col-3 lg:col-3 text-orange-500 ajustar-text">Fin de Funciones:</label>
+        <p-calendar [showIcon]="true" dateFormat="dd/mm/yy" formControlName="fechaFin"> </p-calendar>
+      </div>
+    </div>
+  </form>
+</p-panel>
+
+
+<!-- DATOS EMAIL -->
+<div class="grid">
+  <div class="col-12 md:col-6 lg:col-6">
+    <p-panel header="EMAIL(S)">
+      <ng-template pTemplate="icons">
+        <button pButton icon="pi pi-plus" type="button" class="p-button-sm px-1 p-button-success"
+          (click)="agregarRegistroEmail()" label="Agregar">
+        </button>
+      </ng-template>
+      <form autocomplete="off" [formGroup]="formEmail">
+        <div formArrayName="emailArr">
+          <div *ngFor="let em of lstFormEmail().controls;  let i = index" [formGroupName]="i">
+            <br>
+            <div class="grid">
+
+              <input class="col-7" pInputText formControlName="email" placeholder="Nuevo Email">
+
+              <button pButton class="col-4 mx-1 p-button-danger" type="button" label="Eliminar"
+                (click)="eliminarRegistroEmail($event, i)" icon="pi pi-trash"></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+  <!-- FIN DATO EMAIL-->
+
+  <!-- DATO TELEFONO -->
+
+  <div class="col-12 md:col-6 lg:col-6">
+    <p-panel header="TELEFONO(S)">
+      <ng-template pTemplate="icons">
+        <button pButton icon="pi pi-plus" type="button" class="p-button-sm px-1 p-button-success"
+          (click)="agregarRegistroTelefono()" label="Agregar">
+        </button>
+      </ng-template>
+      <form autocomplete="off" [formGroup]="formTelefono">
+        <div formArrayName="telfArr">
+          <div *ngFor="let tel of lstFormTelf().controls;  let i = index" [formGroupName]="i">
+            <br>
+            <div class="grid">
+
+              <input class="col-7" pInputText formControlName="telefono" placeholder="Nuevo Telefono">
+
+              <button pButton class="col-4 mx-1 p-button-danger" type="button" label="Eliminar"
+                (click)="eliminarRegistroTelf($event, i)" icon="pi pi-trash"></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-panel>
+  </div>
+</div>
+<!-- FIN DATO TELEFONO -->
+
+<div class="col-12 md:col-12 lg:col-12">
+  <p-panel header="DATOS EXPERIENCIA LABORAL">
+    <ng-template pTemplate="icons">
+      <button pButton icon="pi pi-plus" type="button" class="p-button-sm px-1 p-button-success"
+        (click)="agregarExperienciaLaboral()" label="Agregar">
+      </button>
+    </ng-template>
+    <form autocomplete="off" [formGroup]="formExpLab">
+      <div formArrayName="expLabArr">
+        <p-table [value]="lstFormExpLab().controls" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Empresa</th>
+              <th>Cargo</th>
+              <th>Descripcion</th>
+              <th>Fecha de Inicio</th>
+              <th>Fecha Conclusión</th>
+              <th>Telefono Referencia</th>
+              <th>Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-controls let-i="rowIndex">
+            <tr [formGroupName]="i">
+              <td>
+                <input type="text" formControlName="nombreEmpresa" class="form-control" />
+              </td>
+              <td>
+                <input type="text" formControlName="cargo" class="form-control" />
+              </td>
+              <td>
+                <input type="text" formControlName="descripcion" class="form-control" />
+              </td>
+              <td>
+                <p-calendar formControlName="fechaInicio" [touchUI]="true" dateFormat="dd/mm/yy"></p-calendar>
+              </td>
+              <td>
+                <p-calendar formControlName="fechaFin" [touchUI]="true" dataType="date" dateFormat="dd/mm/yy">
+                </p-calendar>
+              </td>
+              <td>
+                <input type="text" formControlName="nroReferencia" class="form-control" />
+              </td>
+              <td>
+                <button pButton class="p-button-danger" type="button" label="Eliminar"
+                  (click)="eliminarDatosExperienciaLab(i)" icon="pi pi-trash"></button>
+              </td>
+            </tr>
+
+          </ng-template>
+        </p-table>
+      </div>
+    </form>
+  </p-panel>
+  <br>
+
+</div>
+<!-- FIN DATOS EXPERIENCIA LABORAL -->
+<!-- DATOS FORMACION -->
+
+<div class="col-12 md:col-12 lg:col-12">
+  <p-panel header="DATOS FORMACION">
+    <ng-template pTemplate="icons">
+      <button pButton icon="pi pi-plus" type="button" class="p-button-sm px-1 p-button-success"
+        (click)="agregarFormacion()" label="Agregar">
+      </button>
+    </ng-template>
+    <form autocomplete="off" [formGroup]="formFormacion">
+      <div formArrayName="formaArr">
+        <p-table [value]="lstFormFormacion().controls" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Formacion</th>
+              <th>Curso</th>
+              <th>Duracion</th>
+              <th>Tipo Medicion</th>
+              <th>Fecha</th>
+              <th>Accion</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-controls let-i="rowIndex">
+            <tr [formGroupName]="i">
+              <td>
+
+                <p-dropdown appendTo="body" [options]="lstFormacion" formControlName="tipoFormacion" optionLabel="nombre"
+                  optionValue="codTipos"></p-dropdown>
+
+              </td>
+              <td>
+                <input type="text" formControlName="descripcion" class="form-control" />
+              </td>
+              <td>
+                <input type="text" formControlName="duracion" class="form-control" />
+              </td>
+              <td>
+                <p-dropdown appendTo="body" [options]="lstMedicion" formControlName="tipoDuracion" optionLabel="nombre"
+                  optionValue="codTipos"></p-dropdown>
+              </td>
+              <td>
+                <p-calendar formControlName="fechaFormacion" [touchUI]="true" dateFormat="dd/mm/yy"></p-calendar>
+              </td>
+              <td>
+                <button pButton class="p-button-danger" type="button" label="Eliminar"
+                  (click)="eliminarDatosFormacion(i)" icon="pi pi-trash"></button>
+              </td>
+            </tr>
+
+          </ng-template>
+        </p-table>
+      </div>
+    </form>
+  </p-panel>
+  <br>
+
+</div>
+<!-- FIN DATOS FORMACION -->
+
+<!-- DATOS LICENCIA CONDUCIR -->
+
+<div class="z-0 col-12 md:col-12 lg:col-12">
+  <p-panel header="DATOS LICENCIA CONDUCIR">
+    <ng-template pTemplate="icons">
+      <button pButton icon="pi pi-plus" type="button" class="p-button-sm px-1 p-button-success"
+        (click)="agregarLicenciaConducir()" label="Agregar">
+      </button>
+    </ng-template>
+    <form autocomplete="off" [formGroup]="formLicenciaCon" (ngSubmit)="guardar()">
+      <div  formArrayName="licenArr">
+        <p-table [value]="lstFormLicencia().controls" responsiveLayout="scroll">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Categoria</th>
+              <th>Fecha Caducidad</th>
+              <th>Accion</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-controls let-i="rowIndex">
+            <tr [formGroupName]="i">
+              <td>
+                <p-dropdown appendTo="body" [options]="lstTipoLicencia" formControlName="categoria" class="z-5" placeholder="-Seleccione-"
+                  optionLabel="nombre" optionValue="codTipos"></p-dropdown>
+              </td>
+
+              <td>
+                <p-calendar formControlName="fechaCaducidad" [touchUI]="true" dateFormat="dd/mm/yy"></p-calendar>
+              </td>
+              <td>
+                <button pButton class="p-button-danger" type="button" label="Eliminar"
+                  (click)="eliminarDatosLicenciaConducir(i)" icon="pi pi-trash"></button>
+              </td>
+            </tr>
+
+          </ng-template>
+        </p-table>
+      </div>
+      <br>
+      <br>
+        <button pButton class="col-12 md:col-12 lg:col-12 p-button-success" type="submit" label="Guardar" icon="pi pi-save"></button>
+      <br>
+      <br>
+    </form>
+  </p-panel>
+  <br>
+</div>
+<!-- FIN DATOS LICENCIA CONDUCIR -->

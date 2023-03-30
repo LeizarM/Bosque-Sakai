@@ -1,0 +1,16 @@
+.user-card .user-card-header {
+  height: 100px;
+  overflow: hidden;
+  background-color: #545b61;
+}
+
+
+.truncar-text{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
+.ajustar-text{
+  overflow-wrap: break-word;
+}

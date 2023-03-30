@@ -1,0 +1,32 @@
+.user-card .user-card-header {
+  height: 100px;
+  overflow: hidden;
+  background-color: #545b61;
+}
+.bg-image {
+  background: url("../../../../../assets/img/bosqueFondo.png") no-repeat;
+  height: 150px;
+  width: 100%;
+  background-size: cover;
+}
+
+.posicion-imagen {
+  height: 150px;
+  width: 150px;
+  margin-top: -150px;
+}
+
+.usuario-card .usuario-card-content .usuario-detail {
+  padding: 10px 25px;
+  border-top: 1px solid #eaeaea;
+}
+
+.truncar-text{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
+.ajustar-text{
+  overflow-wrap: break-word;
+}

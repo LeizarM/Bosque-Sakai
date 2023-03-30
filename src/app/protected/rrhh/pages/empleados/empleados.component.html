@@ -1,0 +1,80 @@
+<br />
+  <div align="center">
+    <h1>EMPLEADOS</h1>
+  </div>
+<br />
+
+<p-toolbar class="card">
+  <button pButton type="button" icon="pi pi-plus" class="p-button-sm" label="Registrar Nuevo Empleado" routerLink="registro-empleado" ></button>
+  <div>
+    <span class="color-blanco-text">
+      Buscar Empleado:
+    </span>
+    <input pInputText type="text" (input)="filtarEmpleados($any($event), 'contains')" />
+  </div>
+  <button pButton type="button" icon="pi pi-file-pdf" class="p-button-sm p-button-secondary" label="Reporte de Empleados" ></button>
+</p-toolbar>
+
+
+<!-- Contenido Tabla -->
+<div class="card" *ngIf="lstEmpleados.length > 0">
+  <p-table #dtEmp [value]="lstEmpleados" responsiveLayout="scroll" styleClass="p-datatable-gridlines p-datatable-sm"
+    [rows]="15" [showCurrentPageReport]="true" [rowsPerPageOptions]="[15,25,50]" [paginator]="true"
+    currentPageReportTemplate="Mostrando {first} al {last} de {totalRecords} registros"
+    [globalFilterFields]="['persona.datoPersona','cargo.descripcion']">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>#</th>
+        <th>APELLIDOS Y NOMBRES</th>
+        <th>CARGO</th>
+        <th>
+          ESTADO
+          <br/>
+          <p-dropdown [options]="lstEstados" optionLabel="nombre" optionValue="codTipos" (onChange)="filtrarEmpleados($event)"></p-dropdown>
+
+        </th>
+        <th>ACCIONES</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-emp let-rowIndex="rowIndex">
+      <tr>
+        <td>
+          {{ rowIndex + 1 }}
+        </td>
+        <td>
+          {{ emp.persona.datoPersona }}
+        </td>
+        <td>
+          {{ emp.empleadoCargo.cargoSucursal.cargo.descripcion }}
+        </td>
+        <td>
+          <span [ngClass]="{
+                              'fondoVerde' : emp.relEmpEmpr.esActivo === 1,
+                              'fondoRojo' : emp.relEmpEmpr.esActivo === 0
+                            }" >
+            {{ emp.relEmpEmpr.esActivo === 1 ? 'Activo' : 'Inactivo' }}
+          </span>
+        </td>
+        <td>
+         <button pButton type="button" icon="pi pi-arrow-right" class="p-button-sm" label="Detalle"  (click)="siguientePagina( emp.codEmpleado )" ></button>
+         <!-- <button pButton type="button" icon="pi pi-arrow-right" class="p-button-sm" label="Detalle" [routerLink]="['./detalle-empleado']" [state]=emp ></button> -->
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Empleados no encontrados.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Snipper -->
+<div class="grid" *ngIf="lstEmpleados.length <= 0">
+  <div class="col-6 col-offset-6">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+</div>

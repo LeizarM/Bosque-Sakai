@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { PrimeNgModule } from 'src/app/prime-ng/prime-ng.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AppConfigModule } from "./layout/config/config.module";
 import { LayoutComponent } from './layout/layout.component';
@@ -15,9 +16,11 @@ import { SharedModule } from './shared/shared.module';
     ],
     imports: [
         CommonModule,
+        PrimeNgModule,
         ProtectedRoutingModule,
         SharedModule,
-        AppConfigModule
+        AppConfigModule,
+
     ]
 })
 export class ProtectedModule { }
