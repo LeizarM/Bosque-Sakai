@@ -1,25 +1,22 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-
-import { Empleado } from '../../interfaces/Empleado';
-import { Persona } from '../../interfaces/Persona';
+import { CargoSucursal } from '../../interfaces/CargoSucursal';
+import { Ciudad } from '../../interfaces/Ciudad';
 import { Email } from '../../interfaces/Email';
-import { Telefono } from '../../interfaces/Telefono';
+import { Empleado } from '../../interfaces/Empleado';
+import { EmpleadoCargo } from '../../interfaces/EmpleadoCargo';
 import { ExperienciaLaboral } from '../../interfaces/ExperienciaLaboral';
 import { Formacion } from '../../interfaces/Formacion';
 import { Licencia } from '../../interfaces/Licencia';
-import { Ciudad } from '../../interfaces/Ciudad';
-import { Zona } from '../../interfaces/Zona';
-import { Sucursal } from '../../interfaces/Sucursal';
-import { CargoSucursal } from '../../interfaces/CargoSucursal';
-import { EmpleadoCargo } from '../../interfaces/EmpleadoCargo';
+import { Feature, Lugares } from '../../interfaces/Lugares';
+import { Persona } from '../../interfaces/Persona';
 import { RelEmplEmpr } from '../../interfaces/RelEmpEmpr';
-import { Lugares, Feature } from '../../interfaces/Lugares';
-
-
+import { Sucursal } from '../../interfaces/Sucursal';
+import { Telefono } from '../../interfaces/Telefono';
+import { Zona } from '../../interfaces/Zona';
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +26,10 @@ export class RrhhService {
   public lugares: Feature[] = [];
 
   private baseUrl: string = environment.baseUrl;
-  constructor(private http: HttpClient) { }
+
+  constructor(private http: HttpClient) {
+
+  }
 
   /**
     * ===============================================
@@ -52,20 +52,20 @@ export class RrhhService {
 
     return this.http.post<Empleado[]>(url, emp)
       .pipe(
-
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
 
   }
+
 
   /**
    * Procedimiento para obtener Detalle de empleados
@@ -81,16 +81,17 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
+
   /**
    * Procedimiento para obtener los datos personales de un empleado
    */
@@ -105,38 +106,13 @@ export class RrhhService {
 
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
-        })
-      );
-  }
-
-  /**
-   * Procedimiento para obtener los emails por persona
-   */
-  obtenerDatosEmail(codPersona: number): Observable<Email[]> {
-
-    const url = `${this.baseUrl}/rrhh/emailPersona`;
-    const email: Email = {
-      codPersona: codPersona
-    };
-
-    return this.http.post<Email[]>(url, email)
-      .pipe(
-        catchError(e => {
-          if (e.status == 401) {
-            return throwError(e);
-          }
-          if (e.ok === false) {
-            console.error(e.error.error);
-            return throwError(e);
-          }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
@@ -155,16 +131,17 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
+
 
   /**
    * Procedimiento para obtener la experiencia laboral por empleado
@@ -182,16 +159,18 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
+
+
   /**
    * Obtendra la formacion de un empleado
    * @param codEmpleado
@@ -207,13 +186,13 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
@@ -233,18 +212,16 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
-
-
 
   /**
    * Obtendra las ciudades por pais
@@ -262,13 +239,13 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
 
@@ -290,13 +267,13 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
@@ -339,16 +316,17 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
+
 
   /**
    * Procedimiento que obtendra los cargos por sucursal registrada
@@ -366,13 +344,13 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
@@ -383,7 +361,7 @@ export class RrhhService {
    * @returns
    */
   registrarInfoEmpleado(empleado: Empleado): Observable<Empleado> {
-    console.log("en resgistrarInfoEmpleado servicio****** ", empleado);
+
     const url = `${this.baseUrl}/rrhh/registroEmpleado`;
 
     return this.http.post<Empleado>(url, empleado)
@@ -397,7 +375,6 @@ export class RrhhService {
       );
 
   }
-
 
   /**
    * Procedimiento para registro del Empleado Cargo
@@ -420,6 +397,8 @@ export class RrhhService {
       );
 
   }
+
+
   /**
    * Procedimiento para obtener las fechas beneficio por empleado
    * @param codEmpleado
@@ -436,16 +415,17 @@ export class RrhhService {
       .pipe(
         catchError(e => {
           if (e.status == 401) {
-            return throwError(e);
+            return throwError(() => e);
           }
           if (e.ok === false) {
             console.error(e.error.error);
-            return throwError(e);
+            return throwError(() => e);
           }
-          return throwError(e);
+          return throwError(() => e);
         })
       );
   }
+
 
   /**
    * Procedimiento para registro de relacion con la empresa y el empleado
@@ -468,6 +448,7 @@ export class RrhhService {
       );
 
   }
+
   /**
    * Procedimiento para registrar un Email por empleado
    * @param e
@@ -517,7 +498,6 @@ export class RrhhService {
   */
   registrarTelefono(t: Telefono): Observable<Telefono> {
     const url = `${this.baseUrl}/rrhh/registroTelefono`;
-    console.log("el telefono obj es ");
     console.log(t);
     return this.http.post<Telefono>(url, t)
       .pipe(
@@ -633,6 +613,7 @@ export class RrhhService {
       });
     return this.lugares;
   }
+
   /**
    * Obtendra el ulticmo codigo de un empleado agregado
    * @returns

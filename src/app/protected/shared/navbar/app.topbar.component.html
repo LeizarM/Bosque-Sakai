@@ -13,17 +13,20 @@
     </button>
 
     <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button">
-            <i class="pi pi-sign-out"></i>
-            <span>Cerrar Sesion</span>
-        </button>
+
         <button class="p-link layout-topbar-button">
             <i class="pi pi-user"></i>
             <span>Perfil</span>
         </button>
+
         <button class="p-link layout-topbar-button">
             <i class="pi pi-cog"></i>
             <span>Configuracion</span>
         </button>
+
+        <button (click)="logout()" class="p-link layout-topbar-button">
+          <i class="pi pi-sign-out"></i>
+          <span>Cerrar Sesion</span>
+      </button>
     </div>
 </div>

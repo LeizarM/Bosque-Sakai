@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { FichaTrabajadorComponent } from './ficha-trabajador/pages/ficha-trabajador/ficha-trabajador.component';
 import { LayoutComponent } from "./layout/layout.component";
+import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
 
 
  const routes: Routes = [
@@ -13,7 +15,7 @@ import { LayoutComponent } from "./layout/layout.component";
         path: 'dashboard',
         component: DashboardComponent
       },
-      /* {
+      /*{
         path: 'tprAutorizacion/Autorizacion',
         component: AutorizacionComponent
       },
@@ -24,23 +26,23 @@ import { LayoutComponent } from "./layout/layout.component";
       {
         path: 'tcrDocumento/Documento',
         component: DocumentoComponent
-      },
+      },*/
       {
         path: 'tbEmpleado/empleados',
         component: EmpleadosComponent
       },
-      {
+      /*{
         path: 'tbEmpleado/empleados/detalle-empleado',
         component: DetalleEmpleadoComponent
       },
       {
         path: 'tbEmpleado/empleados/registro-empleado',
         component: RegistroEmpleadoComponent
-      },
-      /*{
+      },*/
+      {
         path: 'tftFichaTrabajador/ficha',
         component: FichaTrabajadorComponent
-      },*/
+      },
       {
         path: '**',
         redirectTo: ''
