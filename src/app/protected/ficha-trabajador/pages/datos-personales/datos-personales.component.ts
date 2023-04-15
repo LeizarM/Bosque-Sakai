@@ -161,7 +161,8 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
    */
    obtenerDetalleEmpleado( codEmpleado : number ): void {
 
-     this.datoPersonalesSuscription = this.rrhhService.obtenerDetalleEmpleado( codEmpleado ).subscribe((resp) => {
+    //Change de suscribe method
+    this.datoPersonalesSuscription = this.rrhhService.obtenerDetalleEmpleado( codEmpleado ).subscribe((resp) => {
       if (resp) {
         this.regEmp = resp;
 
