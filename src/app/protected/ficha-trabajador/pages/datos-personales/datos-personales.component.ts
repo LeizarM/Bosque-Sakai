@@ -33,7 +33,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
   formDatosPersonales : FormGroup = new FormGroup({});
   isDisabled          : boolean = true;
 
-  @ViewChild('mapR') mapR !: ElementRef; //map read
+  @ViewChild('mapR', { static: true }) mapR!: ElementRef; //map read
   @ViewChild('mapE') mapE !: ElementRef; //map Edit
 
   private markers: Marker[] = [];
@@ -146,14 +146,22 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
   mapaLectura(lat: number, lng: number): void {
     this.mapa = new maplibregl.Map({
       container: this.mapR.nativeElement,
-      style: 'https://api.maptiler.com/maps/streets/style.json?key=get_your_own_OpIi9ZULNHzrESv6T2vL',
-
+      style: 'https://api.maptiler.com/maps/openstreetmap/style.json?key=C4ecPhJcO5UXHU2sCQwc',
       center: [lat, lng],
       zoom: 16,
     });
 
-    // Agregando marcador
-    new maplibregl.Marker().setLngLat([lat, lng]).addTo(this.mapa);
+    // Agregar controles de zoom al mapa
+    const nav = new maplibregl.NavigationControl({
+      showZoom: true,
+      showCompass: true,
+      visualizePitch: false
+    });
+    this.mapa.addControl(nav, 'top-left');
+
+    new maplibregl.Marker().setLngLat([lat, lng]) // longitud, latitud
+    .addTo(this.mapa);
+
   }
 
   /**
@@ -398,19 +406,6 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
       this.mapaEdit.off('dragend', () => { });
       this.mapaEdit.off('move', () => { });
 
-    }
-
-    /**
-     * para hacer zoom al mapa
-     */
-    zoomIn():void{
-      this.mapa.zoomIn();
-    }
-    /**
-     * Para alejar el zoom al mapa
-     */
-    zoomOut():void{
-      this.mapa.zoomOut();
     }
 
     /**

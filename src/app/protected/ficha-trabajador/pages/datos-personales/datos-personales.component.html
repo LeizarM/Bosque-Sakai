@@ -4,7 +4,7 @@
 <p-toast position="bottom-center" key="bc"></p-toast>
 
 <h3>DATOS PERSONALES DEL TRABAJADOR</h3>
-<hr>
+
 <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="cargarInformacionPersonal()"
   class="p-button-info"></button>
 <hr>
@@ -13,13 +13,17 @@
 <div class="p-fluid grid p-formgrid" *ngIf="regPer">
 
   <div class="field col-12 md:col-4">
-    <div class="col-12 text-orange-500">Apellido Paterno</div>
-    <div class="col-12">{{ regPer.apPaterno }}</div>
+    <div class="field">
+      <div class="col-12 text-orange-500">Apellido Paterno</div>
+      <div class="col-12">{{ regPer.apPaterno }}</div>
+    </div>
   </div>
 
   <div class="field col-12 md:col-4">
-    <div class="col-12 text-orange-500">Apellido Materno</div>
-    <div class="col-12">{{ regPer.apMaterno }}</div>
+    <div class="field">
+      <div class="col-12 text-orange-500">Apellido Materno</div>
+      <div class="col-12">{{ regPer.apMaterno }}</div>
+    </div>
   </div>
 
   <div class="field col-12 md:col-4">
@@ -84,39 +88,30 @@
 
   </div>
 
-  <hr>
 
- <!--  <app-dato-telefonos *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"
+  <!--  <app-dato-telefonos *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"
     class="col-12 md:col-6 lg:col-6 ajustar-text"></app-dato-telefonos>
   <app-dato-email *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"
-    class="col-12 md:col-6 lg:col-6 ajustar-text"></app-dato-email> -->
+    class="col-12 md:col-6 lg:col-6 ajustar-text"></app-dato-email>-->
 
   <hr>
 
-  <div class="z-0 align-items-center justify-content-center  green-container col-12 md:col-12">
-    <label> CROQUIS </label>
-    <br>
-
-    <div class="card">
-      <div class="flex flex-row flex-wrap card-container blue-container">
-        <button
-          class="flex align-items-center justify-content-center w-4rem h-4rem bg-blue-500 font-bold text-white border-round m-2"
-          (click)="zoomIn()"> + </button>
-        <button
-          class="flex align-items-center justify-content-center w-4rem h-4rem bg-blue-500 font-bold text-white border-round m-2"
-          (click)="zoomOut()"> - </button>
-
-      </div>
-    </div>
-
-    <div class="my-5 border-round bg-green-100  font-bold p-3 flex align-items-center justify-content-center">
-      <div #mapR class="col-12" style="height: 500px;">
-      </div>
-    </div>
-
-  </div>
-
 </div>
+<div class="col-12 md:col-12">
+  <label> CROQUIS </label>
+  <br>
+  <div class="grid">
+    <div class="col-12">
+      <div class="card">
+        <div #mapR class="col-12" style="height: 500px;">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 <!-- Dialog o modal para cargar la informacion personal para poder editarlo -->
@@ -238,7 +233,7 @@
             <div class="white-space-normal"></div>
 
             <input id="buscador" #txtQuery (keyup)="onQueryChange(txtQuery.value)" pInputText
-              placeholder="Ingresa alguna ubicacion, calle, lugar o zona" >
+              placeholder="Ingresa alguna ubicacion, calle, lugar o zona">
             <p-scrollPanel [style]="{width: '100%', height: '400px'}" styleClass="custombar2">
               <ul class="list-group mt-2 overflow-y: scroll;" *ngIf="lugares.length > 0">
                 <li *ngFor="let lugar of lugares" class="z-5 list-group-item list-group-item-action cursor-pointer"
@@ -270,5 +265,3 @@
     </div>
   </form>
 </p-dialog>
-
-<hr>
