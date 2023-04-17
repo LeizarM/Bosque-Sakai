@@ -10,6 +10,7 @@ import { Empleado } from 'src/app/protected/interfaces/Empleado';
 import { Pais } from 'src/app/protected/interfaces/Pais';
 import { Persona } from 'src/app/protected/interfaces/Persona';
 import { Zona } from 'src/app/protected/interfaces/Zona';
+import { MapaLibreService } from 'src/app/protected/mapaLibre/mapaLibre.service';
 import { PaisService } from 'src/app/protected/pais/services/pais.service';
 import { RrhhService } from 'src/app/protected/rrhh/services/rrhh.service';
 import { Feature } from '../../../interfaces/MapBoxLibre';
@@ -43,13 +44,13 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
   mapa            !: maplibregl.Map;
   mapaEdit        !: maplibregl.Map;
 
-  lstGenero           : Tipos[] = [];
-  lstExpedido         : Tipos[] = [];
-  lstEstadoCivil      : Tipos[] = [];
-  lstPais             : Pais[]  = [];
-  lstCiudad           : Ciudad[] = [];
-  lstZona             : Zona[] = [];
-  lugares             : Feature[] = [];
+  lstGenero       : Tipos[] = [];
+  lstExpedido     : Tipos[] = [];
+  lstEstadoCivil  : Tipos[] = [];
+  lstPais         : Pais[]  = [];
+  lstCiudad       : Ciudad[] = [];
+  lstZona         : Zona[] = [];
+  lugares         : Feature[] = [];
 
   codEmpleado : number = 0;
   displayModal : boolean = false;
@@ -67,7 +68,9 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
     private loginService           : LoginService,
     private rrhhService            : RrhhService,
     private paisService            : PaisService,
-    private fichaTrabajadorService : FichaTrabajadorService
+    private fichaTrabajadorService : FichaTrabajadorService,
+    private mapalibre              : MapaLibreService
+
   ) {
     this.codEmpleado = this.loginService.codEmpleado;
     this.obtenerDetalleEmpleado( this.codEmpleado );
@@ -147,7 +150,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
   mapaLectura(lat: number, lng: number): void {
     this.mapa = new maplibregl.Map({
       container: this.mapR.nativeElement,
-      style: 'https://api.maptiler.com/maps/openstreetmap/style.json?key=C4ecPhJcO5UXHU2sCQwc',
+      style: this.mapalibre.obtenerZonaxCiudad(),
       center: [lat, lng],
       zoom: 16,
     });
@@ -261,9 +264,10 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
 
     this.mapaEdit = new maplibregl.Map({
       container: this.mapE.nativeElement,
-      style: 'https://api.maptiler.com/maps/streets/style.json?key=C4ecPhJcO5UXHU2sCQwc',
+      style: this.mapalibre.obtenerZonaxCiudad(),
       center: this.center,
       zoom: 18,
+
 
     });
 

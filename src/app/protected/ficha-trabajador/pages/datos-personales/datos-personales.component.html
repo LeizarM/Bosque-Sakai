@@ -116,10 +116,9 @@
 <!-- Dialog o modal para cargar la informacion personal para poder editarlo -->
 <p-dialog header="Informacion Personal" [(visible)]="displayModal" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
   [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
-  {{ formDatosPersonales.value | json }}
+
   <form [formGroup]="formDatosPersonales" autocomplete="off" (ngSubmit)="guardar()">
     <div class="formgrid grid">
-
 
       <div class="field col-12 md:col-4">
         <label for="nombres">Nombres</label>
@@ -254,8 +253,6 @@
           </div>
 
         </div>
-
-
       </div>
 
       <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid"
