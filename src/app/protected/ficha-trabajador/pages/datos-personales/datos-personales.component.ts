@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import maplibregl, { Marker, Popup } from 'maplibre-gl';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
@@ -80,6 +80,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
 
    }
 
+
   ngOnDestroy(): void {
 
     if(this.mapa && this.mapaEdit){
@@ -124,7 +125,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
       ciVenci         : [ {value: 0, readOnly: this.isDisabled},],
       estCivil        : [ ],
       direccion       : [ ],
-      zonaRe          : [ ],
+      codZona         : [ ,[ Validators.min(0) ] ],
       lat             : [ ],
       lng             : [ ],
 
@@ -192,6 +193,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
     this.datoPersonalesSuscription = this.rrhhService.obtenerDatosPersonales(codPersona).subscribe((resp) => {
       if (resp) {
         this.regPer = resp;
+
         this.mapaLectura(this.regPer.lat!, this.regPer.lng!);
 
       }
@@ -203,7 +205,8 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
   /**
    * Para cargar los datos personales de una persona
    */
-  cargarInformacionPersonal():void{
+  async cargarInformacionPersonal():Promise<void>{
+
     this.displayModal = true;
     this.regPerEditar = {...this.regPer };
 
@@ -211,12 +214,18 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
     this.regPerEditar.fechaNacimiento    = new Utiles().fechaTStoPrimeNG( this.regPerEditar.fechaNacimiento! );
     this.regPerEditar.ciFechaVencimiento = new Utiles().fechaTStoPrimeNG( this.regPerEditar.ciFechaVencimiento! );
 
+
     // limpiando el input de busqueda
     this.lugares = [];
 
     //cargando los combo
-    this.obtenerCiudadesXPais( this.regPerEditar.ciudad?.codPais! );
-    this.obtenerZonaXCiudad( this.regPerEditar.ciudad?.codCiudad! );
+    try {
+      await this.obtenerCiudadesXPais(this.regPerEditar.ciudad?.codPais!);
+      await this.obtenerZonaXCiudad(this.regPerEditar.ciudad?.codCiudad!);
+    } catch (error) {
+      console.log("Error al cargar ciudades y zonas:", error);
+    }
+
 
 
     //Inicializando el Formulario con valores predeterminados
@@ -235,7 +244,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
       ciVenci         : [ this.regPerEditar.ciFechaVencimiento ],
       estCivil        : [ this.regPerEditar.estadoCivil ],
       direccion       : [ this.regPerEditar.direccion ],
-      zonaRe          : [ this.regPerEditar.codZona ],
+      codZona         : [ this.regPerEditar.codZona ],
       lat             : [ this.regPerEditar.lat ],
       lng             : [ this.regPerEditar.lng ],
 
@@ -245,6 +254,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
       ciudad          : [ this.regPerEditar.ciudad?.codCiudad ]
 
     });
+
 
 
     this.center = [this.regPerEditar.lat!, this.regPerEditar.lng!];
@@ -301,16 +311,23 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
    * Procedimiento para obtener las ciudades por pais
    * @param codPais
    */
-   obtenerCiudadesXPais( codPais: number ): void {
+   obtenerCiudadesXPais( codPais: number ): Promise<Ciudad[]> {
 
-    this.datoPersonalesSuscription = this.rrhhService.obtenerCiudadesXPais(codPais).subscribe((resp) => {
-      if (resp) {
-        this.lstCiudad = resp;
-        this.lstZona = [];
-      }
-    }, (err) => {
-      this.lstCiudad = [];
-      console.log(err);
+    return new Promise((resolve, reject) => {
+      this.datoPersonalesSuscription = this.rrhhService.obtenerCiudadesXPais(codPais).subscribe(
+        (resp) => {
+          if (resp) {
+            this.lstCiudad = resp;
+            this.lstZona = [];
+            resolve(resp);
+          }
+        },
+        (err) => {
+          this.lstCiudad = [];
+          console.log(err);
+          reject(err);
+        }
+      );
     });
   }
   /**
@@ -341,17 +358,24 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
    * Procedimiento para obtener las zonas por ciudad
    * @param codCiudad
    */
-    obtenerZonaXCiudad(codCiudad: number): void {
-      this.datoPersonalesSuscription = this.rrhhService.obtenerZonaxCiudad(codCiudad).subscribe((resp) => {
-
-        if (resp.length > 0) {
-          this.lstZona = resp;
-        } else {
-          this.lstZona = [];
-        }
-      }, (err) => {
-        this.lstZona = [];
-        console.log(err);
+    obtenerZonaXCiudad(codCiudad: number): Promise<Zona[]> {
+      return new Promise((resolve, reject) => {
+        this.datoPersonalesSuscription = this.rrhhService.obtenerZonaxCiudad(codCiudad).subscribe(
+          (resp) => {
+            if (resp.length > 0) {
+              this.lstZona = resp;
+              resolve(resp);
+            } else {
+              this.lstZona = [];
+              resolve([]);
+            }
+          },
+          (err) => {
+            this.lstZona = [];
+            console.log(err);
+            reject(err);
+          }
+        );
       });
 
     }
@@ -361,7 +385,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
      */
     guardar():void{
 
-      const {codPersona, nombres, apPaterno, apMaterno, sexo, fecNac, lugarNacimiento, ci, expedido, ciVenci, estCivil, direccion, zonaRe, nacionalidad, lat, lng } = this.formDatosPersonales.value;
+      const {codPersona, nombres, apPaterno, apMaterno, sexo, fecNac, lugarNacimiento, ci, expedido, ciVenci, estCivil, direccion, codZona, nacionalidad, lat, lng } = this.formDatosPersonales.value;
 
       const regPersona : Persona = {
         codPersona,
@@ -376,7 +400,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
         ciFechaVencimiento : ciVenci,
         estadoCivil : estCivil,
         direccion,
-        codZona : zonaRe,
+        codZona : codZona,
         nacionalidad,
         lat,
         lng
@@ -385,15 +409,17 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
 
       this.datoPersonalesSuscription = this.rrhhService.registrarInfoPersona(regPersona).subscribe(( resp )=>{
 
-        if(resp && resp?.ok === "ok"){
+        if(resp && resp.ok === "ok"){
 
-          this.messageService.add({ key: 'bc', severity: 'success', summary: 'Accion Realizada', detail: resp.msg });
+          this.messageService.add({ key: 'bc', severity: 'success', summary: 'Accion Realizada' });
           this.displayModal = false;
 
         }else{
-          this.messageService.add({ key: 'bc', severity: 'error', summary: 'Error al Actualizar', detail: resp.msg  });
+          this.messageService.add({ key: 'bc', severity: 'error', summary: 'Error al Actualizar'  });
 
         }
+
+        console.log("el resp es en guardar ",resp);
       },(err) => {
         console.log("Error General...");
         console.log(err);

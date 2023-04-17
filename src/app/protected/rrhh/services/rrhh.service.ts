@@ -283,7 +283,7 @@ export class RrhhService {
    * @param persona
    * @returns
    */
-  registrarInfoPersona(persona: Persona): Observable<any> {
+  registrarInfoPersona(persona: Persona): Observable<Persona> {
 
     const url = `${this.baseUrl}/rrhh/registroPersona`;
 
@@ -448,6 +448,31 @@ export class RrhhService {
       );
 
   }
+
+    /**
+   * Procedimiento para obtener los emails por persona
+   */
+    obtenerDatosEmail(codPersona: number): Observable<Email[]> {
+
+      const url = `${this.baseUrl}/rrhh/emailPersona`;
+      const email: Email = {
+        codPersona: codPersona
+      };
+
+      return this.http.post<Email[]>(url, email)
+        .pipe(
+          catchError(e => {
+            if (e.status == 401) {
+              return throwError(e);
+            }
+            if (e.ok === false) {
+              console.error(e.error.error);
+              return throwError(e);
+            }
+            return throwError(e);
+          })
+        );
+    }
 
   /**
    * Procedimiento para registrar un Email por empleado

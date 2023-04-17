@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PrimeNgModule } from 'src/app/prime-ng/prime-ng.module';
+import { DatoEmailComponent } from './pages/dato-email/dato-email.component';
+import { DatoTelefonosComponent } from './pages/dato-telefonos/dato-telefonos.component';
 import { DatosPersonalesComponent } from './pages/datos-personales/datos-personales.component';
 import { FichaTrabajadorComponent } from './pages/ficha-trabajador/ficha-trabajador.component';
 import { CiExpedidoPipe } from './pipes/ci-expedido.pipe';
@@ -26,7 +28,9 @@ import { TipoDuracionPipe } from './pipes/tipo-duracion.pipe';
 
 
     FichaTrabajadorComponent,
-    DatosPersonalesComponent
+    DatosPersonalesComponent,
+    DatoTelefonosComponent,
+    DatoEmailComponent
   ],
   imports: [
     CommonModule,

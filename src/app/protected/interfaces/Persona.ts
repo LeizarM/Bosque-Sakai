@@ -1,5 +1,5 @@
-import { Pais } from './Pais';
 import { Ciudad } from './Ciudad';
+import { Pais } from './Pais';
 import { Zona } from './Zona';
 export interface Persona {
   codPersona?:         number;
@@ -24,6 +24,9 @@ export interface Persona {
   zona?:               Zona;
   pais?:               Pais;
   ciudad?:             Ciudad;
+
+  ok?:                 string;
+  msg?:                string;
 }
 
 

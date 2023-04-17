@@ -89,10 +89,9 @@
   </div>
 
 
-  <!--  <app-dato-telefonos *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"
-    class="col-12 md:col-6 lg:col-6 ajustar-text"></app-dato-telefonos>
-  <app-dato-email *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"
-    class="col-12 md:col-6 lg:col-6 ajustar-text"></app-dato-email>-->
+  <app-dato-telefonos *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona" class="col-12 md:col-6 lg:col-6 ajustar-text"></app-dato-telefonos>
+
+  <app-dato-email *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona" class="col-12 md:col-6 lg:col-6 ajustar-text"></app-dato-email>
 
   <hr>
 
@@ -117,7 +116,7 @@
 <!-- Dialog o modal para cargar la informacion personal para poder editarlo -->
 <p-dialog header="Informacion Personal" [(visible)]="displayModal" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
   [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
-
+  {{ formDatosPersonales.value | json }}
   <form [formGroup]="formDatosPersonales" autocomplete="off" (ngSubmit)="guardar()">
     <div class="formgrid grid">
 
@@ -215,8 +214,8 @@
       </div>
 
       <div class="field col-12 md:col-4">
-        <label for="zonaRe">Zona Residencia</label>
-        <p-dropdown id="zonaRe" formControlName="zonaRe" placeholder="Seleccione Zona" [options]="lstZona"
+        <label for="codZona">Zona Residencia</label>
+        <p-dropdown id="codZona" formControlName="codZona" placeholder="Seleccione Zona" [options]="lstZona"
           optionValue="codZona" optionLabel="zona" class="flex" appendTo="body">
         </p-dropdown>
       </div>
@@ -259,7 +258,7 @@
 
       </div>
 
-      <button pButton type="submit" icon="pi pi-save" label="Guardar"
+      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid"
         class="flex-1 m-15 px-5 py-3 flex align-items-center p-button-raised p-button-success"></button>
 
     </div>
