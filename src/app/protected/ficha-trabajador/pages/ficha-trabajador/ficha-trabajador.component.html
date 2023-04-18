@@ -1,21 +1,55 @@
+<p-toast></p-toast>
+<p-toast position="top-left" key="tl"></p-toast>
+<p-toast position="top-center" key="tc"></p-toast>
+<p-toast position="bottom-center" key="bc"></p-toast>
+
 <div class="grid">
   <div class="col-12">
-      <div class="card flex justify-content-center">
-          <h2>FICHA DE TRAJADOR</h2>
+    <div class="card flex justify-content-center">
+      <h2>FICHA DE TRAJADOR</h2>
+    </div>
+    <br>
+
+    <div class="flex justify-content-center flex-wrap card-container">
+      <div class="flex align-items-center justify-content-center w-70rem h-70rem border-round m-2">
+        <!-- <p-image src="../../../../../assets/img/personas/user.jpg" alt="user" width="250" height="250"></p-image> -->
+        <p-image src="{{baseUrl}}/fichaTrabajador/uploads/img/{{codEmpleado}}.jpg" class="round-image"
+          styleClass="p-image-preview-container" alt="foto-usuario" width="250" height="250"></p-image>
+
       </div>
   </div>
+
+  <br />
+
+  <div class="flex align-items-center justify-content-center w-70rem h-70rem border-round m-2">
+    <div class="grid">
+      <div class="custom-file">
+        <input (change)="seleccionarFoto($event)" pInputText type="file" class="custom-file-input" id="inputGroupFile04"
+          aria-describedby="inputGroupFileAddon04">
+        <label class="custom-file-label" for="inputGroupFile04"></label>
+      </div>
+      <div class="input-group-append">
+        <button (click)="subirFoto()" pButton [disabled]="!fotoSeleccionada" class="btn btn-outline-secondary"
+          type="button" id="inputGroupFileAddon04">Subir</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="flex align-items-center justify-content-center w-70rem h-70rem border-round m-2">
+    <button pButton label="Descargar Ficha Trabajador" (click)="descargarFichaTrabajador()"></button>
+  </div>
 </div>
+</div>
+
 
 <app-datos-personales></app-datos-personales>
 
 <app-dato-ingreso></app-dato-ingreso>
 
-
 <app-dependiente></app-dependiente>
 
-
 <app-garante-referencia></app-garante-referencia>
-
 
 <app-dato-formacion></app-dato-formacion>
 

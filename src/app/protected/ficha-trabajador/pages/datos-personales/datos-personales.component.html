@@ -89,14 +89,6 @@
 
 
 
-
-
-
-
-
-
-
-
 <!-- Dialog o modal para cargar la informacion personal para poder editarlo -->
 <p-dialog header="Informacion Personal" [(visible)]="displayModal" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
   [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
@@ -138,13 +130,13 @@
 
       <div class="field col-12 md:col-4">
         <label for="lugarNacimiento">Lugar de Nacimiento</label>
-        <input id="lugarNacimiento" type="text" formControlName="lugarNacimiento"
+        <input id="lugarNacimiento" pInputText type="text" formControlName="lugarNacimiento"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="ci">Cedula de Indentidad</label>
-        <input id="ci" type="text" formControlName="ci"
+        <input id="ci" pInputText type="text" formControlName="ci"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
       </div>
 
@@ -161,6 +153,7 @@
           class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
         </p-calendar>
       </div>
+
       <div class="field col-12 md:col-3">
         <label for="nacionalidad">Nacionalidad</label>
         <p-dropdown id="nacionalidad" class="inputfield w-full" [options]="lstPais" optionLabel="pais"

@@ -1,0 +1,6 @@
+.round-image img {
+  border-radius: 50%;
+  width: 150px; /* Ajusta este valor para cambiar el tamaño de la imagen */
+  height: 150px; /* Ajusta este valor para cambiar el tamaño de la imagen */
+  object-fit: cover; /* Asegura que la imagen mantenga su proporción al ajustarse al tamaño */
+}

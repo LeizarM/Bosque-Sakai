@@ -116,25 +116,25 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
   cargarFormulario(): void {
 
     this.formDatosPersonales = this.fb.group({
-      codPersona      : [ {value: '', disabled: this.isDisabled},],
-      nombres         : [ {value: '', disabled: this.isDisabled},],
-      apPaterno       : [ {value: '', disabled: this.isDisabled},],
-      apMaterno       : [ {value: '', disabled: this.isDisabled},],
-      sexo            : [ {value: '', disabled: this.isDisabled},],
-      fecNac          : [ {value: '', disabled: this.isDisabled},],
-      lugarNacimiento : [ {value: 0, disabled: this.isDisabled},],
-      ci              : [ {value: '', disabled: this.isDisabled},],
-      expedido        : [ {value: '', disabled: this.isDisabled},],
-      ciVenci         : [ {value: 0, readOnly: this.isDisabled},],
-      estCivil        : [ ],
-      direccion       : [ ],
+      codPersona      : [ ,],
+      nombres         : [ ,],
+      apPaterno       : [ ,],
+      apMaterno       : [ ,],
+      sexo            : [ ,],
+      fecNac          : [ ,],
+      lugarNacimiento : [ ,],
+      ci              : [ ,],
+      expedido        : [ ,],
+      ciVenci         : [ ,],
+      estCivil        : [ ,],
+      direccion       : [ ,],
       codZona         : [ ,[ Validators.min(0) ] ],
-      lat             : [ ],
-      lng             : [ ],
+      lat             : [ ,],
+      lng             : [ ,],
 
-      codPais         : [ ],
-      nacionalidad    : [ {value: 0, disabled: this.isDisabled}],
-      ciudad          : [ ],
+      codPais         : [ ,],
+      nacionalidad    : [ ,],
+      ciudad          : [ ,],
     });
   }
 
@@ -223,6 +223,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
 
     //cargando los combo
     try {
+      //await this.obtenerPaises();
       await this.obtenerCiudadesXPais(this.regPerEditar.ciudad?.codPais!);
       await this.obtenerZonaXCiudad(this.regPerEditar.ciudad?.codCiudad!);
     } catch (error) {
@@ -230,21 +231,21 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
     }
 
 
-
+    console.log(this.regPerEditar.nacionalidad);
     //Inicializando el Formulario con valores predeterminados
 
     this.formDatosPersonales = this.fb.group({
 
-      codPersona      : [ this.regPerEditar.codPersona],
-      nombres         : [ this.regPerEditar.nombres ],
-      apPaterno       : [ this.regPerEditar.apPaterno ],
-      apMaterno       : [ this.regPerEditar.apMaterno ],
-      sexo            : [ this.regPerEditar.sexo ],
-      fecNac          : [ this.regPerEditar.fechaNacimiento ],
-      lugarNacimiento : [ this.regPerEditar.lugarNacimiento ],
-      ci              : [ this.regPerEditar.ciNumero ],
-      expedido        : [ this.regPerEditar.ciExpedido ],
-      ciVenci         : [ this.regPerEditar.ciFechaVencimiento ],
+      codPersona      : [ {value: this.regPerEditar.codPersona , disabled: this.isDisabled}],
+      nombres         : [ {value: this.regPerEditar.nombres , disabled: this.isDisabled}],
+      apPaterno       : [ {value: this.regPerEditar.apPaterno, disabled: this.isDisabled}],
+      apMaterno       : [ {value: this.regPerEditar.apMaterno, disabled: this.isDisabled}],
+      sexo            : [ {value: this.regPerEditar.sexo, disabled: this.isDisabled}],
+      fecNac          : [ {value: this.regPerEditar.fechaNacimiento, disabled: this.isDisabled}],
+      lugarNacimiento : [ {value: this.regPerEditar.lugarNacimiento, disabled: this.isDisabled} ],
+      ci              : [ {value: this.regPerEditar.ciNumero, disabled: this.isDisabled}],
+      expedido        : [ {value: this.regPerEditar.ciExpedido, disabled: this.isDisabled}],
+      ciVenci         : [ {value: this.regPerEditar.ciFechaVencimiento, disabled: this.isDisabled} ],
       estCivil        : [ this.regPerEditar.estadoCivil ],
       direccion       : [ this.regPerEditar.direccion ],
       codZona         : [ this.regPerEditar.codZona ],
@@ -253,7 +254,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
 
 
       codPais         : [ this.regPerEditar.ciudad?.codPais],
-      nacionalidad    : [ this.regPerEditar.nacionalidad ],
+      nacionalidad    : [ {value: this.regPerEditar.nacionalidad, disabled: this.isDisabled} ],
       ciudad          : [ this.regPerEditar.ciudad?.codCiudad ]
 
     });
@@ -309,6 +310,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
       this.lstPais = [];
       console.log(err);
     });
+
   }
 
   /**
