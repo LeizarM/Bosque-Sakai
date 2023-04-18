@@ -219,6 +219,7 @@
                   <p>
                     {{ lugar.properties.address.country }}
                   </p>
+                  <hr>
                 </li>
               </ul>
             </p-scrollPanel>
@@ -232,9 +233,10 @@
         </div>
       </div>
 
-      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid"
-        class="flex-1 m-15 px-5 py-3 flex align-items-center p-button-raised p-button-success"></button>
-
+    </div>
+    <br/>
+    <div class="flex justify-content-center">
+      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid" class=""></button>
     </div>
   </form>
 </p-dialog>
