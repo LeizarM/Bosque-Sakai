@@ -1,0 +1,179 @@
+<p-toast></p-toast>
+<p-toast position="top-left" key="tl"></p-toast>
+<p-toast position="top-center" key="tc"></p-toast>
+<p-toast position="bottom-center" key="bc"></p-toast>
+
+
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <h4>DEPENDIENTES</h4>
+      <button pButton type="button" label="Nuevo Dependiente" (click)="cargarDatosDependiente()" icon="pi pi-plus"
+        class="p-button-success">
+      </button>
+
+      <br />
+      <!-- Data table para mostrar los dependientes disponibles -->
+      <p-table [value]="lstDependientes" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+
+          <tr>
+            <th>Nombre Completo</th>
+            <th>Descripcion</th>
+            <th>Edad</th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-dep>
+
+          <tr>
+            <td>{{ dep.nombreCompleto }}</td>
+            <td>{{ dep.descripcion }}</td>
+            <td>{{ dep.edad }}</td>
+
+          </tr>
+
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- Modal para cargar datos de un nuevo dependiente -->
+<p-dialog header="Registrar Datos Dependiente" [(visible)]="displayModal"
+  [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
+
+  <form [formGroup]="formDatosDependiente" autocomplete="off" (ngSubmit)="guardar()">
+    <div class="formgrid grid">
+
+
+      <div class="field col-12 md:col-4">
+        <label for="nombres">Nombres</label>
+        <input pInputText id="nombres" type="text" formControlName="nombres"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Nombres son requeridos" *ngIf="esValido('nombres')"></p-message>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="apPaterno">Apellido Paterno</label>
+        <input pInputText id="apPaterno" type="text" formControlName="apPaterno"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Apellido Paterno es Requerido" *ngIf="esValido('apPaterno')"></p-message>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="apMaterno">Apellido Materno</label>
+        <input pInputText id="apMaterno" type="text" formControlName="apMaterno"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Apellido Materno es Requerido" *ngIf="esValido('apMaterno')"></p-message>
+
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="sexo">Sexo</label>
+        <p-dropdown id="sexo" [options]="lstGenero" formControlName="sexo" optionValue="codTipos" optionLabel="nombre"
+          class="flex">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="fecNac">Fecha Nacimiento</label>
+        <p-calendar id="fecNac" appendTo="body" formControlName="fecNac"
+          class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
+        </p-calendar>
+        <p-message severity="error" text="* Fecha de Nacimiento es Requerido" *ngIf="esValido('fecNac')"></p-message>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="lugarNacimiento">Lugar de Nacimiento</label>
+        <input id="lugarNacimiento" type="text" formControlName="lugarNacimiento"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Lugar de Nacimiento es Requerido"
+          *ngIf="esValido('lugarNacimiento')"></p-message>
+
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="ci">Cedula de Indentidad</label>
+        <input id="ci" type="text" formControlName="ci"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Cedula de Identidad es Requerido" *ngIf="esValido('ci')"></p-message>
+
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="expedido">Expedido en</label>
+        <p-dropdown id="expedido" [options]="lstExpedido" formControlName="expedido" optionValue="codTipos"
+          optionLabel="nombre" class="flex">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="ciVenci">CI Vencimiento</label>
+        <p-calendar id="ciVenci" appendTo="body" formControlName="ciVenci"
+          class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
+        </p-calendar>
+        <p-message severity="error" text="* CI Vencimiento es Requerido" *ngIf="esValido('ciVenci')"></p-message>
+
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="estCivil">Estado Civil</label>
+        <p-dropdown id="estCivil" [options]="lstEstadoCivil" formControlName="estCivil" optionLabel="nombre"
+          optionValue="codTipos" class="flex"></p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-3">
+        <label for="nacionalidad">Nacionalidad</label>
+        <p-dropdown id="nacionalidad" class="inputfield w-full" [options]="lstPais" optionLabel="pais"
+          optionValue="codPais" formControlName="nacionalidad"></p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-3">
+        <label for="parentesco">Tipo Dependiente</label>
+        <p-dropdown id="parentesco" class="inputfield w-full" [options]="lstTipoDependientes" optionLabel="nombre"
+          optionValue="codTipos" formControlName="parentesco"></p-dropdown>
+      </div>
+
+      <div class="field col-12">
+        <label for="direccion">Direccion</label>
+        <textarea id="direccion" type="text" rows="4" formControlName="direccion"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"></textarea>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="pais">Pais Residencia</label>
+        <p-dropdown id="pais" formControlName="codPais" placeholder="Seleccione Pais" [options]="lstPais"
+          optionLabel="pais" optionValue="codPais" class="flex" (onChange)="cargarCiudades($event.value)"
+          appendTo="body">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="estCivil">Ciudad Residencia</label>
+        <p-dropdown id="pais" formControlName="ciudad" placeholder="Seleccione Ciudad" [options]="lstCiudad"
+          optionLabel="ciudad" optionValue="codCiudad" class="flex" (onChange)="cargarZonas($event.value)"
+          appendTo="body">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12 md:col-4">
+        <label for="zonaRe">Zona Residencia</label>
+        <p-dropdown id="zonaRe" formControlName="zonaRe" placeholder="Seleccione Zona" [options]="lstZona"
+          optionValue="codZona" optionLabel="zona" class="flex" appendTo="body">
+        </p-dropdown>
+      </div>
+
+      <button pButton type="submit" icon="pi pi-save" [disabled]="!formDatosDependiente.valid" label="Guardar"
+        class="flex-1 m-15 px-5 py-3 flex align-items-center p-button-raised p-button-success"></button>
+
+    </div>
+  </form>
+
+</p-dialog>

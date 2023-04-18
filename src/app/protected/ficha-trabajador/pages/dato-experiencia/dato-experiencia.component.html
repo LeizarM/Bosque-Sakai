@@ -1,0 +1,111 @@
+<p-toast></p-toast>
+<p-toast position="top-left" key="tl"></p-toast>
+<p-toast position="top-center" key="tc"></p-toast>
+<p-toast position="bottom-center" key="bc"></p-toast>
+
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <h4>EXPERIENCIA</h4>
+
+      <button pButton icon="pi pi-plus" class="p-button-success" (click)="nuevoRegistro()"
+        label="Nuevo Registro"></button>
+
+      <!-- Tabla para desplegar la experiencia laboral -->
+      <p-table [value]="lstExperienciaLaboral" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Empresa</th>
+            <th>Cargo</th>
+            <th>Descripcion</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Conclusion</th>
+            <th>Telefono Referencia</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-expLab>
+          <tr>
+            <td>{{expLab.nombreEmpresa}}</td>
+            <td>{{expLab.cargo}}</td>
+            <td>{{expLab.descripcion}}</td>
+            <td>{{expLab.fechaInicio | date: 'dd/MM/yyyy' }}</td>
+            <td>{{expLab.fechaFin | date: 'dd/MM/yyyy' }}</td>
+            <td>{{expLab.nroReferencia }}</td>
+            <td>
+              <button pButton type="button" label="Editar" icon="pi pi-pencil" (click)="cargarRegistro( expLab )"
+                class="p-button-warning"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Dialog o modal para editar la informacion sobre la experiencia -->
+<p-dialog header="REGISTRAR EXPERIENCIA LABORAL" [(visible)]="displayModal" [modal]="true" [draggable]="true"
+  [resizable]="true" [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '40vw'}">
+
+  <form autocomplete="off" [formGroup]=formExperiencia (ngSubmit)="guardar()">
+
+    <div class="grid">
+
+      <div class="field col-12">
+        <label for="nombreEmpresa">Nombre Empresa: </label>
+        <input id="nombreEmpresa" type="text" formControlName="nombreEmpresa"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Nombres Empresa es requerido" *ngIf="esValido('nombreEmpresa')"></p-message>
+      </div>
+
+      <div class="field col-12">
+        <label for="cargo">Cargo: </label>
+        <input id="cargo" type="text" formControlName="cargo"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Cargo es requerido" *ngIf="esValido('cargo')"></p-message>
+      </div>
+
+      <div class="field col-12">
+        <label for="descripcion">Descripcion: </label>
+        <input id="descripcion" type="text" formControlName="descripcion"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Descripcion requerida" *ngIf="esValido('descripcion')"></p-message>
+      </div>
+
+      <div class="field col-12">
+        <label for="fechaInicio">Fecha Inicio: </label>
+        <p-calendar appendTo="body" id="fechaInicio" formControlName="fechaInicio" dateFormat="dd/mm/yy"></p-calendar>
+        <p-message severity="error" text="* Fecha Inicio es requerida" *ngIf="esValido('fechaInicio')"></p-message>
+
+      </div>
+
+      <div class="field col-12">
+        <label for="fechaFin">Fecha Conclusion: </label>
+        <p-calendar id="fechaFin" appendTo="body" formControlName="fechaFin" dateFormat="dd/mm/yy"></p-calendar>
+        <p-message severity="error" text="* Fecha Fin requerida" *ngIf="esValido('fechaFin')"></p-message>
+
+      </div>
+
+      <div class="field col-12">
+        <label for="nroReferencia">Telefono Referencia: </label>
+        <input id="nroReferencia" type="text" formControlName="nroReferencia"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+
+      </div>
+    </div>
+
+    <div aling="center">
+      <button type="submit" pButton icon="icon" [disabled]="!formExperiencia.valid" label="Guardar"></button>
+    </div>
+
+  </form>
+
+</p-dialog>

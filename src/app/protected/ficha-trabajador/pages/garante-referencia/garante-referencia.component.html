@@ -3,123 +3,86 @@
 <p-toast position="top-center" key="tc"></p-toast>
 <p-toast position="bottom-center" key="bc"></p-toast>
 
-
 <div class="grid">
   <div class="col-12">
-
-    <div class="card justify-content-center">
-      <h4>DATOS PERSONALES DEL TRABAJADOR</h4>
-      <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="cargarInformacionPersonal()"
-        class="p-button-info"></button>
-      <hr>
-      <br />
-
-      <div class="flex align-items-baseline p-fluid grid p-formgrid" *ngIf="regPer">
-
-        <div class="field col">
-          <label class="col-12  font-bold text-orange-500">APELLIDO PATERNO</label>
-          <div class="col-12">{{ regPer.apPaterno }}</div>
-				</div>
-
-        <div class="field col">
-          <label class="col-12  font-bold text-orange-500">APELLIDO MATERNO</label>
-          <div class="col-12">{{ regPer.apMaterno }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12  font-bold text-orange-500">NOMBRES</label>
-          <div class="col-12">{{ regPer.nombres }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">SEXO</label>
-          <div class="col-12">{{ regPer.sexo | genero }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">FECHA DE NACIMIENTO</label>
-          <div class="col-12">{{ regPer.fechaNacimiento | date: 'dd/MM/yyyy' }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold  text-orange-500">LUGAR DE NACIMIENTO</label>
-          <div class="col-12">{{ regPer.lugarNacimiento }}</div>
-				</div>
-
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">CEDULA DE IDENTIDAD</label>
-          <div class="col-12">{{ regPer.ciNumero }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">EXPEDIDO</label>
-          <div class="col-12">{{ regPer.ciExpedido | ciExpedido }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">CI FECHA DE VENCIMIENTO</label>
-          <div class="col-12">{{ regPer.ciFechaVencimiento | date: 'dd/MM/yyyy' }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">ESTADO CIVIL</label>
-          <div class="col-12">{{ regPer.estadoCivil | estadoCivil }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">DIRECCION</label>
-          <div class="col-12">{{ regPer.direccion }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">NACIONALIDAD</label>
-          <div class="col-12">{{ regPer.nacionalidad | pais }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">ZONA RESIDENCIA</label>
-          <div class="col-12">{{ regPer.zona?.zona }}</div>
-				</div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">CIUDAD DE RESIDENCIA</label>
-          <div class="col-12">{{ regPer.ciudad?.ciudad }}</div>
-				</div>
-
-      </div>
-    </div>
-
     <div class="card">
-      <div #mapR class="col-12" style="height: 500px;">
-      </div>
+      <h4>GARANTES Y REFERENCIAS</h4>
+      <button pButton type="button" label="Nuevo Garante o Referencia" icon="pi pi-plus" class="p-button-success"
+        (click)="prepararFormulario()">
+      </button>
+
+      <br/>
+      <br/>
+
+      <!-- datos de los garantes y referencias -->
+      <p-table [value]="lstGaranteReferencia" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nombre Completo</th>
+            <th>Direccion Domicilio</th>
+            <th>Direccion Trabajo</th>
+            <th>Empresa Trabajo</th>
+            <th>Tipo</th>
+            <th>Observacion</th>
+            <th>Tipo Laboral/Personal</th>
+            <!--  <th>Accion</th> -->
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-gr>
+
+          <tr>
+            <td>{{ gr.nombreCompleto }}</td>
+            <td>{{ gr.direccionDomicilio }}</td>
+            <td>{{ gr.direccionTrabajo }}</td>
+            <td>{{ gr.empresaTrabajo }}</td>
+            <td>{{ gr.tipo }}</td>
+            <td>{{ gr.observacion }}</td>
+            <td>{{ gr.esEmpleado }}</td>
+            <td>
+              <button pButton type="button" label="Detalle" icon="pi pi-list" class="p-button-success"></button>
+            </td>
+          </tr>
+
+        </ng-template>
+      </p-table>
+
     </div>
-
   </div>
-
 </div>
 
 
 
 
 
+<!-- Dialog para registrar a un nuevo dependiente -->
+<p-dialog header="Registrar Datos Garante o Referencia" [(visible)]="displayModal"
+  [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
 
+  <form [formGroup]="formDatosGaranYRef" autocomplete="off" (ngSubmit)="guardar()">
 
-
-
-
-
-<!-- Dialog o modal para cargar la informacion personal para poder editarlo -->
-<p-dialog header="Informacion Personal" [(visible)]="displayModal" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
-  [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
-
-  <form [formGroup]="formDatosPersonales" autocomplete="off" (ngSubmit)="guardar()">
     <div class="formgrid grid">
 
       <div class="field col-12 md:col-4">
         <label for="nombres">Nombres</label>
         <input pInputText id="nombres" type="text" formControlName="nombres"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Nombres son requeridos" *ngIf="esValido('nombres')"></p-message>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="apPaterno">Apellido Paterno</label>
         <input pInputText id="apPaterno" type="text" formControlName="apPaterno"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Apellido Paterno es Requerido" *ngIf="esValido('apPaterno')"></p-message>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="apMaterno">Apellido Materno</label>
         <input pInputText id="apMaterno" type="text" formControlName="apMaterno"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Apellido Materno es Requerido" *ngIf="esValido('apMaterno')"></p-message>
+
       </div>
 
       <div class="field col-12 md:col-4">
@@ -134,18 +97,24 @@
         <p-calendar id="fecNac" appendTo="body" formControlName="fecNac"
           class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
         </p-calendar>
+        <p-message severity="error" text="* Fecha de Nacimiento es Requerido" *ngIf="esValido('fecNac')"></p-message>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="lugarNacimiento">Lugar de Nacimiento</label>
         <input id="lugarNacimiento" type="text" formControlName="lugarNacimiento"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Lugar de Nacimiento es Requerido"
+          *ngIf="esValido('lugarNacimiento')"></p-message>
+
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="ci">Cedula de Indentidad</label>
         <input id="ci" type="text" formControlName="ci"
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Cedula de Identidad es Requerido" *ngIf="esValido('ci')"></p-message>
+
       </div>
 
       <div class="field col-12 md:col-4">
@@ -160,11 +129,8 @@
         <p-calendar id="ciVenci" appendTo="body" formControlName="ciVenci"
           class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
         </p-calendar>
-      </div>
-      <div class="field col-12 md:col-3">
-        <label for="nacionalidad">Nacionalidad</label>
-        <p-dropdown id="nacionalidad" class="inputfield w-full" [options]="lstPais" optionLabel="pais"
-          optionValue="codPais" formControlName="nacionalidad"></p-dropdown>
+        <p-message severity="error" text="* CI Vencimiento es Requerido" *ngIf="esValido('ciVenci')"></p-message>
+
       </div>
 
       <div class="field col-12 md:col-4">
@@ -172,6 +138,14 @@
         <p-dropdown id="estCivil" [options]="lstEstadoCivil" formControlName="estCivil" optionLabel="nombre"
           optionValue="codTipos" class="flex"></p-dropdown>
       </div>
+
+      <div class="field col-12 md:col-3">
+        <label for="nacionalidad">Nacionalidad</label>
+        <p-dropdown id="nacionalidad" class="inputfield w-full flex" [options]="lstPais" optionLabel="pais"
+          optionValue="codPais" formControlName="nacionalidad">
+        </p-dropdown>
+      </div>
+
 
 
       <div class="field col-12">
@@ -197,8 +171,8 @@
       </div>
 
       <div class="field col-12 md:col-4">
-        <label for="codZona">Zona Residencia</label>
-        <p-dropdown id="codZona" formControlName="codZona" placeholder="Seleccione Zona" [options]="lstZona"
+        <label for="zonaRe">Zona Residencia</label>
+        <p-dropdown id="zonaRe" formControlName="zonaRe" placeholder="Seleccione Zona" [options]="lstZona"
           optionValue="codZona" optionLabel="zona" class="flex" appendTo="body">
         </p-dropdown>
       </div>
@@ -237,9 +211,47 @@
           </div>
 
         </div>
+
+
       </div>
 
-      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid"
+
+
+      <div class="field col-12">
+        <p-divider align="center">
+          <span class="p-tag">DATOS GARANTE O REFERENCIA </span>
+        </p-divider>
+      </div>
+
+
+      <div class="field col-12">
+        <label for="direccionTrabajo">Direccion Trabajo</label>
+        <textarea id="direccionTrabajo" type="text" rows="4" formControlName="direccionTrabajo"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"></textarea>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="empresaTrabajo">Empresa Trabajo</label>
+        <input pInputText id="empresaTrabajo" type="text" formControlName="empresaTrabajo"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Empresa es Requerido" *ngIf="esValido('empresaTrabajo')"></p-message>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="tipo"> Referencia o Garante </label>
+        <p-dropdown id="tipo" [options]="lstGaranteYRef" formControlName="tipo" optionValue="codTipos"
+          optionLabel="nombre" class="flex">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12">
+        <label for="obs">Observaciones</label>
+        <textarea id="obs" type="text" rows="4" formControlName="obs"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"></textarea>
+      </div>
+
+
+      <button pButton type="submit" icon="pi pi-save" [disabled]="!formDatosGaranYRef.valid" label="Guardar"
         class="flex-1 m-15 px-5 py-3 flex align-items-center p-button-raised p-button-success"></button>
 
     </div>

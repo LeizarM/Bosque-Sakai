@@ -1,0 +1,22 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <h4>DATOS DE INGRESO</h4>
+      <div class="grid">
+        <div class="col-12 md:col-6 lg:col-3 font-bold text-orange-500">
+          Cargo:
+        </div>
+        <div class="col-12 md:col-6 lg:col-3">
+          {{ regEmp.empleadoCargo?.cargoSucursal?.cargo?.descripcionPlanilla }}
+        </div>
+        <div class="col-12 md:col-6 lg:col-3 font-bold text-orange-500">
+          Fecha Ingreso a la Empresa:
+        </div>
+        <div class="col-12 md:col-6 lg:col-3">
+          {{ regEmp.relEmpEmpr?.fechaInicioPlanilla| date: 'dd/MM/yyyy' }}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

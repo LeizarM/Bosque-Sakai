@@ -1,0 +1,99 @@
+<p-toast></p-toast>
+<p-toast position="top-left" key="tl"></p-toast>
+<p-toast position="top-center" key="tc"></p-toast>
+<p-toast position="bottom-center" key="bc"></p-toast>
+
+
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <h4>FORMACION</h4>
+      <button pButton icon="pi pi-plus" class="p-button-success" label="Nuevo Registro"
+        (click)="nuevoRegistro()"></button>
+
+      <!-- Tabla para desplegar la formacion de una persona -->
+      <p-table [value]="lstFormacion" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Formacion</th>
+            <th>Curso</th>
+            <th>Duracion</th>
+            <th>Medicion</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-form>
+          <tr>
+            <td>{{ form.tipoFormacion | formacion }}</td>
+            <td>{{ form.descripcion }}</td>
+            <td>{{ form.duracion }}</td>
+            <td>{{ form.tipoDuracion | tipoDuracion }}</td>
+            <td>{{ form.fechaFormacion | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <button pButton type="button" label="Editar" (click)="capturarRegistro( form )" icon="pi pi-pencil"
+                class="p-button-warning">
+
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!--  DESPLEGAR EL MODAL PARA EDITAR LA INFORMACIÓN -->
+<p-dialog header="REGISTRO DE FORMACION" [(visible)]="displayModal" [modal]="true" [draggable]="true" [resizable]="true"
+  [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '60vw'}">
+  <form autocomplete="off" [formGroup]=formFormacion (ngSubmit)="guardar()">
+    <br>
+    <div class="grid">
+
+      <div class="field col-12">
+        <label for="tipoFormacion">Tipo de Formacion: </label>
+        <p-dropdown id="tipoFormacion" [options]="lstMedicionDropDown" optionLabel="nombre" optionValue="codTipos"
+          class="inputfield w-full" formControlName="tipoFormacion" placeholder="Seleccione Curso">
+        </p-dropdown>
+      </div>
+
+      <div class="field col-12">
+        <label for="descripcion">Nombre Curso : </label>
+        <input id="descripcion" type="text" formControlName="descripcion"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Nombre Curso requerida" *ngIf="esValido('descripcion')"></p-message>
+
+      </div>
+
+      <div class="field col-6">
+        <label for="duracion">Duracion : </label>
+        <input id="duracion" type="text" formControlName="duracion"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <p-message severity="error" text="* Duracion requerida" *ngIf="esValido('duracion')"></p-message>
+
+      </div>
+
+      <div class="field col-6">
+        <label for="tipoDuracion">Medicion : </label>
+        <p-dropdown id="tipoDuracion" [options]="lstMedicion" optionLabel="nombre" optionValue="codTipos"
+          class="inputfield w-full flex" formControlName="tipoDuracion" placeholder="Seleccione Medicion">
+        </p-dropdown>
+      </div>
+      <div class="field col-12">
+        <label for="fechaFormacion">Fecha Culminacion : </label>
+        <p-calendar id="fechaFormacion" appendTo="body" formControlName="fechaFormacion"
+          dateFormat="dd/mm/yy"></p-calendar>
+        <p-message severity="error" text="* Fecha Culminacion requerida" *ngIf="esValido('fechaFormacion')"></p-message>
+
+      </div>
+
+    </div>
+    <div class="">
+      <button pButton label="Guardar" icon="pi pi-save" class="p-button-success" [disabled]="!formFormacion.valid"
+        type="submit"></button>
+    </div>
+  </form>
+</p-dialog>
