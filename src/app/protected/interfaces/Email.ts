@@ -3,6 +3,9 @@ export interface Email {
   codPersona?: number;
   email?:      string;
   audUsuario?: number;
+
+  ok?: string;
+  msg?: string;
 }
 
 // Converts JSON strings to/from your types

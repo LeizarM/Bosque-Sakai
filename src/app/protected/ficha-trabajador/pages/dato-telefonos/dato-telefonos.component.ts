@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { of, Subscription } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { LoginService } from 'src/app/auth/services/login.service';
 import { Telefono } from '../../../interfaces/Telefono';
@@ -116,11 +116,11 @@ export class DatoTelefonosComponent implements OnInit, OnDestroy {
    */
   crearNuevoRegistro(): FormGroup {
     return this.fb.group({
-      codTelefono: new FormControl(0),
-      codPersona: new FormControl(this.codPersona),
-      codTipoTel: new FormControl(1),
-      telefono: new FormControl('', [Validators.required]),
-      audUsuario: new FormControl(this.codUsuario)
+      codTelefono : new FormControl(0),
+      codPersona  : new FormControl(this.codPersona),
+      codTipoTel  : new FormControl(1),
+      telefono    : new FormControl('', [Validators.required, Validators.minLength(7)]),
+      audUsuario  : new FormControl(this.codUsuario)
     });
   }
 

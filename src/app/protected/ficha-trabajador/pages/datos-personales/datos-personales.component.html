@@ -19,61 +19,61 @@
         <div class="field col">
           <label class="col-12  font-bold text-orange-500">APELLIDO PATERNO</label>
           <div class="col-12">{{ regPer.apPaterno }}</div>
-				</div>
+        </div>
 
         <div class="field col">
           <label class="col-12  font-bold text-orange-500">APELLIDO MATERNO</label>
           <div class="col-12">{{ regPer.apMaterno }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12  font-bold text-orange-500">NOMBRES</label>
           <div class="col-12">{{ regPer.nombres }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">SEXO</label>
           <div class="col-12">{{ regPer.sexo | genero }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">FECHA DE NACIMIENTO</label>
           <div class="col-12">{{ regPer.fechaNacimiento | date: 'dd/MM/yyyy' }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold  text-orange-500">LUGAR DE NACIMIENTO</label>
           <div class="col-12">{{ regPer.lugarNacimiento }}</div>
-				</div>
+        </div>
 
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">CEDULA DE IDENTIDAD</label>
           <div class="col-12">{{ regPer.ciNumero }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">EXPEDIDO</label>
           <div class="col-12">{{ regPer.ciExpedido | ciExpedido }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">CI FECHA DE VENCIMIENTO</label>
           <div class="col-12">{{ regPer.ciFechaVencimiento | date: 'dd/MM/yyyy' }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">ESTADO CIVIL</label>
           <div class="col-12">{{ regPer.estadoCivil | estadoCivil }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">DIRECCION</label>
           <div class="col-12">{{ regPer.direccion }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">NACIONALIDAD</label>
           <div class="col-12">{{ regPer.nacionalidad | pais }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">ZONA RESIDENCIA</label>
           <div class="col-12">{{ regPer.zona?.zona }}</div>
-				</div>
+        </div>
         <div class="field col">
           <label class="col-12 font-bold text-orange-500">CIUDAD DE RESIDENCIA</label>
           <div class="col-12">{{ regPer.ciudad?.ciudad }}</div>
-				</div>
+        </div>
 
       </div>
     </div>
@@ -83,7 +83,12 @@
       </div>
     </div>
 
+
+
   </div>
+  <app-dato-email class="col-12 md:col-12 lg:col-6" *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"></app-dato-email>
+
+  <app-dato-telefonos class="col-12 md:col-12 lg:col-6" *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"></app-dato-telefonos>
 
 </div>
 
@@ -234,9 +239,10 @@
       </div>
 
     </div>
-    <br/>
+    <br />
     <div class="flex justify-content-center">
-      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid" class=""></button>
+      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid"
+        class=""></button>
     </div>
   </form>
 </p-dialog>

@@ -4,6 +4,9 @@ export interface Telefono {
   codTipoTel?:  number;
   telefono?:    number;
   audUsuario?:  number;
+
+  ok?: string;
+  msg?: string;
 }
 
 // Converts JSON strings to/from your types

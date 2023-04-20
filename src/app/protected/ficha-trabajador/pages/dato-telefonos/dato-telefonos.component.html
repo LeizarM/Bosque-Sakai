@@ -25,17 +25,18 @@
 <!-- Dialog para editar la informacion de los telefonos -->
 <p-dialog header="ACTUALIZAR DATOS DE TELEFONOS" [(visible)]="displayModal" [modal]="true" [draggable]="true">
   <hr>
-  <button pButton class="p-button-help" (click)="agregarNuevoRegistro()"> Nuevo Registro</button>
+  <button pButton class="p-button-help" icon="pi pi-plus" (click)="agregarNuevoRegistro()"> Nuevo Registro</button>
   <form autocomplete="off" [formGroup]="formTelefono" (ngSubmit)="guardarTelefono()">
     <br>
-    <div formArrayName="telArr">
+    <div formArrayName="telArr" class="p-3">
+
       <div *ngFor="let em of lstFormTel().controls;  let i = index" [formGroupName]="i">
         <br>
-        <div class="grid">
+        <div class="grid justify-content-between">
 
-          <input class="col-7" pInputText formControlName="telefono" placeholder="Nuevo Telefono">
+          <input class="col-6" pInputText formControlName="telefono" placeholder="Nuevo Telefono">
 
-          <button pButton class="col-4 mx-1 p-button-danger" type="button" label="Eliminar"
+          <button pButton class="col-6 p-button-danger" type="button"
             (click)="eliminarRegistro($event, i, lstFormTel().controls[i].value.codTelefono)" icon="pi pi-trash">
           </button>
 
@@ -45,8 +46,14 @@
 
     </div>
     <hr>
-    <button pButton class="p-button-success" icon="pi pi-save" type="submit" label="Guardar"
-      [disabled]="!formTelefono.valid">
-    </button>
+
+    <div class="flex justify-content-center">
+
+      <button pButton class="p-button-success" icon="pi pi-save" type="submit" label="Guardar"
+        [disabled]="!formTelefono.valid">
+      </button>
+
+    </div>
+
   </form>
 </p-dialog>

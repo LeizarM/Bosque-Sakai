@@ -11,8 +11,8 @@
         (click)="prepararFormulario()">
       </button>
 
-      <br/>
-      <br/>
+      <br />
+      <br />
 
       <!-- datos de los garantes y referencias -->
       <p-table [value]="lstGaranteReferencia" responsiveLayout="scroll">
@@ -40,7 +40,7 @@
             <td>{{ gr.observacion }}</td>
             <td>{{ gr.esEmpleado }}</td>
             <td>
-              <button pButton type="button" label="Detalle" icon="pi pi-list" class="p-button-success"></button>
+              <button pButton type="button" class="p-button-sm p-button-raised" label="Mas Detalles"></button>
             </td>
           </tr>
 
@@ -177,6 +177,78 @@
         </p-dropdown>
       </div>
 
+      <br>
+      {{ formDatosGaranYRef.value | json }}
+      <div class="col-12 md:col-8 lg:col-6 mt-5">
+        <div class="grid">
+          <div class="col-12">
+            <div class="card">
+              <h4>Registrar Telefonos</h4>
+              <button pButton type="button" label="Agregar Registro" class="p-button-success" (click)="agregarNuevoRegistroTelefono()">
+              </button>
+              <div formArrayName="telArr" class="p-3">
+
+                <div *ngFor="let em of lstFormTelefono().controls;  let i = index" [formGroupName]="i">
+                  <br>
+                  <div class="grid justify-content-between">
+
+                    <input class="col-6" pInputText formControlName="telefono" placeholder="Nuevo Telefono"/>
+
+                    <button pButton class="col-6 p-button-danger" type="button" (click)="eliminarRegistroTelefono( i )"
+                      icon="pi pi-trash">
+                    </button>
+
+                    <hr>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 md:col-4 lg:col-6 mt-5">
+        <div class="grid">
+          <div class="col-12">
+            <div class="card">
+              <h4>Registrar Correos Electronicos</h4>
+              <button pButton type="button" label="Agregar Registro" class="p-button-success"
+                (click)="agregarNuevoRegistroEmail()">
+              </button>
+              <div formArrayName="emailArr" class="p-3">
+
+                <div *ngFor="let em of lstFormEmail().controls;  let i = index" [formGroupName]="i">
+                  <br>
+                  <div class="grid justify-content-between">
+
+                    <input class="col-6" pInputText formControlName="email" placeholder="Nuevo Email">
+
+                    <button pButton class="col-6 p-button-danger" type="button" (click)="eliminarRegistroEmail( i )"
+                      icon="pi pi-trash">
+                    </button>
+
+                    <hr>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
+        </div>
+      </div>
+
+      <hr>
+
       <div class="align-items-center justify-content-center  green-container col-12 md:col-12">
         <label> CROQUIS </label>
         <br>
@@ -200,6 +272,7 @@
                   <p>
                     {{ lugar.properties.address.country }}
                   </p>
+                  <hr>
                 </li>
               </ul>
             </p-scrollPanel>

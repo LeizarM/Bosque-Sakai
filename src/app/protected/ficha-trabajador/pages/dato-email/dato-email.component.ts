@@ -2,6 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
+import { LoginService } from 'src/app/auth/services/login.service';
 import { Email } from 'src/app/protected/interfaces/Email';
 import { RrhhService } from 'src/app/protected/rrhh/services/rrhh.service';
 
@@ -36,7 +37,8 @@ export class DatoEmailComponent implements OnInit, OnDestroy {
     private rrhhService  : RrhhService,
     private fb           : FormBuilder,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loginService : LoginService
   ) {
 
 
@@ -123,7 +125,7 @@ export class DatoEmailComponent implements OnInit, OnDestroy {
       codEmail    : new FormControl(0),
       codPersona  : new FormControl(this.codPersona!),
       email       : new FormControl('', [Validators.required, Validators.email]),
-      audUsuario  : new FormControl(34)
+      audUsuario  : new FormControl(this.loginService.codUsuario)
     });
   }
 
@@ -175,28 +177,34 @@ export class DatoEmailComponent implements OnInit, OnDestroy {
 
 
   /**
-   * Metodo para guardar los Emails
+   * Para guardar los datos del formulario de correo electrónicos
    */
   guardarEmails():void {
 
     this.lstFormEmail().controls.map(e => {
-      //console.log(e.value);
-      //let { codEmail, codPersona, email, audUsuario } = e.value;
-      this.emailSuscription = this.rrhhService.registrarEmail(e.value).subscribe(
+
+      const  { codEmail, email } = e.value;
+      let em: Email = {
+        codEmail,
+        codPersona : this.codPersona,
+        email,
+        audUsuario : this.loginService.codUsuario
+      };
+
+      this.emailSuscription = this.rrhhService.registrarEmail(em).subscribe(
         (resp) => {
           if (resp) {
-            console.log("bien");
+
             this.displayModal = false;
             this.obtenerEmails(e.value.codPersona);
             this.messageService.add({ key: 'bc', severity: 'success', summary: 'Accion Realizada', detail: 'Registro Actualizado' });
 
           } else {
-            console.log(resp);
             this.messageService.add({ key: 'bc', severity: 'error', summary: 'Accion Invalida', detail: "No se pudo Actualizar la información" });
           }
         }, (err) => {
-          console.log("Error General");
-          console.log(err);
+          console.log("Error General", err);
+
         }
       );
     });

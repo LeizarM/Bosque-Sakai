@@ -4,7 +4,7 @@
 <p-toast position="bottom-center" key="bc"></p-toast>
 <p-confirmPopup></p-confirmPopup>
 
-<h3>E-MAILS</h3>
+<h3>CORREOS ELECTRONICOS</h3>
 <hr>
 <br />
 
@@ -22,34 +22,44 @@
 
 
 <!-- Dialog para editar o agregar mas Emails  -->
-<p-dialog header="ACTUALIZAR DATOS DE EMAIL" [(visible)]="displayModal" [modal]="true" [draggable]="true"
-  [responsive]="true">
+<p-dialog header="ACTUALIZAR DATOS DE CORREO" [(visible)]="displayModal" [modal]="true" [draggable]="true" >
   <hr>
-  <button pButton class="p-button-help" (click)="agregarNuevoRegistro()"> Nuevo Registro </button>
+  <button pButton class="p-button-help" icon="pi pi-plus" (click)="agregarNuevoRegistro()"> Nuevo Registro </button>
+
   <form autocomplete="off" [formGroup]="formEmail" (ngSubmit)="guardarEmails()">
 
     <br>
-    <div formArrayName="emailArr">
+
+    <div formArrayName="emailArr" class="p-3">
 
       <div *ngFor="let em of lstFormEmail().controls;  let i = index" [formGroupName]="i">
         <br>
-        <div class="formgrid">
+        <div class="grid justify-content-between">
 
-          <input class="pr-8 col-6 " pInputText formControlName="email" placeholder="Nuevo Email">
+            <input class="col-6" pInputText formControlName="email" placeholder="Nuevo Email">
 
-          <button pButton class="pr-8 col-6 mx-1 p-button-danger" type="button" label="Eliminar"
-            (click)="eliminarRegistro($event, i, lstFormEmail().controls[i].value.codEmail)" icon="pi pi-trash">
-          </button>
+            <button pButton class="col-6 p-button-danger" type="button"
+              (click)="eliminarRegistro($event, i, lstFormEmail().controls[i].value.codEmail)" icon="pi pi-trash">
+            </button>
 
+
+          <hr>
         </div>
 
       </div>
 
     </div>
     <hr>
-    <button pButton class="p-button-success" icon="pi pi-save" type="submit" label="Guardar"
+
+    <div class="flex justify-content-center">
+
+      <button pButton class="p-button-success" icon="pi pi-save" type="submit" label="Guardar"
+
       [disabled]="!formEmail.valid">
-    </button>
+
+      </button>
+    </div>
 
   </form>
+
 </p-dialog>
