@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import maplibregl, { Marker, Popup } from 'maplibre-gl';
 import { MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 import { LoginService } from 'src/app/auth/services/login.service';
 import { Ciudad } from 'src/app/protected/interfaces/Ciudad';
 import { Email } from 'src/app/protected/interfaces/Email';
@@ -19,6 +19,7 @@ import { Feature } from '../../../interfaces/MapBoxLibre';
 import { FichaTrabajadorService } from '../../services/ficha-trabajador.service';
 
 
+
 @Component({
   selector: 'app-garante-referencia',
   templateUrl: './garante-referencia.component.html',
@@ -29,27 +30,33 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
 
   //Formularios
   formDatosGaranYRef: FormGroup = this.fb.group({});
-  /* formEmail: FormGroup = this.fb.group({
-    emailArr: this.fb.array([])
-  }); */
+
+  regPersona: Persona = {};
 
   lstGaranteReferencia: GaranteReferencia[] = [];
-  lstExpedido         : Tipos[] = [];
-  lstGenero           : Tipos[] = [];
-  lstEstadoCivil      : Tipos[] = [];
-  lstGaranteYRef      : Tipos[] = [];
-  lstPais             : Pais[] = [];
-  lstCiudad           : Ciudad[] = [];
-  lstZona             : Zona[] = [];
-  lugares             : Feature[] = [];
+  lstExpedido: Tipos[] = [];
+  lstGenero: Tipos[] = [];
+  lstEstadoCivil: Tipos[] = [];
+  lstGaranteYRef: Tipos[] = [];
+  lstPais: Pais[] = [];
+  lstCiudad: Ciudad[] = [];
+  lstZona: Zona[] = [];
+  lugares: Feature[] = [];
+  lstEmail: Email[] = [];
+  lstTelefono: Telefono[] = [];
 
   //variables
   codEmpleado: number = 0;
   displayModal: boolean = false;
+  displayModalGR: boolean = false;
 
   //Maps
   @ViewChild('mapE') mapE !: ElementRef; //map Edit
+  @ViewChild('mapR') mapR!: ElementRef; //map read
+
+  mapa     !: maplibregl.Map;
   mapaEdit !: maplibregl.Map;
+
   private markers: Marker[] = [];
   private center: [number, number] = [-68.13539986925227, -16.51605372184381]; // coordenadas por default
 
@@ -68,7 +75,7 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
     private paisService: PaisService,
     private rrhhService: RrhhService,
     private messageService: MessageService,
-    private mapLibreService : MapaLibreService
+    private mapLibreService: MapaLibreService
   ) {
     this.codEmpleado = this.loginService.codEmpleado;
     this.cargarGaranteReferencia(this.codEmpleado);
@@ -102,6 +109,65 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
 
   }
 
+  cargarCroqTelfYEmail(gr: GaranteReferencia): void {
+
+    this.displayModalGR =  true;
+
+    const email$ = this.rrhhService.obtenerDatosEmail(gr.codPersona!);
+    const telefono$ = this.rrhhService.obtenerDatosTelefono(gr.codPersona!);
+    const datoPersonales$ = this.rrhhService.obtenerDatosPersonales(gr.codPersona!);
+    forkJoin([email$, telefono$, datoPersonales$]).subscribe(([emailResp, telefonoResp, datoPersonaResp]) => {
+
+      if (emailResp) {
+        this.lstEmail = emailResp;
+      } else {
+        this.lstEmail = [];
+      }
+
+      if (telefonoResp) {
+        this.lstTelefono = telefonoResp;
+      }
+
+      if (datoPersonaResp) {
+        this.regPersona = datoPersonaResp;
+
+      } else {
+        this.regPersona = {};
+      }
+      this.mapaLectura(this.regPersona.lat!, this.regPersona.lng!)
+
+    }, (err) => {
+      console.log(err);
+    });
+
+
+  }
+  /**
+   * para cargar el mapa
+   * @param lat
+   * @param lng
+   */
+  mapaLectura(lat: number, lng: number): void {
+    this.mapa = new maplibregl.Map({
+      container: this.mapR.nativeElement,
+      style: this.mapLibreService.obtenerZonaxCiudad(),
+      center: [lat, lng],
+      zoom: 16,
+    });
+
+    // Agregar controles de zoom al mapa
+    const nav = new maplibregl.NavigationControl({
+      showZoom: true,
+      showCompass: true,
+      visualizePitch: false
+    });
+    this.mapa.addControl(nav, 'top-left');
+
+    new maplibregl.Marker().setLngLat([lat, lng]) // longitud, latitud
+      .addTo(this.mapa);
+
+  }
+
   /**
    * Prepara el formulario para que se pueda agregar datos
    */
@@ -109,23 +175,23 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
 
     this.formDatosGaranYRef = this.fb.group({
 
-      nombres     : ['', [Validators.required, Validators.minLength(3)]],
-      apPaterno   : ['', [Validators.required, Validators.minLength(3)]],
-      apMaterno   : ['', [Validators.required, Validators.minLength(3)]],
-      sexo        : ['M', [Validators.required, Validators.minLength(1)]],
-      fecNac      : [, [Validators.required, Validators.nullValidator]],
+      nombres: ['', [Validators.required, Validators.minLength(3)]],
+      apPaterno: ['', [Validators.required, Validators.minLength(3)]],
+      apMaterno: ['', [Validators.required, Validators.minLength(3)]],
+      sexo: ['M', [Validators.required, Validators.minLength(1)]],
+      fecNac: [, [Validators.required, Validators.nullValidator]],
       lugarNacimiento: [, [Validators.required, Validators.minLength(3)]],
-      ci          : [, [Validators.required, Validators.minLength(5)]],
-      expedido    : ['lp', [Validators.required, Validators.minLength(1)]],
-      ciVenci     : [, [Validators.required, Validators.nullValidator]],
-      estCivil    : ['cas', [Validators.required, Validators.minLength(2)]],
-      direccion   : [, [Validators.required, Validators.minLength(3)]],
-      zonaRe      : [, [Validators.required]],
-      codPais     : [, [Validators.required]],
+      ci: [, [Validators.required, Validators.minLength(5)]],
+      expedido: ['lp', [Validators.required, Validators.minLength(1)]],
+      ciVenci: [, [Validators.required, Validators.nullValidator]],
+      estCivil: ['cas', [Validators.required, Validators.minLength(2)]],
+      direccion: [, [Validators.required, Validators.minLength(3)]],
+      zonaRe: [, [Validators.required]],
+      codPais: [, [Validators.required]],
       nacionalidad: [1, [Validators.required]],
-      ciudad      : [, [Validators.required]],
-      lat         : [],
-      lng         : [],
+      ciudad: [, [Validators.required]],
+      lat: [],
+      lng: [],
 
       direccionTrabajo: ['', [Validators.required, Validators.minLength(5)]],
       empresaTrabajo: ['', [Validators.required, Validators.minLength(3)]],
@@ -144,7 +210,7 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
    * @param lat
    * @param lng
    */
-  mapaLectura(lat: number = 0, lng: number = 0): void {
+  mapaEditar(lat: number = 0, lng: number = 0): void {
 
     if (lat === null || lng === null || lat === undefined || lng === undefined || lng === 0 || lat === 0) {
       [lat, lng] = this.center;
@@ -195,8 +261,8 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
    */
   prepararFormulario(): void {
     this.displayModal = true;
-
-    this.mapaLectura();
+    this.formDatosGaranYRef.reset();
+    this.mapaEditar();
   }
 
   /**
@@ -206,7 +272,7 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
 
 
     //Desestructurando datos personales
-    const { nombres, apPaterno, apMaterno, sexo, fecNac, lugarNacimiento, ci, expedido, ciVenci,estCivil, direccion, zonaRe, nacionalidad, direccionTrabajo, lng, lat, empresaTrabajo, tipo, obs } = this.formDatosGaranYRef.value;
+    const { nombres, apPaterno, apMaterno, sexo, fecNac, lugarNacimiento, ci, expedido, ciVenci, estCivil, direccion, zonaRe, nacionalidad, direccionTrabajo, lng, lat, empresaTrabajo, tipo, obs } = this.formDatosGaranYRef.value;
 
     const regPersona: Persona = {
       nombres,
@@ -218,7 +284,7 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
       ciNumero: ci,
       ciExpedido: expedido,
       ciFechaVencimiento: ciVenci,
-      estadoCivil : estCivil,
+      estadoCivil: estCivil,
       direccion,
       codZona: zonaRe,
       nacionalidad,
@@ -239,11 +305,11 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
 
     //Desestructurando datos de Email
     const { emailArr }: { emailArr: Email[] } = this.formDatosGaranYRef.value;
-    const { telArr }  : { telArr  : Telefono[] } = this.formDatosGaranYRef.value;
+    const { telArr }: { telArr: Telefono[] } = this.formDatosGaranYRef.value;
 
 
 
-    if( telArr.length === 0 ) {
+    if (telArr.length === 0) {
       this.messageService.add({ key: 'bc', severity: 'error', summary: 'Error', detail: "Por lo menos ingrese un telefono para esta persona" });
       return;
     }
@@ -306,7 +372,7 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
    * Para registrar Los telefonos
    * @param telefono
    */
-  registrarTelefono(telefono : Telefono) : void{
+  registrarTelefono(telefono: Telefono): void {
 
     this.garantRefSuscription = this.rrhhService.registrarTelefono(telefono)
       .subscribe((resp) => {
@@ -326,7 +392,7 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
    * para el registro de email
    * @param email
    */
-  registrarEmail( email: Email ): void {
+  registrarEmail(email: Email): void {
     this.rrhhService.registrarEmail(email).subscribe((resp) => {
 
       if (resp && resp?.ok === "ok") {
@@ -423,14 +489,14 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
      * Para ir a la ubicacion seleccionada en una lista
      * @param lugar
      */
-  flyTo(lugar : Feature){
+  flyTo(lugar: Feature) {
     this.selectedId = lugar.properties.place_id;
 
     this.mapaEdit.flyTo({
-      center :[
-                lugar.bbox[0] + ( lugar.bbox[2] - lugar.bbox[0] ) / 2,
-                lugar.bbox[1] + ( lugar.bbox[3] - lugar.bbox[1] ) / 2
-              ]
+      center: [
+        lugar.bbox[0] + (lugar.bbox[2] - lugar.bbox[0]) / 2,
+        lugar.bbox[1] + (lugar.bbox[3] - lugar.bbox[1]) / 2
+      ]
     });
 
   }
@@ -521,34 +587,34 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
     return this.formDatosGaranYRef.get('emailArr') as FormArray;
   }
 
-    /**
-   * Agregara un nuevo registro
-   */
-    agregarNuevoRegistroEmail():void{
-      this.lstFormEmail().push(this.crearNuevoRegistroEmail());
-    }
+  /**
+ * Agregara un nuevo registro
+ */
+  agregarNuevoRegistroEmail(): void {
+    this.lstFormEmail().push(this.crearNuevoRegistroEmail());
+  }
 
-    /**
-     * Crear nuevo registro
-     * @returns
-     */
-    crearNuevoRegistroEmail(): FormGroup {
-      return this.fb.group({
-        codEmail    : new FormControl(0),
-        codPersona  : new FormControl(0),
-        email       : new FormControl('', [Validators.required, Validators.email]),
-        audUsuario  : new FormControl(this.loginService.codUsuario)
-      });
-    }
+  /**
+   * Crear nuevo registro
+   * @returns
+   */
+  crearNuevoRegistroEmail(): FormGroup {
+    return this.fb.group({
+      codEmail: new FormControl(0),
+      codPersona: new FormControl(0),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      audUsuario: new FormControl(this.loginService.codUsuario)
+    });
+  }
 
 
   /**
    * Elimina un registro del formulario email
    * @param index
    */
-  eliminarRegistroEmail( index: number ): void {
+  eliminarRegistroEmail(index: number): void {
 
-         this.lstFormEmail().removeAt(index)
+    this.lstFormEmail().removeAt(index)
   }
 
   /**
@@ -562,31 +628,31 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
   /**
    * Agregara un nuevo registro
    */
-    agregarNuevoRegistroTelefono():void{
-      this.lstFormTelefono().push(this.crearNuevoRegistroTelefono());
-    }
+  agregarNuevoRegistroTelefono(): void {
+    this.lstFormTelefono().push(this.crearNuevoRegistroTelefono());
+  }
 
-    /**
-     * Crear nuevo registro
-     * @returns
-     */
-    crearNuevoRegistroTelefono(): FormGroup {
-      return this.fb.group({
-        codTelefono : new FormControl(0),
-        codPersona  : new FormControl(0),
-        telefono    : new FormControl('', [Validators.required, Validators.min(7)]),
-        audUsuario  : new FormControl(this.loginService.codUsuario)
-      });
-    }
+  /**
+   * Crear nuevo registro
+   * @returns
+   */
+  crearNuevoRegistroTelefono(): FormGroup {
+    return this.fb.group({
+      codTelefono: new FormControl(0),
+      codPersona: new FormControl(0),
+      telefono: new FormControl('', [Validators.required, Validators.min(7)]),
+      audUsuario: new FormControl(this.loginService.codUsuario)
+    });
+  }
 
-    /**
-     * Elimina los datos del formulario telefono
-     * @param index
-     */
-    eliminarRegistroTelefono( index: number ): void {
+  /**
+   * Elimina los datos del formulario telefono
+   * @param index
+   */
+  eliminarRegistroTelefono(index: number): void {
 
-         this.lstFormTelefono().removeAt(index)
-    }
+    this.lstFormTelefono().removeAt(index)
+  }
 
 
 

@@ -40,7 +40,8 @@
             <td>{{ gr.observacion }}</td>
             <td>{{ gr.esEmpleado }}</td>
             <td>
-              <button pButton type="button" class="p-button-sm p-button-raised" label="Mas Detalles"></button>
+              <button pButton type="button" class="p-button-sm p-button-raised" (click)="cargarCroqTelfYEmail(gr)"
+                label="Mas Detalles"></button>
             </td>
           </tr>
 
@@ -184,7 +185,8 @@
           <div class="col-12">
             <div class="card">
               <h4>Registrar Telefonos</h4>
-              <button pButton type="button" label="Agregar Registro" class="p-button-success" (click)="agregarNuevoRegistroTelefono()">
+              <button pButton type="button" label="Agregar Registro" class="p-button-success"
+                (click)="agregarNuevoRegistroTelefono()">
               </button>
               <div formArrayName="telArr" class="p-3">
 
@@ -192,7 +194,7 @@
                   <br>
                   <div class="grid justify-content-between">
 
-                    <input class="col-6" pInputText formControlName="telefono" placeholder="Nuevo Telefono"/>
+                    <input class="col-6" pInputText formControlName="telefono" placeholder="Nuevo Telefono" />
 
                     <button pButton class="col-6 p-button-danger" type="button" (click)="eliminarRegistroTelefono( i )"
                       icon="pi pi-trash">
@@ -238,12 +240,6 @@
             </div>
           </div>
 
-
-
-
-
-
-
         </div>
       </div>
 
@@ -285,17 +281,13 @@
 
         </div>
 
-
       </div>
-
-
 
       <div class="field col-12">
         <p-divider align="center">
           <span class="p-tag">DATOS GARANTE O REFERENCIA </span>
         </p-divider>
       </div>
-
 
       <div class="field col-12">
         <label for="direccionTrabajo">Direccion Trabajo</label>
@@ -323,10 +315,52 @@
           class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"></textarea>
       </div>
 
-
       <button pButton type="submit" icon="pi pi-save" [disabled]="!formDatosGaranYRef.valid" label="Guardar"
-        class="flex-1 m-15 px-5 py-3 flex align-items-center p-button-raised p-button-success"></button>
+        class="flex-1 m-15 px-5 py-3 flex align-items-center p-button-raised p-button-success">
+      </button>
 
     </div>
   </form>
+</p-dialog>
+
+<p-dialog header="DETALLES GARANTE Y REFERENCIA" [(visible)]="displayModalGR"
+  [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
+
+
+
+  <div class="grid">
+
+    <div class="col-6 md:col-12 lg:col-6">
+      <div class="card">
+        <h4>Telefonos</h4>
+
+        <ul *ngFor="let telf of lstTelefono">
+          <li>
+            {{ telf.telefono }}
+          </li>
+        </ul>
+
+      </div>
+    </div>
+
+    <div class="col-6 md:col-12 lg:col-6">
+      <div class="card">
+        <h4>Correos</h4>
+        <ul *ngFor="let em of lstEmail">
+          <li>
+            {{ em.email }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-12 lg:col-12">
+      <div class="card">
+        <h4>CROQUIS</h4>
+        <div #mapR style="height: 500px;"></div>
+      </div>
+    </div>
+
+  </div>
+
 </p-dialog>

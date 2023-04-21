@@ -34,11 +34,11 @@ export class DatoEmailComponent implements OnInit, OnDestroy {
   emailSuscription !: Subscription;
 
   constructor(
-    private rrhhService  : RrhhService,
-    private fb           : FormBuilder,
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private loginService : LoginService
+    private rrhhService         : RrhhService,
+    private fb                  : FormBuilder,
+    private confirmationService : ConfirmationService,
+    private messageService      : MessageService,
+    private loginService        : LoginService
   ) {
 
 
