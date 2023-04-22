@@ -103,65 +103,94 @@
 
       <div class="field col-12 md:col-4">
         <label for="nombres">Nombres</label>
-        <input pInputText id="nombres" type="text" formControlName="nombres"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <!-- <input pInputText id="nombres" type="text" formControlName="nombres"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
+          <div class="field">
+            <label> {{ regPerEditar.nombres }}</label>
+          </div>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="apPaterno">Apellido Paterno</label>
-        <input pInputText id="apPaterno" type="text" formControlName="apPaterno"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-      </div>
+        <!-- <input pInputText id="apPaterno" type="text" formControlName="apPaterno"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
+          <div class="field">
+            <label> {{ regPerEditar.apPaterno  }}</label>
+          </div>
+        </div>
 
       <div class="field col-12 md:col-4">
         <label for="apMaterno">Apellido Materno</label>
-        <input pInputText id="apMaterno" type="text" formControlName="apMaterno"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+       <!--  <input pInputText id="apMaterno" type="text" formControlName="apMaterno"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
+          <div class="field">
+            <label> {{ regPerEditar.apMaterno  }}</label>
+          </div>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="sexo">Sexo</label>
-        <p-dropdown id="sexo" [options]="lstGenero" formControlName="sexo" optionValue="codTipos" optionLabel="nombre"
+        <!-- <p-dropdown id="sexo" [options]="lstGenero" formControlName="sexo" optionValue="codTipos" optionLabel="nombre"
           class="flex">
-        </p-dropdown>
+        </p-dropdown> -->
+        <div class="field">
+          <label> {{ regPerEditar.sexo | genero  }}</label>
+        </div>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="fecNac">Fecha Nacimiento</label>
-        <p-calendar id="fecNac" appendTo="body" formControlName="fecNac"
+        <!-- <p-calendar id="fecNac" appendTo="body" formControlName="fecNac"
           class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
-        </p-calendar>
+        </p-calendar> -->
+        <div class="field">
+          <label> {{ regPerEditar.fechaNacimiento | date: 'dd/MM/yyyy'  }}</label>
+        </div>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="lugarNacimiento">Lugar de Nacimiento</label>
-        <input id="lugarNacimiento" pInputText type="text" formControlName="lugarNacimiento"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-      </div>
+       <!--  <input id="lugarNacimiento" pInputText type="text" formControlName="lugarNacimiento"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
+          <div class="field">
+            <label> {{ regPerEditar.lugarNacimiento  }}</label>
+          </div>
+        </div>
 
       <div class="field col-12 md:col-4">
         <label for="ci">Cedula de Indentidad</label>
-        <input id="ci" pInputText type="text" formControlName="ci"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        <!-- <input id="ci" pInputText type="text" formControlName="ci"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
+          <div class="field">
+            <label> {{ regPerEditar.ciNumero  }}</label>
+          </div>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="expedido">Expedido en</label>
-        <p-dropdown id="expedido" [options]="lstExpedido" formControlName="expedido" optionValue="codTipos"
+        <!-- <p-dropdown id="expedido" [options]="lstExpedido" formControlName="expedido" optionValue="codTipos"
           optionLabel="nombre" class="flex">
-        </p-dropdown>
+        </p-dropdown> -->
+        <div class="field">
+          <label> {{ regPerEditar.ciExpedido | ciExpedido  }}</label>
+        </div>
       </div>
 
       <div class="field col-12 md:col-4">
         <label for="ciVenci">CI Vencimiento</label>
-        <p-calendar id="ciVenci" appendTo="body" formControlName="ciVenci"
+        <!-- <p-calendar id="ciVenci" appendTo="body" formControlName="ciVenci"
           class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
-        </p-calendar>
+        </p-calendar> -->
+
+        <div class="field">
+          <label> {{ regPerEditar.ciFechaVencimiento | date: 'dd/MM/yyyy'   }}</label>
+        </div>
       </div>
 
       <div class="field col-12 md:col-3">
         <label for="nacionalidad">Nacionalidad</label>
         <!-- <p-dropdown  id="nacionalidad" class="flex" [options]="lstPais" formControlName="nacionalidad" optionValue="codPais"  optionLabel="pais" >
+
 
         </p-dropdown> -->
         <div class="field">
@@ -206,7 +235,7 @@
           optionValue="codZona" optionLabel="zona" class="flex" appendTo="body">
         </p-dropdown>
       </div>
-      {{ formDatosPersonales.value | json }}
+
       <div class="align-items-center justify-content-center  green-container col-12 md:col-12">
         <label> CROQUIS </label>
         <br>

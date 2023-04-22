@@ -236,16 +236,16 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
 
     this.formDatosPersonales = this.fb.group({
 
-      codPersona      : [ {value: this.regPerEditar.codPersona , disabled: this.isDisabled}],
-      nombres         : [ {value: this.regPerEditar.nombres , disabled: this.isDisabled}],
-      apPaterno       : [ {value: this.regPerEditar.apPaterno, disabled: this.isDisabled}],
-      apMaterno       : [ {value: this.regPerEditar.apMaterno, disabled: this.isDisabled}],
-      sexo            : [ {value: this.regPerEditar.sexo, disabled: this.isDisabled}],
-      fecNac          : [ {value: this.regPerEditar.fechaNacimiento, disabled: this.isDisabled}],
-      lugarNacimiento : [ {value: this.regPerEditar.lugarNacimiento, disabled: this.isDisabled} ],
-      ci              : [ {value: this.regPerEditar.ciNumero, disabled: this.isDisabled}],
-      expedido        : [ {value: this.regPerEditar.ciExpedido, disabled: this.isDisabled}],
-      ciVenci         : [ {value: this.regPerEditar.ciFechaVencimiento, disabled: this.isDisabled} ],
+      codPersona      : [ this.regPerEditar.codPersona],
+      nombres         : [ this.regPerEditar.nombres ],
+      apPaterno       : [ this.regPerEditar.apPaterno],
+      apMaterno       : [ this.regPerEditar.apMaterno],
+      sexo            : [ this.regPerEditar.sexo],
+      fecNac          : [ this.regPerEditar.fechaNacimiento],
+      lugarNacimiento : [ this.regPerEditar.lugarNacimiento ],
+      ci              : [ this.regPerEditar.ciNumero],
+      expedido        : [ this.regPerEditar.ciExpedido],
+      ciVenci         : [ this.regPerEditar.ciFechaVencimiento ],
       estCivil        : [ this.regPerEditar.estadoCivil ],
       direccion       : [ this.regPerEditar.direccion ],
       codZona         : [ this.regPerEditar.codZona ],
@@ -410,10 +410,12 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
         codZona : codZona,
         nacionalidad,
         lat,
-        lng
+        lng,
+        audUsuarioI : this.loginService.codUsuario
 
       }
-      console.log("el regPersona es ===",regPersona);
+
+
        this.datoPersonalesSuscription = this.rrhhService.registrarInfoPersona(regPersona).subscribe(( resp )=>{
 
         if(resp && resp.ok === "ok"){
