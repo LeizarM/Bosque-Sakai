@@ -161,10 +161,12 @@
 
       <div class="field col-12 md:col-3">
         <label for="nacionalidad">Nacionalidad</label>
-        <p-dropdown  id="nacionalidad" class="flex" [options]="lstPais" formControlName="nacionalidad" optionValue="codPais"  optionLabel="pais" >
+        <!-- <p-dropdown  id="nacionalidad" class="flex" [options]="lstPais" formControlName="nacionalidad" optionValue="codPais"  optionLabel="pais" >
 
-        </p-dropdown>
-
+        </p-dropdown> -->
+        <div class="field">
+          <label> {{ regPerEditar.nacionalidad | pais }}</label>
+        </div>
 
 
       </div>
