@@ -231,7 +231,7 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
     }
 
 
-    console.log(this.regPerEditar.nacionalidad);
+
     //Inicializando el Formulario con valores predeterminados
 
     this.formDatosPersonales = this.fb.group({
@@ -254,10 +254,11 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
 
 
       codPais         : [ this.regPerEditar.ciudad?.codPais],
-      nacionalidad    : [ {value: this.regPerEditar.nacionalidad, disabled: this.isDisabled} ],
+      nacionalidad    : [ this.regPerEditar.nacionalidad ],
       ciudad          : [ this.regPerEditar.ciudad?.codCiudad ]
 
     });
+
 
 
 
@@ -412,8 +413,8 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
         lng
 
       }
-
-      this.datoPersonalesSuscription = this.rrhhService.registrarInfoPersona(regPersona).subscribe(( resp )=>{
+      console.log("el regPersona es ===",regPersona);
+       this.datoPersonalesSuscription = this.rrhhService.registrarInfoPersona(regPersona).subscribe(( resp )=>{
 
         if(resp && resp.ok === "ok"){
 

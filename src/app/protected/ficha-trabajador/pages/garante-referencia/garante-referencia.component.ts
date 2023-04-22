@@ -137,7 +137,7 @@ export class GaranteReferenciaComponent implements OnInit, OnDestroy {
       this.mapaLectura(this.regPersona.lat!, this.regPersona.lng!)
 
     }, (err) => {
-      console.log(err);
+      this.messageService.add({ key: 'bc', severity: 'error', summary: 'Error', detail: "No se pudo cargar la informacion"+ err });
     });
 
 

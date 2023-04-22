@@ -161,8 +161,12 @@
 
       <div class="field col-12 md:col-3">
         <label for="nacionalidad">Nacionalidad</label>
-        <p-dropdown id="nacionalidad" class="inputfield w-full" [options]="lstPais" optionLabel="pais"
-          optionValue="codPais" formControlName="nacionalidad"></p-dropdown>
+        <p-dropdown  id="nacionalidad" class="flex" [options]="lstPais" formControlName="nacionalidad" optionValue="codPais"  optionLabel="pais" >
+
+        </p-dropdown>
+
+
+
       </div>
 
       <div class="field col-12 md:col-4">
@@ -200,7 +204,7 @@
           optionValue="codZona" optionLabel="zona" class="flex" appendTo="body">
         </p-dropdown>
       </div>
-
+      {{ formDatosPersonales.value | json }}
       <div class="align-items-center justify-content-center  green-container col-12 md:col-12">
         <label> CROQUIS </label>
         <br>
@@ -232,7 +236,7 @@
           </div>
 
           <div class="col-12 md:col-6 lg:col-9">
-            <div #mapR style="height: 500px;"></div>
+            <div #mapE style="height: 500px;"></div>
           </div>
 
         </div>
@@ -241,8 +245,8 @@
     </div>
     <br />
     <div class="flex justify-content-center">
-      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid"
-        class=""></button>
+      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid">
+      </button>
     </div>
   </form>
 </p-dialog>

@@ -11,7 +11,7 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
     path: '',
     component: LayoutComponent,
     children : [
-       {
+      {
         path: 'dashboard',
         component: DashboardComponent
       },
