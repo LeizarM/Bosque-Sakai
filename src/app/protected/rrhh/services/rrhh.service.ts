@@ -96,6 +96,7 @@ export class RrhhService {
    * Procedimiento para obtener los datos personales de un empleado
    */
   obtenerDatosPersonales(codPersona: number): Observable<Persona> {
+
     const url = `${this.baseUrl}/rrhh/datosPersonales`;
     const per: Persona = {
       codPersona: codPersona

@@ -22,7 +22,7 @@
                     <p-message severity="error" text="* Usuario es requerido" *ngIf="esValido('usuario')"></p-message>
 
                     <label for="password" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
-                    <p-password id="password" formControlName="password" placeholder="Contraseña" [toggleMask]="true" styleClass="mb-5"  inputStyleClass="w-full p-3 md:w-30rem" required>                    </p-password>
+                    <p-password id="password" formControlName="password" placeholder="Contraseña" [toggleMask]="true"  [feedback]="false" styleClass="mb-5"  inputStyleClass="w-full p-3 md:w-30rem" required>                    </p-password>
                     <p-message severity="error" text="* Contraseña es requerida" *ngIf="esValido('password')"></p-message>
 
                     <div class="flex align-items-center justify-content-between mb-5 gap-5">
