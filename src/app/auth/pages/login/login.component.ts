@@ -19,7 +19,7 @@ export class LoginComponent {
   //Objeto formulario
   frmLogin: FormGroup = this.fb.group({
     usuario: [ , [ Validators.required, Validators.minLength(1) ]   ],
-    password: [ , [ Validators.required, Validators.minLength(1)] ],
+    password2: [ , [ Validators.required, Validators.minLength(1)] ],
   })
 
 
@@ -46,10 +46,10 @@ export class LoginComponent {
       this.frmLogin.markAllAsTouched();
       return;
     }
-    const { usuario, password } = this.frmLogin.value; //desestructuracion del objecto form
+    const { usuario, password2 } = this.frmLogin.value; //desestructuracion del objecto form
 
 
-    this.loginService.verificarLogin(usuario, password).subscribe({
+    this.loginService.verificarLogin(usuario, password2).subscribe({
       next: (resp) => {
 
         if (resp != null && resp != undefined) {

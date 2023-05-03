@@ -302,17 +302,21 @@ export class DatosPersonalesComponent implements OnInit, OnDestroy {
  /**
   * Procedimiento para obtener Paises
   */
-   obtenerPaises(): void {
-    this.datoPersonalesSuscription = this.paisService.obtenerPaises().subscribe((resp) => {
-      if (resp) {
-        this.lstPais = resp;
+   /**
+ * Method to get countries
+ * @returns void
+ */
+  obtenerPaises(): void {
+    this.datoPersonalesSuscription = this.paisService.obtenerPaises().subscribe({
+      next: (resp: Pais[]) => this.lstPais = resp,
+      error: (err: any) => {
+        this.lstPais = [];
+        console.log(err);
       }
-    }, (err) => {
-      this.lstPais = [];
-      console.log(err);
     });
-
   }
+
+
 
   /**
    * Procedimiento para obtener las ciudades por pais

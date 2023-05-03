@@ -5,6 +5,7 @@ export interface Login {
   codEmpleado       ?: number;
   login             ?: string;
   password          ?: string;
+  password2         ?: string;
   tipoUsuario       ?: string;
   esAutorizador     ?: string;
   estado            ?: string;
@@ -25,6 +26,7 @@ export interface Login {
   token?: string;
   ok?: boolean;
   authoriy?: Authority[];
+  npassword?: string;
 }
 
 

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { PrimeNgModule } from '../prime-ng/prime-ng.module';
+import { ChangePasswordModule } from './change-password/change-password.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FichaTrabajadorModule } from './ficha-trabajador/ficha-trabajador.module';
 import { AppConfigModule } from "./layout/config/config.module";
@@ -23,6 +24,7 @@ import { SharedModule } from './shared/shared.module';
         RrhhModule,
         AppConfigModule,
         FichaTrabajadorModule,
+        ChangePasswordModule,
         PrimeNgModule
 
     ]

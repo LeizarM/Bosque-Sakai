@@ -33,14 +33,14 @@ export class LoginService {
    * @param password
    * @returns
    */
-  verificarLogin(usuario: string, password: string): Observable<Login> {
+  verificarLogin(usuario: string, password2: string): Observable<Login> {
 
     const url = `${this.baseUrl}/auth/login`;
     const cabecera = new HttpHeaders();
     cabecera.append('Content-Type', 'application/json');
     const data = {
       "login": usuario,
-      "password": password
+      "password2": password2
     };
 
     return this.http.post<Login>(url, data, { headers: cabecera })
@@ -56,6 +56,31 @@ export class LoginService {
       );
 
   }
+
+  /**
+   * Procedimiento para cambiar la contraseña del usuario
+   * @param login
+   * @returns
+   */
+  changePassword ( login : Login): Observable<Login> {
+    console.log(login);
+    const url = `${this.baseUrl}/auth/changePassword`;
+
+    return this.http.post<Login>(url, login)
+      .pipe(
+        tap(resp => {
+
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => of(err.error))
+      );
+
+
+  }
+
 
 
   /**
