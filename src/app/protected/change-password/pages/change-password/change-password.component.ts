@@ -27,6 +27,11 @@ export class ChangePasswordComponent implements OnInit {
 
     const { password, npassword } =  this.formChangePassword.value;
 
+    if(String(npassword).length < 8 ){
+      this.messageService.add({ key: 'bc', severity: 'error', summary: 'Accion Invalida', detail: "Su contraseña debe tener al menos mas de 8 caracteres" });
+      return;
+    }
+
     const {codUsuario, login} = this.loginService.obtenerUsuario;
     let l : Login = {
       codUsuario,
