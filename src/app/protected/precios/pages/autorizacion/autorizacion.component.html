@@ -1,0 +1,91 @@
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <h4>PRECIOS</h4>
+      <!-- menu -->
+      <app-menu-precios></app-menu-precios>
+      <!-- End menu -->
+      <!-- Contenido principal -->
+
+      <p-table #dt1 *ngIf="autorizaciones.length > 0" [value]="autorizaciones"
+        styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} Registros"
+        [rowsPerPageOptions]="[10,25,35]" responsiveLayout="scroll" [tableStyle]="{'table-layout':'auto'}">
+        <ng-template pTemplate="caption">
+          PROPUESTAS PARA ACTUALIZACION DE PRECIOS
+        </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Titulo Propuesta</th>
+            <th>Propuesto Por</th>
+            <th>Fecha Propuesta</th>
+            <th>
+              En Respuesta De:
+              <p-columnFilter field="estadoCad" matchMode="equals" [showMenu]="false">
+                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                  <p-dropdown [ngModel]="value" [options]="estadosPropuesta" (onChange)="filter($event.value)"
+                    placeholder="- Todos -" [showClear]="true">
+                    <ng-template let-option pTemplate="item">
+                      {{option.nombre}}
+                    </ng-template>
+                  </p-dropdown>
+                </ng-template>
+              </p-columnFilter>
+            </th>
+            <th>Aprobado / Rechazado Por</th>
+            <th>Fecha Aprobacion</th>
+            <th>Generado Por</th>
+            <th>Fecha Generacion</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-aut>
+          <tr>
+            <td>{{ aut.idPropuesta }}</td>
+            <td>
+
+              <button pButton pRipple type="button" icon="pi pi-arrow-right"
+                class="p-button-rounded p-button-text"></button>
+              {{ aut.regProp.titulo }}
+            </td>
+            <td>{{ aut.datoUsuarioP }}</td>
+            <td>{{ aut.regProp.audFecha | date: 'dd/MM/yyyy' }}</td>
+            <td>
+
+              <div [ngClass]="{'noAprobada':  aut.estadoCad === 'No Aprobada',
+                          'pendiente': aut.estadoCad === 'Pendiente',
+                          'aprobada': aut.estadoCad === 'Aprobada' }">
+                {{ aut.estadoCad }}
+              </div>
+
+            </td>
+            <td>{{ aut.datoUsuarioAP }}</td>
+            <td>{{ aut.audFecha | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ aut.datoUsuarioGP }}</td>
+            <td>{{ aut.regProp.audUsGenerado | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <button pRipple pButton icon="pi pi-eye" label="Ver"></button>
+              <button pRipple pButton icon="pi pi-file-pdf" label="Exportar"></button>
+
+            </td>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="10">No se encontraron registros... </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+
+      <!-- Snipper -->
+      <div class="grid" *ngIf="autorizaciones.length <= 0">
+        <div class="col-6 col-offset-6">
+          <p-progressSpinner></p-progressSpinner>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+.noAprobada {
+  font-weight: 700;
+  color: #FF5252;
+
+}
+
+.pendiente {
+  font-weight: 700;
+  color: #FFA726;
+}
+
+.aprobada {
+  font-weight: 700;
+  color: #00a508;
+}
+
+button{
+  margin: 3px;
+  padding: 3px;
+}

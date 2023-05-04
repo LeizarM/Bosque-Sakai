@@ -4,6 +4,8 @@ import { ChangePasswordComponent } from './change-password/pages/change-password
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FichaTrabajadorComponent } from './ficha-trabajador/pages/ficha-trabajador/ficha-trabajador.component';
 import { LayoutComponent } from "./layout/layout.component";
+import { AutorizacionComponent } from './precios/pages/autorizacion/autorizacion.component';
+import { FamiliasComponent } from './precios/pages/familias/familias.component';
 import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
 
 
@@ -20,7 +22,7 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
         path: 'tbUsuario/cpassword',
         component: ChangePasswordComponent
       },
-      /*{
+      {
         path: 'tprAutorizacion/Autorizacion',
         component: AutorizacionComponent
       },
@@ -28,7 +30,7 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
         path: 'tprAutorizacion/Autorizacion/familias',
         component: FamiliasComponent
       },
-      {
+      /*{
         path: 'tcrDocumento/Documento',
         component: DocumentoComponent
       },*/
