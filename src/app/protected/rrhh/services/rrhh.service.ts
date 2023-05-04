@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { environment } from 'src/environments/environment.development';
 import { CargoSucursal } from '../../interfaces/CargoSucursal';
 import { Ciudad } from '../../interfaces/Ciudad';
 import { Email } from '../../interfaces/Email';
