@@ -1,6 +1,6 @@
 <p-toolbar>
   <div>
-    <button pRipple pButton label="Nueva Propuesta" icon="pi pi-plus" class="p-button-sm"></button>
+    <button pRipple pButton label="Nueva Propuesta" icon="pi pi-plus" (click)="showNewPropuse()" class="p-button-sm"></button>
     <button pRipple pButton label="Ver Lista de Precios " icon="pi pi-list" class="p-button-sm"></button>
     <button pRipple pButton label="Ver Familias" icon="pi pi-sitemap" class="p-button-sm"
       routerLink="familias"></button>
@@ -12,3 +12,4 @@
     TIPO CAMBIO
   </div>
 </p-toolbar>
+<app-propuesta></app-propuesta>

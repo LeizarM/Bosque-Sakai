@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, catchError, tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { Autorizacion } from 'src/app/protected/interfaces/Autorizacion';
 import { environment } from 'src/environments/environment';
-import { Autorizacion, Convert } from 'src/app/protected/interfaces/Autorizacion';
-import { throwError, Observable } from 'rxjs';
 
 
 
@@ -15,6 +15,10 @@ import { throwError, Observable } from 'rxjs';
 export class PreciosService {
 
   private baseUrl: string = environment.baseUrl;
+
+  // Agrega el BehaviorSubject para la variable compartida
+  private sharedVisible = new BehaviorSubject<boolean>(false);
+  sharedVisible$ = this.sharedVisible.asObservable();
   constructor( private http: HttpClient ) { }
 
   /**
@@ -27,7 +31,6 @@ export class PreciosService {
    * @returns
    */
   obtenerListAutorizacion(): Observable<Autorizacion[]>{
-
 
     const url = `${this.baseUrl}/price/autorizacion`;
     const data = { };
@@ -46,5 +49,10 @@ export class PreciosService {
       })
     );
 
+  }
+
+   // Agrega el método para actualizar la variable compartida
+   updateSharedVisible(newValue: boolean): void {
+    this.sharedVisible.next(newValue);
   }
 }

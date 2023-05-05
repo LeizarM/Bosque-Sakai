@@ -5,6 +5,7 @@ import { PrimeNgModule } from 'src/app/prime-ng/prime-ng.module';
 import { AutorizacionComponent } from './pages/autorizacion/autorizacion.component';
 import { FamiliasComponent } from './pages/familias/familias.component';
 import { MenuPreciosComponent } from './pages/menu-precios/menu-precios.component';
+import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 
 
 
@@ -12,7 +13,8 @@ import { MenuPreciosComponent } from './pages/menu-precios/menu-precios.componen
   declarations: [
     AutorizacionComponent,
     FamiliasComponent,
-    MenuPreciosComponent
+    MenuPreciosComponent,
+    PropuestaComponent
 
   ],
   imports: [

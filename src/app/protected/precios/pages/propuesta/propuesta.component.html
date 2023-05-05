@@ -1,0 +1,60 @@
+<p-dialog header="Nueva Propuesta" [(visible)]="receivedVisible" [modal]="true" [style]="{ width: '50vw' }">
+
+
+
+    <div class="formgrid grid">
+      <div class="field col">
+        <label for="titulo">Titulo de Propuesta</label>
+        <input id="titulo" type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+      </div>
+      <div class="field col">
+        <label for="obs">Observaciones</label>
+        <input pInputText  id="obs" type="text"
+          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+      </div>
+    </div>
+
+
+
+  <p-tabView styleClass="tabview-custom">
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-sitemap"></i>
+        <span>Propuesta por Familias</span>
+      </ng-template>
+
+      <p-table  [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Sucursal</th>
+                <th>Costo</th>
+
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td></td>
+                <td></td>
+
+            </tr>
+        </ng-template>
+    </p-table>
+
+    </p-tabPanel>
+    <p-tabPanel>
+      <ng-template pTemplate="header">
+        <i class="pi pi-th-large"></i>
+        <span>Propuesta por Articulos</span>
+      </ng-template>
+      <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+        enim
+        ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui
+        ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+      </p>
+    </p-tabPanel>
+  </p-tabView>
+
+</p-dialog>

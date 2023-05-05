@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
+import { PreciosService } from '../../services/precios.service';
 
 @Component({
   selector: 'app-menu-precios',
@@ -8,10 +9,21 @@ import { PrimeNGConfig } from 'primeng/api';
 })
 export class MenuPreciosComponent implements OnInit {
 
-  constructor( private primengConfig: PrimeNGConfig ) { }
+  visible: boolean = false;
+
+  constructor( private primengConfig  : PrimeNGConfig,
+               private preciosService : PreciosService ) { }
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
+
+  }
+
+
+  showNewPropuse():void{
+    this.visible = true;
+console.log("entro en showNewPropuse");
+    this.preciosService.updateSharedVisible(this.visible);
   }
 
 }
