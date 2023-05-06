@@ -3,6 +3,7 @@ import { PrimeNGConfig } from 'primeng/api';
 import { PreciosService } from '../../services/precios.service';
 
 @Component({
+
   selector: 'app-menu-precios',
   templateUrl: './menu-precios.component.html',
   styleUrls: ['./menu-precios.component.css']
