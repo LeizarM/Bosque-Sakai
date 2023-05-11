@@ -152,7 +152,7 @@ export class DatoEmailComponent implements OnInit, OnDestroy {
           this.emailSuscription = this.rrhhService.eliminarEmail(em).subscribe(
             (resp) => {
               if (resp) {
-                console.log("bien");
+
                 this.displayModal = false;
                 this.obtenerEmails(this.codPersona);
                 this.messageService.add({ key: 'bc', severity: 'success', summary: 'Accion Realizada', detail: 'Registro Eliminado' });

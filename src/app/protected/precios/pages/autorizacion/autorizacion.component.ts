@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Autorizacion } from 'src/app/protected/interfaces/Autorizacion';
+import { TiposMod, lstEstadosPropuesta } from '../../../interfaces/Tipos';
 import { PreciosService } from '../../services/precios.service';
-import { Tipos, lstEstadosPropuesta, TiposMod } from '../../../interfaces/Tipos';
 
 
 
@@ -36,9 +36,10 @@ export class AutorizacionComponent implements OnInit {
     this.autorizacion.obtenerListAutorizacion().subscribe((resp) => {
 
       if (resp.length > 0) {
+
         this.autorizaciones = resp;
         this.obtenerEstadosPropuesta();
-        console.log(this.estadosPropuesta);
+
       }
     }, (err) => {
       console.log(err);

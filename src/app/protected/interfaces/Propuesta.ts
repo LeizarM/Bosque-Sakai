@@ -6,7 +6,7 @@ export interface Propuesta {
   obs?:            string;
   estado?:         number;
   audUsGenerado?:  number;
-  audFecGenerado?: Date;
+  audFecGenerado?: string;
   audFecha?:       number;
 
 }

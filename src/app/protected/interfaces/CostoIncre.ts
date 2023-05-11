@@ -4,4 +4,8 @@ export interface CostoIncre {
   idPropuesta?: number;
   valor?:       number;
   audUsuario?:  number;
+
+  codCiudad?:       number;
+  nombreSucursal?:  string;
+  nombreCiudad?:    string;
 }

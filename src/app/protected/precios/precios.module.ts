@@ -9,6 +9,7 @@ import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 
 
 
+
 @NgModule({
   declarations: [
     AutorizacionComponent,
