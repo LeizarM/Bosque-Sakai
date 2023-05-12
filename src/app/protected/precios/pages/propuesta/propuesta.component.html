@@ -1,90 +1,93 @@
 <p-dialog header="Nueva Propuesta" [(visible)]="receivedVisible" [breakpoints]="{ '960px': '75vw' }"
-  [style]="{ width: '50vw' }" [modal]="true">
+  [style]="{ width: '60vw' }" [modal]="true">
 
   <form class="mt-3" [formGroup]="formCostoIncre" autocomplete="off">
-
-    <div class="formgrid grid">
-      <div class="field col">
-        <label for="titulo">Titulo de Propuesta</label>
-        <input pInputText id="titulo" type="text" formControlName="propuesta"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+    <div>
+      <div class="formgrid grid">
+        <div class="field col-12 md:col-6 lg:col-6">
+          <label for="titulo">Titulo de Propuesta</label>
+          <input pInputText id="titulo" type="text" formControlName="propuesta"
+            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
+        <div class="field col-12 md:col-6 lg:col-6">
+          <label for="obs">Observaciones</label>
+          <input pInputText id="obs" type="text" formControlName="obs"
+            class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+        </div>
       </div>
-      <div class="field col">
-        <label for="obs">Observaciones</label>
-        <input pInputText id="obs" type="text" formControlName="obs"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
-      </div>
-    </div>
 
-    {{ formCostoIncre.value | json }}
+      <p-tabView styleClass="tabview-custom">
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <i class="pi pi-sitemap"></i>
+            <span>Propuesta por Familias</span>
+          </ng-template>
 
-    <p-tabView styleClass="tabview-custom">
-      <p-tabPanel>
-        <ng-template pTemplate="header">
-          <i class="pi pi-sitemap"></i>
-          <span>Propuesta por Familias</span>
-        </ng-template>
+          <div formArrayName="costoIncreArr" class="p-3">
+            <div *ngFor="let em of lstFormCostoIncre().controls;  let i = index" [formGroupName]="i">
 
-        <div formArrayName="costoIncreArr" class="p-3">
-          <div *ngFor="let em of lstFormCostoIncre().controls;  let i = index" [formGroupName]="i">
+              <div class="grid mt-2">
 
-            <div class="grid mt-2">
+                <label for="sucursal" class="col-6 md:col-12 lg:col-6"> {{
+                  lstFormCostoIncre().controls[i].value.nombreSucursal}} </label>
+                <input pInputText id="sucursal" formControlName="valor" class="col-6 md:col-12 lg:col-6" />
 
-              <label for="sucursal" class="col-6 md:col-12 lg:col-6"> {{
-                lstFormCostoIncre().controls[i].value.nombreSucursal}} </label>
-              <input pInputText id="sucursal" formControlName="valor" class="col-6 md:col-12 lg:col-6" />
-
+              </div>
+            </div>
+            <div class="flex align-items-center justify-content-center mt-4">
+              <button pButton type="button" [disabled]="!formCostoIncre.valid" class="p-button-success"
+                label="Siguiente" icon="pi pi-arrow-right" (click)="cargarPrePropuesta()"></button>
             </div>
           </div>
+        </p-tabPanel>
+
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <i class="pi pi-th-large"></i>
+            <span>Propuesta por Articulos</span>
+          </ng-template>
           <div class="flex align-items-center justify-content-center mt-4">
-            <button pButton type="button" [disabled]="!formCostoIncre.valid" class="p-button-success" label="Siguiente"
+            <button pButton type="button" [disabled]="!formCostoIncre.valid" class="p-button-primary" label="Siguiente"
               icon="pi pi-arrow-right" (click)="cargarPrePropuesta()"></button>
           </div>
-        </div>
-      </p-tabPanel>
+        </p-tabPanel>
 
-      <p-tabPanel>
-        <ng-template pTemplate="header">
-          <i class="pi pi-th-large"></i>
-          <span>Propuesta por Articulos</span>
-        </ng-template>
-        <div class="flex align-items-center justify-content-center mt-4">
-          <button pButton type="button" [disabled]="!formCostoIncre.valid" class="p-button-primary" label="Siguiente"
-            icon="pi pi-arrow-right" (click)="cargarPrePropuesta()"></button>
-        </div>
-      </p-tabPanel>
+      </p-tabView>
+    </div>
 
-    </p-tabView>
   </form>
 </p-dialog>
-
 <p-dialog header="Propuesta" [(visible)]="showModal" [modal]="true" [breakpoints]="{ '960px': '95vw' }"
   [style]="{ width: '80vw' }">
 
-  <div class="grid">
-    <div class="col-4">
-      <div class="grid">
-        <div class="col-12">
-          <p-dropdown formControlName="city" [options]="cities" optionLabel="name"></p-dropdown>
+  <div class="grid card">
+
+    <div class="col-3 md:col-12 lg:col-3 sm:col-12">
+
+      <div class="grid p-justify-center p-align-center text-center">
+        <div class="col-12 md:col-12 lg:col-12 sm:col-12">
+          <p-dropdown [options]="cities" optionLabel="name"></p-dropdown>
         </div>
 
-        <div class="col-12">
-          <p-dropdown formControlName="city" [options]="cities" optionLabel="name"></p-dropdown>
+        <div class="col-12 md:col-12 lg:col-12 sm:col-12">
+          <p-dropdown [options]="cities" optionLabel="name"></p-dropdown>
         </div>
 
-        <div class="col-12">
-         <ul>
-          <li>A 10</li>
-          <li>B 10</li>
-          <li>C 10</li>
-          <li>D 10</li>
-         </ul>
+        <div class="card shadow-5 col-12 md:col-12 lg:col-12 sm:col-12 p-text-left">
+          <table class="font-bold" style="width: 100%;">
+            <tr *ngFor="let cf of lstCostoIncre;  let i = index">
+              <td>{{ cf.nombreSucursal }}</td>
+              <hr>
+              <td>{{ cf.valor }}</td>
+            </tr>
+          </table>
         </div>
 
       </div>
+
     </div>
 
-    <div class="col-8">
+    <div class="col-8 md:col-12 lg:col-8 sm:col-12 ml-1 card shadow-5">
       Tabla de Precios
     </div>
   </div>
