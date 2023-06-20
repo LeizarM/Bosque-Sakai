@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { ArticuloPropuesto } from 'src/app/protected/interfaces/ArticuloPropuesto';
 import { CostoIncre } from 'src/app/protected/interfaces/CostoIncre';
+import { Producto } from 'src/app/protected/interfaces/Producto';
 import { PreciosService } from '../../services/precios.service';
 
 
@@ -11,23 +13,24 @@ import { PreciosService } from '../../services/precios.service';
 })
 export class PropuestaComponent implements OnInit, OnDestroy {
 
-  receivedVisible : boolean = true;
+  receivedVisible : boolean = false;
   showModal : boolean = false;
+  showModalArticulo : boolean = false;
   private subscription  !: Subscription;
 
-  lstCostoIncre : CostoIncre[] = [];
+
+  lstCostoIncre       : CostoIncre[] = [];
+  lstProveedor        : Producto[] = [];
+  lstFamilia          : Producto[] = [];
+  lstFamiliaXGrupo    : Producto[] = [];
+  lstProductSelected  : Producto[] = [];
+  lstArticuloXFamilia : ArticuloPropuesto[] = [];
 
   formCostoIncre: FormGroup = this.fb.group({
     costoIncreArr: this.fb.array([])
   });
 
-  cities = [
-    { name: 'New York', code: 'NY' },
-    { name: 'Rome', code: 'RM' },
-    { name: 'London', code: 'LDN' },
-    { name: 'Istanbul', code: 'IST' },
-    { name: 'Paris', code: 'PRS' }
-  ];
+
 
   constructor( private precioService : PreciosService,
                private fb            : FormBuilder, )
@@ -51,6 +54,32 @@ export class PropuestaComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+
+  }
+
+  /**
+   * Para cargar la lista de familias
+   * @param event
+   */
+  onChangeFamilia( event: any) : void {
+    this.obtenerFamilia(event.value);
+
+  }
+
+  /**
+   * Procedimiento para obtener la lista de grupo de articulos
+   * @param event
+   */
+  onChangeFamiliaXCodigo( event : any ){
+
+    this.lstProductSelected = [];
+
+    this.precioService.obtenerListFamiliaXGrupo( event.value ).subscribe({
+      next: (resp) =>  this.lstFamiliaXGrupo =  resp,
+      error: (err) => console.log(err),
+      complete: () => {}
+    });
+
   }
 
   /**
@@ -58,17 +87,25 @@ export class PropuestaComponent implements OnInit, OnDestroy {
    */
   obtenerCostoFlete():void {
 
-    this.precioService.obtenerListCostoFlete().subscribe((resp) => {
+    this.precioService.obtenerListCostoFlete().subscribe({
+      next: (resp) => this.lstCostoIncre = resp,
+      error: (err) => console.log(err),
+      complete() {}
+    });
+  }
 
-      if (resp.length > 0) {
-
-        this.lstCostoIncre = resp;
-
-
-      }
-    }, (err) => {
-      console.log(err);
-
+  /**
+   * Obtendra la lista de de familias
+   */
+  obtenerFamilia( codFamilia : number ):void{
+    this.precioService.obtenerListFamilia( codFamilia ).subscribe({
+      next: (resp) =>
+      {
+        this.lstFamilia = resp;
+        console.log(this.lstFamilia);
+      },
+      error: (err) => console.log(err),
+      complete() {}
     });
   }
 
@@ -79,7 +116,6 @@ export class PropuestaComponent implements OnInit, OnDestroy {
   lstFormCostoIncre(): FormArray {
     return this.formCostoIncre.get('costoIncreArr') as FormArray;
   }
-
 
   /**
    *Cargara la lista de costo incremento en el formArray
@@ -95,8 +131,6 @@ export class PropuestaComponent implements OnInit, OnDestroy {
     });
 
   }
-
-
     /**
    * Llenar Formulario
    * @param cin
@@ -111,11 +145,60 @@ export class PropuestaComponent implements OnInit, OnDestroy {
 
       });
     }
-
-    cargarPrePropuesta() : void{
+    /**
+     *Cargara los datos de proveedor y codigo de familia
+     */
+    cargarPrePropuesta() : void {
         const { costoIncreArr } = this.formCostoIncre.value
         this.lstCostoIncre =  costoIncreArr;
-        console.log( this.lstCostoIncre );
         this.showModal =  true;
+
+        this.precioService.obtenerListProveedor().subscribe(
+          {
+            next: (resp) =>  {
+              this.lstProveedor = resp;
+              this.lstProveedor = [
+                {
+                  codigoFamilia: -1,
+                  nombreProveedor: 'Todos',
+                },
+                ...this.lstProveedor
+              ];
+
+            },
+            error: (err) => console.log(err),
+            complete() {
+
+            },
+          }
+        );
+        this.obtenerFamilia(-1);
+
+
     }
-}
+
+    /**
+     * Para obtener los articulos por familias
+     */
+    onSelectedFamilyCode() : void {
+
+      this.showModalArticulo = true;
+      const codigosFamilia = this.lstProductSelected.map(item => item.codigoFamilia);
+
+      // Convertir la lista en una cadena de texto separada por comas
+      const cadena = `${codigosFamilia.join(",")},`;
+
+      console.log(cadena);
+
+      this.precioService.obtenerListArticulosXFamilia( cadena ).subscribe({
+        next: (resp) => this.lstArticuloXFamilia = resp,
+        error: (err) => console.log(err),
+        complete() {}
+      });
+
+    }
+
+
+
+
+  }

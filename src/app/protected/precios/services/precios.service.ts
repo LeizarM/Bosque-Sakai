@@ -5,9 +5,9 @@ import { catchError } from 'rxjs/operators';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Autorizacion } from 'src/app/protected/interfaces/Autorizacion';
 import { environment } from 'src/environments/environment';
+import { ArticuloPropuesto } from '../../interfaces/ArticuloPropuesto';
 import { CostoIncre } from '../../interfaces/CostoIncre';
-
-
+import { Producto } from '../../interfaces/Producto';
 
 
 @Injectable({
@@ -81,4 +81,114 @@ export class PreciosService {
     );
 
   }
+
+  /**
+   * Obtendra la lista de proveedores y codigo de familia
+   * @returns
+   */
+  obtenerListProveedor(): Observable<Producto[]>{
+
+    const url = `${this.baseUrl}/price/lstProveedor`;
+    return this.http.post<Producto[]>( url, {} )
+    .pipe(
+
+      catchError(e => {
+        if (e.status == 401) {
+          return throwError(() => e);
+        }
+        if (e.ok === false) {
+          console.error(e.error.error);
+          return throwError(() => e);
+        }
+        return throwError(() => e);
+      })
+    );
+  }
+
+
+  /**
+   * obtendra la lista de familias
+   * @returns
+   */
+  obtenerListFamilia( codFamilia : number ) : Observable<Producto[]> {
+
+    const data : Producto = {
+      codigoFamilia : codFamilia
+    };
+
+    const url = `${this.baseUrl}/price/listFamilia`;
+
+    return this.http.post<Producto[]>( url, data )
+    .pipe(
+      catchError(e => {
+        if( e.status == 401 ){
+          return throwError( () => e );
+        }
+        if( e.ok === false ){
+          console.error(e.error.error);
+          return throwError( () => e );
+        }
+        return throwError( () => e );
+      })
+    );
+
+  }
+  /**
+   * Para lista las familias por grupo de familia
+   * @param idGrpFamiliaSap
+   * @returns
+   */
+  obtenerListFamiliaXGrupo( idGrpFamiliaSap : number ) : Observable<Producto[]> {
+
+    const data : Producto = {
+      idGrpFamiliaSap
+    };
+
+    const url = `${this.baseUrl}/price/listFamiliaXGrupo`;
+
+    return this.http.post<Producto[]>( url, data )
+        .pipe(
+          catchError(e => {
+            if( e.status == 401 ){
+              return throwError( () => e );
+            }
+            if( e.ok === false ){
+              console.error(e.error.error);
+              return throwError( () => e );
+            }
+            return throwError( () => e );
+          })
+        );
+
+  }
+
+  /**
+   * Para listar los articulos por familias
+   * @param codCad
+   * @returns
+   */
+  obtenerListArticulosXFamilia( codCad : string ) : Observable<ArticuloPropuesto[]> {
+
+    const data : ArticuloPropuesto = {
+      codCad
+    };
+
+    const url = `${this.baseUrl}/price/listFamiliaXArticulo`;
+
+    return this.http.post<ArticuloPropuesto[]>( url, data )
+        .pipe(
+          catchError(e => {
+            if( e.status == 401 ){
+              return throwError( () => e );
+            }
+            if( e.ok === false ){
+              console.error(e.error.error);
+              return throwError( () => e );
+            }
+            return throwError( () => e );
+          })
+        );
+
+  }
+
 }

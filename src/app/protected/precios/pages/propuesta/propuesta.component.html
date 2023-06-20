@@ -1,3 +1,4 @@
+<!-- Dialog para cargar la propuesta-->
 <p-dialog header="Nueva Propuesta" [(visible)]="receivedVisible" [breakpoints]="{ '960px': '75vw' }"
   [style]="{ width: '60vw' }" [modal]="true">
 
@@ -28,8 +29,9 @@
 
               <div class="grid mt-2">
 
-                <label for="sucursal" class="col-6 md:col-12 lg:col-6"> {{
-                  lstFormCostoIncre().controls[i].value.nombreSucursal}} </label>
+                <label for="sucursal" class="col-6 md:col-12 lg:col-6">
+                  {{lstFormCostoIncre().controls[i].value.nombreSucursal}}
+                </label>
                 <input pInputText id="sucursal" formControlName="valor" class="col-6 md:col-12 lg:col-6" />
 
               </div>
@@ -57,39 +59,136 @@
 
   </form>
 </p-dialog>
+
+
+
+<!-- CARGAR PRECIOS FAMILIA-->
+
 <p-dialog header="Propuesta" [(visible)]="showModal" [modal]="true" [breakpoints]="{ '960px': '95vw' }"
-  [style]="{ width: '80vw' }">
+  [style]="{ width: '70vw' }">
+  <div class="grid">
 
-  <div class="grid card">
+    <div class="col-12 md:col-12 lg:col-4">
 
-    <div class="col-3 md:col-12 lg:col-3 sm:col-12">
+      <div class="grid">
 
-      <div class="grid p-justify-center p-align-center text-center">
-        <div class="col-12 md:col-12 lg:col-12 sm:col-12">
-          <p-dropdown [options]="cities" optionLabel="name"></p-dropdown>
-        </div>
+        <p-dropdown class="flex flex-column col-12 md:col-12 lg:col-12" [options]="lstProveedor" [filter]="true"
+          filterBy="codigoFamilia" [showClear]="true" optionValue="codigoFamilia" optionLabel="nombreProveedor"
+          placeholder="Seleccione Familia por Codigo" (onChange)="onChangeFamilia($event)">
+          <ng-template let-prov pTemplate="item">
+            <div class="flex align-items-center prov-item">
+              <div>{{prov.codigoFamilia}} - {{prov.nombreProveedor}}</div>
 
-        <div class="col-12 md:col-12 lg:col-12 sm:col-12">
-          <p-dropdown [options]="cities" optionLabel="name"></p-dropdown>
-        </div>
+            </div>
+          </ng-template>
 
-        <div class="card shadow-5 col-12 md:col-12 lg:col-12 sm:col-12 p-text-left">
-          <table class="font-bold" style="width: 100%;">
+        </p-dropdown>
+
+        <p-dropdown class="flex flex-column col-12 md:col-12 lg:col-12" [options]="lstFamilia"
+          optionLabel="nombreFamilia" optionValue="idGrpFamiliaSap" placeholder="Seleccione Familia"
+          (onChange)="onChangeFamiliaXCodigo($event)">
+        </p-dropdown>
+
+        <table class="shadow-5 col-12 md:col-12 lg:col-12  font-bold" style="width: 100%;">
+
+          <thead>
+            <tr>
+              <th>Sucursal</th>
+              <th>Costo Flete</th>
+            </tr>
+          </thead>
+
+          <tbody>
             <tr *ngFor="let cf of lstCostoIncre;  let i = index">
               <td>{{ cf.nombreSucursal }}</td>
               <hr>
               <td>{{ cf.valor }}</td>
             </tr>
-          </table>
-        </div>
+          </tbody>
+
+        </table>
 
       </div>
 
     </div>
 
-    <div class="col-8 md:col-12 lg:col-8 sm:col-12 ml-1 card shadow-5">
-      Tabla de Precios
+    <div class="col-12 md:col-12 lg:col-8">
+      <p-table [value]="lstFamiliaXGrupo" class="col-12 md:col-12 lg:col-8" [scrollable]="true" scrollHeight="400px"
+        [tableStyle]="{ 'min-width': '60rem' }" [autoLayout]="true" [(selection)]="lstProductSelected"
+        dataKey="codigoFamilia" styleClass="p-datatable-sm" >
+        <ng-template pTemplate="caption"> FAMILIAS </ng-template>
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 4rem">
+              <p-tableHeaderCheckbox  ></p-tableHeaderCheckbox>
+            </th>
+            <th>Codigo</th>
+            <th>Familia</th>
+            <th>Proveedor</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-famg>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="famg"  ></p-tableCheckbox>
+            </td>
+            <td>{{ famg.codigoFamilia }}</td>
+            <td>{{ famg.nombreFamilia }}</td>
+            <td>{{ famg.nombreProveedor }}</td>
+            <td>
+              <button pButton type="button" icon="pi pi-dollar" class="p-button-success"
+                label="Editar Precios en Toneladas"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+
+          <div *ngIf="lstFamiliaXGrupo.length > 0">
+            <button pButton label="Ver Articulos" icon="pi pi-eye" class="m-2" *ngIf="lstProductSelected.length > 0  "  (click)="onSelectedFamilyCode()"></button>
+            <button pButton label="Desplegar Articulos" icon="pi pi-eye" class="m-2"></button>
+          </div>
+
+        </ng-template>
+      </p-table>
     </div>
+
   </div>
+
+</p-dialog>
+
+<!-- Dialog para mostrar los articulos seleccionados-->
+<p-dialog header="ARTICULOS SELECCIONADOS " [(visible)]="showModalArticulo" [modal]="true" [breakpoints]="{ '960px': '95vw' }"
+  [style]="{ width: '70vw' }">
+
+  <p-table [value]="lstArticuloXFamilia" responsiveLayout="scroll" [paginator]="true" [rows]="25" [responsive]="true">
+    <ng-template pTemplate="header">
+
+      <tr>
+        <th>#</th>
+        <th>Filas Por Codigo</th>
+        <th>Codigo Familia</th>
+        <th>Codigo Articulo</th>
+        <th>Descripcion</th>
+        <th>Stock</th>
+        <th>UTM</th>
+
+      </tr>
+
+    </ng-template>
+
+    <ng-template pTemplate="body" let-art>
+      <tr>
+        <td>{{ art.fila }}</td>
+        <td>{{ art.filaCod  }}</td>
+        <td>{{ art.codigoFamilia }}</td>
+        <td>{{ art.codArticulo }}</td>
+        <td>{{ art.datoArticulo }}</td>
+        <td>{{ art.stock }}</td>
+        <td>{{ art.utm }}</td>
+
+      </tr>
+    </ng-template>
+  </p-table>
 
 </p-dialog>

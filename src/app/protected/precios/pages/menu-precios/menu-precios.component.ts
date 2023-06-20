@@ -23,7 +23,7 @@ export class MenuPreciosComponent implements OnInit {
 
   showNewPropuse():void{
     this.visible = true;
-console.log("entro en showNewPropuse");
+
     this.preciosService.updateSharedVisible(this.visible);
   }
 

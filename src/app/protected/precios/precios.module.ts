@@ -8,8 +8,6 @@ import { MenuPreciosComponent } from './pages/menu-precios/menu-precios.componen
 import { PropuestaComponent } from './pages/propuesta/propuesta.component';
 
 
-
-
 @NgModule({
   declarations: [
     AutorizacionComponent,

@@ -12,4 +12,12 @@ export interface Producto {
   costoTM?:             number;
   idPropuestaAprobada?: number;
   audUsuario?:          number;
+
+  /**
+   * Variables de Apoyo
+   */
+
+  nombreProveedor ?:    string;
+  nombreFamilia   ?:    string;
+
 }
