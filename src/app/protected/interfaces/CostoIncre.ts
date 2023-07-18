@@ -8,4 +8,7 @@ export interface CostoIncre {
   codCiudad?:       number;
   nombreSucursal?:  string;
   nombreCiudad?:    string;
+
+  ok?:              string;
+  msg?:             string;
 }

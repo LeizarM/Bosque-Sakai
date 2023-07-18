@@ -19,5 +19,8 @@ export interface Producto {
 
   nombreProveedor ?:    string;
   nombreFamilia   ?:    string;
-
+  presentacion    ?:    string;
+  color           ?:    string;
+  tipo            ?:    string;
+  rangoGramaje    ?:    string;
 }

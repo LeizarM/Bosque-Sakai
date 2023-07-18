@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ArticuloPropuesto } from 'src/app/protected/interfaces/ArticuloPropuesto';
 import { Autorizacion } from 'src/app/protected/interfaces/Autorizacion';
 import { TiposMod, lstEstadosPropuesta } from '../../../interfaces/Tipos';
 import { PreciosService } from '../../services/precios.service';
@@ -14,11 +15,16 @@ import { PreciosService } from '../../services/precios.service';
 })
 export class AutorizacionComponent implements OnInit {
 
-  autorizaciones: Autorizacion[] = [];
-  estadosPropuesta: TiposMod[] = [];
+  lstAutorizaciones: Autorizacion[] = [];
+  lstEstadoPropuesta: TiposMod[] = [];
+  lstArticulosXPropuesta : ArticuloPropuesto[] = [];
 
 
-  constructor( private autorizacion: PreciosService )
+  showArticulosProp : boolean = false;
+  showArticulosEdit : boolean = false;
+
+
+  constructor( private precioService: PreciosService )
   {
     this.obtenerListaPropuesta();
   }
@@ -33,17 +39,14 @@ export class AutorizacionComponent implements OnInit {
    */
   obtenerListaPropuesta():void {
 
-    this.autorizacion.obtenerListAutorizacion().subscribe((resp) => {
-
-      if (resp.length > 0) {
-
-        this.autorizaciones = resp;
+    this.precioService.obtenerListAutorizacion().subscribe({
+      next: (res) => {
+        this.lstAutorizaciones = res;
         this.obtenerEstadosPropuesta();
-
+      },
+      error: (e) => {
+        console.log(e);
       }
-    }, (err) => {
-      console.log(err);
-
     });
   }
   /**
@@ -51,13 +54,32 @@ export class AutorizacionComponent implements OnInit {
    */
   obtenerEstadosPropuesta(): void {
 
-    this.estadosPropuesta = lstEstadosPropuesta().filter( x =>{
-      let res = this.autorizaciones.find( ( y )=>{
-      return y.estadoCad == x.nombre;
+    this.lstEstadoPropuesta = lstEstadosPropuesta().filter( x =>{
+      let res = this.lstAutorizaciones.find( ( y )=>{
+      return y.estadoCad === x.nombre;
       });
-    return res != undefined;
+    return res !== undefined;
     });
 
+  }
+
+  /**
+   * Para cargar la lista de de articulos afectados
+   * @param idPropuesta
+   */
+  cargarPropuestaArticulo( idPropuesta : number ){
+
+    this.precioService.obtenerListaDeArticulosPorPropuesta( idPropuesta ).subscribe({
+      next: (res) => {
+        this.lstArticulosXPropuesta = res;
+        console.log(this.lstArticulosXPropuesta);
+        this.showArticulosProp = true;
+      },
+      error: (e) => {
+        console.log(e);
+      }
+
+    });
   }
 
 }

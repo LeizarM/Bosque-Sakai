@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Autorizacion } from 'src/app/protected/interfaces/Autorizacion';
 import { environment } from 'src/environments/environment';
 import { ArticuloPropuesto } from '../../interfaces/ArticuloPropuesto';
 import { CostoIncre } from '../../interfaces/CostoIncre';
+import { CostoSug } from '../../interfaces/CostoSug';
+import { Precio } from '../../interfaces/Precio';
+import { PrecioPropuesta } from '../../interfaces/PrecioPropuesta';
 import { Producto } from '../../interfaces/Producto';
+import { Propuesta } from '../../interfaces/Propuesta';
 
 
 @Injectable({
@@ -174,6 +178,186 @@ export class PreciosService {
     };
 
     const url = `${this.baseUrl}/price/listFamiliaXArticulo`;
+
+    return this.http.post<ArticuloPropuesto[]>( url, data )
+        .pipe(
+          catchError(e => {
+            if( e.status == 401 ){
+              return throwError( () => e );
+            }
+            if( e.ok === false ){
+              console.error(e.error.error);
+              return throwError( () => e );
+            }
+            return throwError( () => e );
+          })
+        );
+
+  }
+
+
+  /**
+   * Obtendra los datos de la familia
+   * @param codigoFamilia
+   * @returns
+   */
+  obtenerDatoFamilia( codigoFamilia : number )  : Observable<Producto>{
+
+    const data : Producto = {
+      codigoFamilia
+    }
+    const url = `${this.baseUrl}/price/cargarProducto`;
+
+    return this.http.post<Producto>( url, data )
+        .pipe(
+          catchError(e => {
+            if( e.status == 401 ){
+              return throwError( () => e );
+            }
+            if( e.ok === false ){
+              console.error(e.error.error);
+              return throwError( () => e );
+            }
+            return throwError( () => e );
+          })
+        );
+
+
+  }
+
+  /**
+   * Metodo para obtener los precios en tonelada por familia
+   * @param codigoFamilia
+   * @returns
+   */
+  obtenerPreciosXToneladaXFamilia(  codigoFamilia : number ) : Observable<Precio[]>{
+
+    const data : Precio = {
+      codigoFamilia
+    }
+    const url = `${this.baseUrl}/price/lstPrecioTonXFamilia`;
+
+    return this.http.post<Precio[]>( url, data )
+        .pipe(
+          catchError(e => {
+            if( e.status == 401 ){
+              return throwError( () => e );
+            }
+            if( e.ok === false ){
+              console.error(e.error.error);
+              return throwError( () => e );
+            }
+            return throwError( () => e );
+          })
+        )
+
+  }
+
+
+  /**
+   * Metodo para registrar la propuesta
+   * @param data
+   * @returns
+   */
+  registrarPropuesta( data : Propuesta) : Observable<Propuesta> {
+
+    const url = `${this.baseUrl}/price/registrarPropuesta`;
+
+    return this.http.post<Propuesta>(url, data)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+  }
+
+
+  /**
+   * Metodo para registrar el costo Incremento por porpuesta
+   * @param data
+   * @returns
+   */
+  registrarCostoIncre ( data : CostoIncre) : Observable<CostoIncre>{
+
+
+    const url = `${this.baseUrl}/price/registrarCostoIncre`;
+
+    return this.http.post<CostoIncre>(url, data)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+
+  }
+
+  /**
+   * Metodo para registrar el precio propuesta en toneladas
+   * @param data
+   * @returns
+   */
+  registrarPrecioPropuesta ( data : PrecioPropuesta ) :  Observable<PrecioPropuesta> {
+
+      const url = `${this.baseUrl}/price/registrarPrecioPropuesta`;
+
+      return this.http.post<PrecioPropuesta>(url, data)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+  }
+
+
+  /**
+   *
+   * @param data
+   * @returns
+   */
+  registrarCostoSugerido ( data : CostoSug ) : Observable<CostoSug> {
+
+    const url = `${this.baseUrl}/price/registrarCostoSug`;
+
+    return this.http.post<CostoSug>(url, data)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+  }
+
+  /**
+   * Cargara una lista para listar los articulos por propuesta
+   * @param idPropuesta
+   * @returns
+   */
+  obtenerListaDeArticulosPorPropuesta( idPropuesta : number ) : Observable<ArticuloPropuesto[]> {
+
+    const data : ArticuloPropuesto = {
+      idPropuesta
+    };
+
+    const url = `${this.baseUrl}/price/lstArticulosXPropuesta`;
 
     return this.http.post<ArticuloPropuesto[]>( url, data )
         .pipe(

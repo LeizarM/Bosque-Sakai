@@ -1,4 +1,5 @@
 export interface Propuesta {
+
   idPropuesta?:    number;
   codEmpresa?:     number;
   tipo?:           number;
@@ -8,16 +9,11 @@ export interface Propuesta {
   audUsGenerado?:  number;
   audFecGenerado?: string;
   audFecha?:       number;
+  audUsuario?:     number;
+
+  ok?:             string;
+  msg?:            string;
+
 
 }
 
-// Converts JSON strings to/from your types
-export class Convert {
-  public static toPropuesta(json: string): Propuesta {
-      return JSON.parse(json);
-  }
-
-  public static propuestaToJson(value: Propuesta): string {
-      return JSON.stringify(value);
-  }
-}

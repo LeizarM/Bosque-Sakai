@@ -11,4 +11,9 @@ export interface PrecioPropuesta {
   nombrePrecio?:      string;
   vpp?:               number;
   audUsuario?:        number;
+
+
+  ok?:                string;
+  msg?:               string;
+
 }

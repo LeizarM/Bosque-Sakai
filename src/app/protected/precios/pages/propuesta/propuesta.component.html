@@ -1,3 +1,9 @@
+<p-toast></p-toast>
+<p-toast position="top-left" key="tl"></p-toast>
+<p-toast position="top-center" key="tc"></p-toast>
+<p-toast position="bottom-center" key="bc"></p-toast>
+
+
 <!-- Dialog para cargar la propuesta-->
 <p-dialog header="Nueva Propuesta" [(visible)]="receivedVisible" [breakpoints]="{ '960px': '75vw' }"
   [style]="{ width: '60vw' }" [modal]="true">
@@ -115,12 +121,12 @@
     <div class="col-12 md:col-12 lg:col-8">
       <p-table [value]="lstFamiliaXGrupo" class="col-12 md:col-12 lg:col-8" [scrollable]="true" scrollHeight="400px"
         [tableStyle]="{ 'min-width': '60rem' }" [autoLayout]="true" [(selection)]="lstProductSelected"
-        dataKey="codigoFamilia" styleClass="p-datatable-sm" >
+        dataKey="codigoFamilia" styleClass="p-datatable-sm">
         <ng-template pTemplate="caption"> FAMILIAS </ng-template>
         <ng-template pTemplate="header">
           <tr>
             <th style="width: 4rem">
-              <p-tableHeaderCheckbox  ></p-tableHeaderCheckbox>
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
             <th>Codigo</th>
             <th>Familia</th>
@@ -131,21 +137,23 @@
         <ng-template pTemplate="body" let-famg>
           <tr>
             <td>
-              <p-tableCheckbox [value]="famg"  ></p-tableCheckbox>
+              <p-tableCheckbox [value]="famg"></p-tableCheckbox>
             </td>
             <td>{{ famg.codigoFamilia }}</td>
             <td>{{ famg.nombreFamilia }}</td>
             <td>{{ famg.nombreProveedor }}</td>
             <td>
               <button pButton type="button" icon="pi pi-dollar" class="p-button-success"
-                label="Editar Precios en Toneladas"></button>
+                label="Editar Precios en Toneladas" (click)="loadFamilyData(famg.codigoFamilia)">
+              </button>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="summary">
 
           <div *ngIf="lstFamiliaXGrupo.length > 0">
-            <button pButton label="Ver Articulos" icon="pi pi-eye" class="m-2" *ngIf="lstProductSelected.length > 0  "  (click)="onSelectedFamilyCode()"></button>
+            <button pButton label="Ver Articulos" icon="pi pi-eye" class="m-2" *ngIf="lstProductSelected.length > 0  "
+              (click)="onSelectedFamilyCode()"></button>
             <button pButton label="Desplegar Articulos" icon="pi pi-eye" class="m-2"></button>
           </div>
 
@@ -158,10 +166,11 @@
 </p-dialog>
 
 <!-- Dialog para mostrar los articulos seleccionados-->
-<p-dialog header="ARTICULOS SELECCIONADOS " [(visible)]="showModalArticulo" [modal]="true" [breakpoints]="{ '960px': '95vw' }"
-  [style]="{ width: '70vw' }">
+<p-dialog header="ARTICULOS SELECCIONADOS " [(visible)]="showModalArticulo" [modal]="true"
+  [breakpoints]="{ '960px': '95vw' }" [style]="{ width: '70vw' }">
 
-  <p-table [value]="lstArticuloXFamilia" responsiveLayout="scroll" [paginator]="true" [rows]="25" [responsive]="true">
+  <p-table #dtArticulos [value]="lstArticuloXFamilia" responsiveLayout="scroll" [paginator]="true" [rows]="25"
+    [responsive]="true">
     <ng-template pTemplate="header">
 
       <tr>
@@ -180,7 +189,7 @@
     <ng-template pTemplate="body" let-art>
       <tr>
         <td>{{ art.fila }}</td>
-        <td>{{ art.filaCod  }}</td>
+        <td>{{ art.filaCod }}</td>
         <td>{{ art.codigoFamilia }}</td>
         <td>{{ art.codArticulo }}</td>
         <td>{{ art.datoArticulo }}</td>
@@ -190,5 +199,125 @@
       </tr>
     </ng-template>
   </p-table>
+
+</p-dialog>
+
+
+
+<!-- Dialog para desplegar la familia seleccionada y los precios de tonelada actuales y propuestos  -->
+<p-dialog header="CALCULO DE PRECIOS EN TONELADAS" [(visible)]="showModalPreciosTon" [modal]="true"
+  [breakpoints]="{ '960px': '95vw' }" [style]="{ width: '70vw' }">
+
+  <div class="grid">
+
+    <div class="col-12 md:col-12 lg:col-12">
+
+      <p-card title="Detalles de la Familia" styleClass="ui-card-shadow">
+        <div class="fluid formgrid grid">
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label class="font-bold w-10">Codigo Familia</label>
+            <p class="font-bold w-10 text-yellow-500">{{ producto.codigoFamilia }}</p>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label class="font-bold w-10">Presentacion</label>
+            <p>{{ producto.presentacion }}</p>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label class="font-bold w-10">Proveedor</label>
+            <p>{{ producto.nombreProveedor }}</p>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label class="font-bold w-10">Familia</label>
+            <p>{{ producto.nombreFamilia }}</p>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label class="font-bold w-10">Rango Gramaje</label>
+            <p>{{ producto.rangoGramaje }}</p>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label class="font-bold w-10">Color</label>
+            <p>{{ producto.color }}</p>
+          </div>
+
+          <div class="field col-12 md:col-6 lg:col-4">
+            <label class="font-bold w-10">Costo Actual</label>
+            <p class="font-bold w-10 text-orange-600">{{ producto.costoTM | currency:'USD' }}</p>
+          </div>
+        </div>
+      </p-card>
+
+    </div>
+
+    <div class="col-12 md:col-12 lg:col-12">
+
+      <div class="flex">
+        <div
+          class="flex-1 md:flex-none flex align-items-center justify-content-center  font-bold m-2 px-5 py-3 border-round">
+          <label for="costo">Costo Propuesto: </label>
+          <span class="p-input-icon-left">
+            <i class="pi pi-dollar"></i>
+            <input pInputText type="text" #costo>
+          </span>
+        </div>
+        <div
+          class="flex-1 md:flex-none flex align-items-center justify-content-center  font-bold m-2 px-5 py-3 border-round">
+          <p-button icon="pi pi-check" label="Calcular" (onClick)="calculateNewPricesTon()"></p-button>
+        </div>
+      </div>
+
+      <p-table [value]="lstPrecioXTonActuales">
+        <ng-template pTemplate="header">
+
+          <tr>
+
+            <th>#</th>
+            <th>Sucursal</th>
+            <th>Lista de Precio</th>
+            <th>Porcentaje</th>
+            <th>IVA</th>
+            <th>IT</th>
+            <th>Precio Tonelada Propuesto</th>
+            <th>Precio Tonelada Actual</th>
+
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-pre>
+          <tr>
+            <td>{{ pre.fila }}</td>
+            <td>{{ pre.nombreSucursal }}</td>
+            <td>{{ pre.vpp }} - {{ pre.nombrePrecio }}</td>
+            <td>{{ pre.porcentaje }} %</td>
+            <td>{{ pre.iva }} %</td>
+            <td>{{ pre.it }} %</td>
+            <td class="text-right font-bold text-blue-600">{{ pre.precioNew | currency : 'USD' }}</td>
+            <td class="text-right font-bold text-orange-600">{{ pre.precio | currency :'USD' }}</td>
+
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+      <span>
+        <p-messages [(value)]="messages" [enableService]="false" [closable]="false"></p-messages>
+      </span>
+
+      <div class="flex justify-content-center">
+
+
+
+        <button class="flex align-items-center m-2" [disabled]="!costo.value" pButton label="Guardar"
+          (click)="saveProposal()"  icon="pi pi-save">
+        </button>
+
+      </div>
+
+    </div>
+  </div>
 
 </p-dialog>
