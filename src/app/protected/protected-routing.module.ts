@@ -4,6 +4,7 @@ import { ChangePasswordComponent } from './change-password/pages/change-password
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { FichaTrabajadorComponent } from './ficha-trabajador/pages/ficha-trabajador/ficha-trabajador.component';
 import { LayoutComponent } from "./layout/layout.component";
+import { CrearLoteProduccionComponent } from './lote-produccion/pages/crear-lote-produccion/crearLoteProduccion.component';
 import { AutorizacionComponent } from './precios/pages/autorizacion/autorizacion.component';
 import { FamiliasComponent } from './precios/pages/familias/familias.component';
 import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
@@ -49,6 +50,10 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
       {
         path: 'tftFichaTrabajador/ficha',
         component: FichaTrabajadorComponent
+      },
+      {
+        path: 'tprod_loteProduccion/loteProduccion',
+        component: CrearLoteProduccionComponent
       },
       {
         path: '**',
