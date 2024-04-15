@@ -2,9 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { throwError } from 'rxjs/internal/observable/throwError';
-import { catchError } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { LoteProduccion } from '../../interfaces/LoteProduccion';
+import { MaterialIngreso } from '../../interfaces/MaterialIngreso';
+import { MaterialSalida } from '../../interfaces/MaterialSalida';
+import { Merma } from '../../interfaces/Merma';
 
 @Injectable({
   providedIn: 'root'
@@ -79,6 +82,96 @@ export class LoteProduccionService {
 
   }
 
+  /**
+   * Metodo para registrar el lote de produccion
+   * @param regLoteProd
+   * @returns
+   */
+  registrarLoteProduccion( regLoteProd : LoteProduccion  ): Observable<LoteProduccion> {
+
+    const url = `${this.baseUrl}/loteProduccion/registroLoteProduccion`;
+
+
+    return this.http.post<LoteProduccion>(url, regLoteProd)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+  }
+
+  /**
+   * para registrar el material de ingreso
+   * @param regMatIngreso
+   * @returns
+   */
+  registrarMaterialIngreso( regMatIngreso : MaterialIngreso[] ): Observable<MaterialIngreso[]> {
+
+    const url = `${this.baseUrl}/loteProduccion/registroIngreso`;
+
+     return this.http.post<MaterialIngreso[]>(url, regMatIngreso)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+  }
+
+
+  /**
+   * para registrar el material de ingreso
+   * @param regMatSalida
+   * @returns
+   */
+  registrarMaterialSalida( regMatSalida : MaterialSalida[] ): Observable<MaterialSalida[]> {
+
+    const url = `${this.baseUrl}/loteProduccion/registroSalida`;
+
+
+    return this.http.post<MaterialSalida[]>(url, regMatSalida)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+  }
+
+  /**
+   * Pare registrar la merma
+   * @param regMerma
+   * @returns
+   */
+  registrarMerma( regMerma : Merma[] ): Observable<Merma[]> {
+
+    const url = `${this.baseUrl}/loteProduccion/registroMerma`;
+
+
+   return this.http.post<Merma[]>(url,  regMerma  )
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+  }
 
 
 }

@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
@@ -75,7 +76,8 @@ import { ToolbarModule } from 'primeng/toolbar';
     SidebarModule,
     FieldsetModule,
     InputMaskModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    ConfirmDialogModule
 
   ]
 })

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from 'primeng/api';
+import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/internal/operators/catchError';
+import { concatMap } from 'rxjs/internal/operators/concatMap';
+import { LoginService } from 'src/app/auth/services/login.service';
 import { MaterialIngreso } from 'src/app/protected/interfaces/MaterialIngreso';
 import * as uuid from 'uuid';
 import { LoteProduccion } from '../../../interfaces/LoteProduccion';
@@ -17,7 +21,7 @@ import { LoteProduccionService } from '../../services/loteProduccion.service.ts.
 
   styleUrls: ['./crearLoteProduccion.component.scss', './crearLoteProduccion.component.css'],
 
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
 
 })
 export class CrearLoteProduccionComponent implements OnInit {
@@ -25,8 +29,8 @@ export class CrearLoteProduccionComponent implements OnInit {
 
   cantHjsSalida: number = 0;
   visible: boolean = false;
-  isTableDisabled : boolean = true;
-  isTableDisabledSalida : boolean = true;
+  isTableDisabled: boolean = true;
+  isTableDisabledSalida: boolean = true;
 
   articuloIngreso: LoteProduccion | undefined = {
     codArticulo: '',
@@ -83,10 +87,13 @@ export class CrearLoteProduccionComponent implements OnInit {
 
 
 
+
   constructor(
     private fb: FormBuilder,
     private messageService: MessageService,
+    private loginService: LoginService,
     private loteProduccionService: LoteProduccionService,
+    private confirmationService: ConfirmationService
 
   ) {
 
@@ -108,6 +115,23 @@ export class CrearLoteProduccionComponent implements OnInit {
 
   }
 
+  inicializarAll() : void {
+
+    this.lstIngreso = [];
+    this.lstSalida = [];
+    this.lstMerma = [];
+    this.lstArticuloIngreso = [];
+    this.lstArticuloSalida = [];
+    this.lstArticuloMerma = [];
+    this.lstArticuloMermaFilter = [];
+    this.inicializarFormulario();
+    this.isTableDisabled = true;
+    this.isTableDisabledSalida = true;
+
+    this.fb.group({});
+
+
+  }
 
   /**
    * Para extraer el numero de hojas de un articulo usando regexp
@@ -144,21 +168,125 @@ export class CrearLoteProduccionComponent implements OnInit {
    */
   previewLoteProduccion(): void {
 
-    this.visible = true;
+
     const { numLote, anio, fecha, hraInicio, hraInicioCorte, hraFin, obs } = this.formLoteProduccion.value;
 
     this.registro = {
+
       numLote,
       anio,
       fecha,
-      hraInicio,
       hraInicioCorte,
+      hraInicio,
       hraFin,
-      obs
+      cantBobinasIngresoTotal: this.lstIngreso.length,
+      pesoKilosTotalIngreso: this.totalIngresosKilos,
+      pesoTotalSalida: this.totalPesoResma,
+      pesoPaletaSalida: this.totalPesoPaleta,
+      pesoMaterialSalida: this.totalPesoMaterial,
+      cantResmaSalida: this.totalCantidadResma,
+      cantHojasSalida: this.totalCantidadHojas,
+      mermaTotal: this.totalMerma,
+      diferenciaProduccion: this.calcularDifProduccion,
+      obs,
+      audUsuario: this.getUser()
     };
+
+    this.lstIngreso = this.lstIngreso.map(item => {
+
+        return {
+          ...item,
+          codArticulo: this.articuloIngreso?.codArticulo,
+          descripcion: this.articuloIngreso?.datoArt
+        };
+
+    });
+
+
+    this.lstSalida = this.lstSalida.map(item => {
+
+      return {
+        ...item,
+        codArticulo: this.articuloSalida?.codArticulo,
+        descripcion: this.articuloSalida?.datoArt,
+        pesoMaterial: (item.pesoResma! - item.pesoPaleta!),
+      };
+
+  });
+
+    if (this.registro.numLote! > 0 && this.registro.anio! > 0 && this.registro.hraInicioCorte?.length! > 0 && this.registro.hraInicio?.length! > 0 && this.registro.hraFin?.length! > 0) {
+      if (this.lstIngreso.length > 0 || this.lstSalida.length > 0 || this.lstMerma.length > 0) {
+        this.visible = true;
+      }
+    }
+
+  }
+
+
+  /**
+   * Para confirmar el envio del lote de produccion
+   */
+  confirmarLoteProduccion(): void {
+
+    this.confirmationService.confirm({
+      message: 'Esta seguro de Enviar el lote de produccion?',
+      header: 'Confirmacion',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Usted confirmo el envio' });
+          this.registroLoteProduccion();
+      },
+      reject: (type: any) => {
+          switch (type) {
+              case ConfirmEventType.REJECT:
+                  this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'Usted No confirmo el envio' });
+                  break;
+              case ConfirmEventType.CANCEL:
+                  this.messageService.add({ severity: 'warn', summary: 'Cancelado', detail: 'Usted a cancelado el envio' });
+                  break;
+          }
+      }
+    });
+
+  }
+  /**
+   * Para registrar el lote de produccion
+   */
+  registroLoteProduccion(): void{
+
+
+    of(null).pipe(
+      // Primero, registra el lote de producción
+      concatMap(() => this.loteProduccionService.registrarLoteProduccion(this.registro)),
+
+      // Luego, registra todos los materiales de ingreso
+      concatMap(() => this.loteProduccionService.registrarMaterialIngreso(this.lstIngreso)),
+
+      // Después, registra todos los materiales de salida
+      concatMap(() => this.loteProduccionService.registrarMaterialSalida(this.lstSalida)),
+
+      // Finalmente, registra todas las mermas
+      concatMap(() => this.loteProduccionService.registrarMerma(this.lstMerma)),
+
+      // Manejo de errores
+      catchError((err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error durante el proceso de registro' });
+        return of(null); // Continúa la ejecución incluso después de un error
+      })
+    ).subscribe({
+      complete: () => {
+        // Mensaje de éxito después de que todos los procesos se han completado correctamente
+        this.messageService.add({ severity: 'success', summary: 'Completo', detail: 'Todos los registros se completaron con éxito' });
+        this.visible = false;
+        this.inicializarAll();
+        this.ngOnInit(); // Llamar a ngOnInit manualmente para reiniciar
+      }
+    });
 
 
   }
+
 
 
 
@@ -211,16 +339,12 @@ export class CrearLoteProduccionComponent implements OnInit {
    */
   filtroMerma(event: any): void {
 
-    console.log(this.lstArticuloMerma);
 
     let query = event.query;
     this.lstArticuloMermaFilter = this.lstArticuloMerma.filter(item => {
       const nombre = item.datoArt?.toLowerCase();
       return nombre?.includes(query);
     });
-
-
-    console.log(this.lstArticuloMermaFilter);
 
   }
 
@@ -257,7 +381,7 @@ export class CrearLoteProduccionComponent implements OnInit {
           descripcion: '',
           pesoKilos: 0,
           balanza: 0,
-          audUsuario: 0,
+          audUsuario: this.getUser(),
 
         });
     }
@@ -291,7 +415,7 @@ export class CrearLoteProduccionComponent implements OnInit {
         descripcion: '',
         pesoKilos: 0,
         balanza: 0,
-        audUsuario: 0,
+        audUsuario: this.getUser(),
 
       });
 
@@ -314,7 +438,7 @@ export class CrearLoteProduccionComponent implements OnInit {
 
     this.articuloIngreso = this.lstArticuloIngreso.find(item => item.codArticulo === event);
 
-    if( this.articuloIngreso?.codArticulo?.length! > 2){
+    if (this.articuloIngreso?.codArticulo?.length! > 2) {
       this.isTableDisabled = false;
     }
 
@@ -327,7 +451,7 @@ export class CrearLoteProduccionComponent implements OnInit {
     this.cantHjsSalida = this.extraerNumero(this.articuloSalida?.datoArt!);
 
 
-    if( this.articuloSalida?.codArticulo?.length! > 2){
+    if (this.articuloSalida?.codArticulo?.length! > 2) {
       this.isTableDisabledSalida = false;
     }
 
@@ -350,7 +474,7 @@ export class CrearLoteProduccionComponent implements OnInit {
           pesoMaterial: 0,
           cantidadResma: 0,
           cantidadHojas: 0,
-          audUsuario: 0
+          audUsuario: this.getUser()
         }
       );
     }
@@ -368,7 +492,7 @@ export class CrearLoteProduccionComponent implements OnInit {
           codArticulo: '',
           descripcion: '',
           peso: 0,
-          audUsuario: 0,
+          audUsuario: this.getUser(),
 
 
         }
@@ -389,7 +513,7 @@ export class CrearLoteProduccionComponent implements OnInit {
         codArticulo: '',
         descripcion: '',
         peso: 0,
-        audUsuario: 0,
+        audUsuario: this.getUser(),
       }
     );
   }
@@ -423,7 +547,7 @@ export class CrearLoteProduccionComponent implements OnInit {
         pesoMaterial: 0,
         cantidadResma: 0,
         cantidadHojas: 0,
-        audUsuario: 0
+        audUsuario: this.getUser()
       });
 
   }
@@ -509,6 +633,13 @@ export class CrearLoteProduccionComponent implements OnInit {
 
   getTableStyleSalida() {
     return this.isTableDisabledSalida ? { 'pointer-events': 'none', 'opacity': '0.5' } : {};
+  }
+
+  /**
+   * obtendra el codigo de usuario actual
+   */
+  getUser(): number {
+    return this.loginService.codUsuario;
   }
 
 }
