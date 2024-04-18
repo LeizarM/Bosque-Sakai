@@ -16,11 +16,16 @@ export interface LoteProduccion {
   cantHojasSalida?:         number;
   mermaTotal?:              number;
   diferenciaProduccion?:    number;
+  diferenciaProdResma?:     number;
+  cantEstimadaResma?:       number;
+  pesoBalanzaTotal?:        number;
+  estado?:                  number;
   obs?:                     string;
   audUsuario?:              number;
 
   codArticulo?:             string;
   datoArt?:                 string;
   articulo?:                string;
+  utm?:                     number;
 
 }

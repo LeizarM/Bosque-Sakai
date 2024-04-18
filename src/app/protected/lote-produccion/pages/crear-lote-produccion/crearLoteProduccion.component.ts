@@ -32,6 +32,13 @@ export class CrearLoteProduccionComponent implements OnInit {
   isTableDisabled: boolean = true;
   isTableDisabledSalida: boolean = true;
 
+  // Establecer la fecha máxima a hoy
+  maxDate: Date = new Date();
+
+  // Establecer la fecha mínima a 30 días atrás desde hoy
+  minDate: Date = new Date();
+
+
   articuloIngreso: LoteProduccion | undefined = {
     codArticulo: '',
     datoArt: '',
@@ -64,6 +71,10 @@ export class CrearLoteProduccionComponent implements OnInit {
     cantHojasSalida: 0,
     mermaTotal: 0,
     diferenciaProduccion: 0,
+    diferenciaProdResma : 0,
+    cantEstimadaResma : 0,
+    pesoBalanzaTotal : 0,
+    estado : 1,
     obs: ''
 
   };
@@ -98,6 +109,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   ) {
 
     this.inicializarFormulario();
+    this.minDate.setDate(this.minDate.getDate() - 30);
 
   }
   ngOnInit(): void {
@@ -114,7 +126,9 @@ export class CrearLoteProduccionComponent implements OnInit {
 
 
   }
-
+  /**
+   * Llena las variables y listas a inicializar
+   */
   inicializarAll() : void {
 
     this.lstIngreso = [];
@@ -124,11 +138,11 @@ export class CrearLoteProduccionComponent implements OnInit {
     this.lstArticuloSalida = [];
     this.lstArticuloMerma = [];
     this.lstArticuloMermaFilter = [];
+    this.fb.group({});
     this.inicializarFormulario();
     this.isTableDisabled = true;
     this.isTableDisabledSalida = true;
 
-    this.fb.group({});
 
 
   }
@@ -188,6 +202,9 @@ export class CrearLoteProduccionComponent implements OnInit {
       cantHojasSalida: this.totalCantidadHojas,
       mermaTotal: this.totalMerma,
       diferenciaProduccion: this.calcularDifProduccion,
+      diferenciaProdResma: this.calcularDifResma,
+      cantEstimadaResma: this.cantidadEstimadaResma,
+      pesoBalanzaTotal: this.totalBalanza,
       obs,
       audUsuario: this.getUser()
     };
@@ -203,16 +220,18 @@ export class CrearLoteProduccionComponent implements OnInit {
     });
 
 
-    this.lstSalida = this.lstSalida.map(item => {
+    this.lstSalida = this.lstSalida.map((item, index) => {
 
       return {
         ...item,
+        nroPaleta: index + 1,
         codArticulo: this.articuloSalida?.codArticulo,
         descripcion: this.articuloSalida?.datoArt,
         pesoMaterial: (item.pesoResma! - item.pesoPaleta!),
       };
 
   });
+
 
     if (this.registro.numLote! > 0 && this.registro.anio! > 0 && this.registro.hraInicioCorte?.length! > 0 && this.registro.hraInicio?.length! > 0 && this.registro.hraFin?.length! > 0) {
       if (this.lstIngreso.length > 0 || this.lstSalida.length > 0 || this.lstMerma.length > 0) {
@@ -232,6 +251,8 @@ export class CrearLoteProduccionComponent implements OnInit {
       message: 'Esta seguro de Enviar el lote de produccion?',
       header: 'Confirmacion',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel:'Si',
+      rejectLabel:'No',
       accept: () => {
           this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Usted confirmo el envio' });
           this.registroLoteProduccion();
@@ -320,9 +341,20 @@ export class CrearLoteProduccionComponent implements OnInit {
       next: (resp) => {
 
         this.lstArticuloIngreso = [...resp];
+        this.lstArticuloIngreso = this.lstArticuloIngreso.filter((item) =>
+                                    item.datoArt?.toLowerCase().includes('bobina'.toLowerCase())
+                                  );
+
         this.lstArticuloSalida = [...resp];
 
+        this.lstArticuloSalida = this.lstArticuloSalida.filter((item) =>
+                                    !item.datoArt?.toLowerCase().includes('bobina'.toLowerCase())
+                                  );
+
         this.lstArticuloMerma = [...resp];
+        this.lstArticuloMerma = this.lstArticuloMerma.filter((item) =>
+                                    item.datoArt?.toLowerCase().includes('merma'.toLowerCase())
+                                  );
 
       },
       error: (err) => {
@@ -372,7 +404,7 @@ export class CrearLoteProduccionComponent implements OnInit {
    */
   llenarListaIngreso(): void {
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
       this.lstIngreso.push(
         {
 
@@ -408,7 +440,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   agregarRegistroIngreso(): void {
 
 
-    this.lstIngreso.unshift(
+    this.lstIngreso.push(
       {
         uuid: uuid.v4(),
         codArticulo: '',
@@ -428,6 +460,12 @@ export class CrearLoteProduccionComponent implements OnInit {
     return this.lstIngreso.reduce((acc, item) => acc + Number(item.pesoKilos), 0);
   }
 
+  /**
+   * Obtendra y calculara el total de peso en balanza de la lista de ingresos
+   */
+  get totalBalanza(){
+    return this.lstIngreso.reduce((acc, item) => acc + Number(item.balanza), 0);
+  }
 
 
   /**
@@ -462,7 +500,7 @@ export class CrearLoteProduccionComponent implements OnInit {
    */
   llenarListaSalida(): void {
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
       this.lstSalida.push(
         {
           uuid: uuid.v4(),
@@ -507,7 +545,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   agregarRegistroMerma(): void {
 
 
-    this.lstMerma.unshift(
+    this.lstMerma.push(
       {
         uuid: uuid.v4(),
         codArticulo: '',
@@ -536,7 +574,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   agregarRegistroSalida(): void {
 
 
-    this.lstSalida.unshift(
+    this.lstSalida.push(
       {
         uuid: uuid.v4(),
         codArticulo: '',
@@ -627,12 +665,22 @@ export class CrearLoteProduccionComponent implements OnInit {
     return this.totalIngresosKilos - (this.totalPesoMaterial + this.totalMerma);
   }
 
+
+  get cantidadEstimadaResma(): number {
+    return  this.totalIngresosKilos / this.articuloSalida?.utm! || 1
+  }
+
+  get calcularDifResma(): number {
+
+    return  this.totalCantidadResma - this.cantidadEstimadaResma;
+  }
+
   getTableStyle() {
-    return this.isTableDisabled ? { 'pointer-events': 'none', 'opacity': '0.5' } : {};
+    return this.isTableDisabled ? { 'pointer-events': 'none', 'opacity': '0.2' } : {};
   }
 
   getTableStyleSalida() {
-    return this.isTableDisabledSalida ? { 'pointer-events': 'none', 'opacity': '0.5' } : {};
+    return this.isTableDisabledSalida ? { 'pointer-events': 'none', 'opacity': '0.2' } : {};
   }
 
   /**
@@ -640,6 +688,27 @@ export class CrearLoteProduccionComponent implements OnInit {
    */
   getUser(): number {
     return this.loginService.codUsuario;
+  }
+
+  get validIngresos() : boolean {
+    //return this.lstIngreso.filter(item => item.pesoKilos && item.balanza!  > 0).length;
+
+    return this.lstIngreso.every(item => item.pesoKilos! > 0 && item.balanza! > 0);
+  }
+
+  get validSalida() : boolean  {
+
+    return this.lstSalida.every(item => item.pesoResma! > 0 && item.pesoPaleta! > 0 && item.cantidadResma! > 0 );
+  }
+
+  get validMerma() : boolean  {
+
+    return this.lstMerma.every(item => item.peso! > 0 && item.descripcion?.length! > 0 );
+  }
+
+  get validarListas() : boolean  {
+
+    return this.validIngresos && this.validSalida && this.validMerma;
   }
 
 }

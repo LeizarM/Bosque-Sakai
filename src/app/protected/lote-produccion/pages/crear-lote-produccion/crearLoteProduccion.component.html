@@ -16,30 +16,15 @@
   <form id="frmLoteProduccion" class="formgrid grid" [formGroup]="formLoteProduccion" (ngSubmit)="previewLoteProduccion()" autocomplete="off">
 
 
-    <p-toolbar class="col-12 lg:col-12 md:col-12 sm:col-12">
-
-      <div class="p-toolbar-group-start">
-        <label class="font-bold text-xl"> Diferencia de Producción = {{ calcularDifProduccion | number }}</label>
-      </div>
-
-      <div class="p-toolbar-group-end">
-
-        <button pButton type="submit" icon="pi pi-arrow-right" class="p-button-success" label="Crear Lote"></button>
-
-      </div>
-
-    </p-toolbar>
-
-
     <div class="field col-12 lg:col-6 md:col-6 sm:col-12">
       <label for="numLote">Numero de Lote</label>
-      <label id="numLote" type="text" class="min-w-full justify-content-center font-bold text-3xl">{{ registro.numLote
-        }}/{{ registro.anio}}</label>
+      <label id="numLote" type="text" class="min-w-full justify-content-center font-bold text-3xl">{{ registro.numLote}}/{{ registro.anio}}</label>
     </div>
 
     <div class="field col-12 lg:col-6 md:col-6 sm:col-12">
       <label for="fecha">Fecha</label>
-      <p-calendar styleClass="min-w-full" dateFormat="dd/mm/yy" [showIcon]="true" formControlName="fecha"></p-calendar>
+      <p-calendar styleClass="min-w-full" dateFormat="dd/mm/yy" [showIcon]="true" formControlName="fecha"
+        [minDate]="minDate" [maxDate]="maxDate"></p-calendar>
 
       <div *ngIf="formLoteProduccion.get('fecha')?.touched && formLoteProduccion.get('fecha')?.invalid"
         class="error-message">
@@ -100,321 +85,351 @@
       <input pInputTextarea id="obs" type="text" formControlName="obs" class="min-w-full h-5rem">
     </div>
 
-  </form>
-
-  <!-- Datos del material de ingreso -->
-
-  <p-panel class="col-12 lg:col-12 md:col-12 sm:col-12">
-
-    <ng-template pTemplate="header"> <span class="text-primary font-bold text-xl">MATERIAL DE  INGRESO</span></ng-template>
-
-    <div class="field col-12 lg:col-8 md:col-12 sm:col-12">
-      <label for="articulo">Seleccione Articulo de Ingreso</label>
-
-      <div class="ui-inputgroup">
-
-        <p-dropdown [options]="lstArticuloIngreso" placeholder="-Seleccione-" [filter]="true" filterBy="articulo"
-          styleClass="max-w-min md:max-w-max " optionValue="codArticulo" optionLabel="articulo"
-          (onChange)="seleccionarArticuloIngreso($event.value)">
-        </p-dropdown>
-
-      </div>
-
-    </div>
 
 
+    <!-- Datos del material de ingreso -->
 
-    <div class="field col-12 lg:col-12 md:col-12 sm:col-12">
-      <p-table [tableStyle]="{'min-width': '50rem'}" [value]="lstIngreso" [tableStyle]="getTableStyle()">
+    <p-panel class="col-12 lg:col-12 md:col-12 sm:col-12">
 
-        <ng-template pTemplate="caption">
-          <button pButton label="Agregar fila" icon="pi pi-plus" (click)="agregarRegistroIngreso()"
-            class="m-2"></button>
-        </ng-template>
+      <ng-template pTemplate="header"> <span class="text-primary font-bold text-xl">MATERIAL DE INGRESO</span></ng-template>
 
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th># </th>
-            <th>Peso Kilos</th>
-            <th>Balanza</th>
-            <th>...</th>
-          </tr>
-        </ng-template>
+      <div class="field col-12 lg:col-8 md:col-12 sm:col-12">
+        <label for="articulo">Seleccione Articulo de Ingreso</label>
 
-        <ng-template pTemplate="body" let-product let-i="rowIndex">
-          <tr>
-            <td> {{ i+1 }} </td>
-            <td [pEditableColumn]="product.pesoKilos" pEditableColumnField="pesoKilos">
-              <p-cellEditor>
+        <div class="ui-inputgroup">
 
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="product.pesoKilos" />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.pesoKilos | number }}
-                </ng-template>
+          <p-dropdown [options]="lstArticuloIngreso" placeholder="-Seleccione-" [filter]="true" filterBy="articulo"
+            styleClass="max-w-min md:max-w-max " optionValue="codArticulo" optionLabel="articulo"
+            (onChange)="seleccionarArticuloIngreso($event.value)">
+          </p-dropdown>
 
-              </p-cellEditor>
-            </td>
-
-            <td [pEditableColumn]="product.balanza" pEditableColumnField="balanza">
-
-              <p-cellEditor>
-
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="product.balanza" />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.balanza | number }}
-                </ng-template>
-
-              </p-cellEditor>
-
-            </td>
-
-            <td> <p-button icon="pi pi-times" styleClass="p-button-danger" pTooltip="Eliminar"
-                (onClick)="eliminarRegistroIngreso(product.uuid)"></p-button> </td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="footer">
-          <tr>
-            <td colspan="1">Totales</td>
-            <td colspan="1" class="text-left">{{ totalIngresosKilos | number }}</td>
-            <td colspan="2"></td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-
-    </div>
-
-
-  </p-panel>
-
-
-  <!-- Datos material de salida -->
-
-  <p-panel class="col-12 lg:col-12 md:col-12 sm:col-12 mt-5">
-
-    <ng-template pTemplate="header"> <span class="text-orange-500 font-bold text-xl">MATERIAL DE
-        SALIDA</span></ng-template>
-
-    <div class="field col-12 lg:col-8 md:col-12 sm:col-12">
-      <label for="articuloS">Seleccione Articulo de Salida</label>
-
-      <div>
-
-        <p-dropdown id="articuloS" [options]="lstArticuloSalida" [filter]="true" filterBy="articulo"
-          placeholder="-Seleccione-" styleClass="max-w-min md:max-w-max " optionValue="codArticulo"
-          optionLabel="articulo" (onChange)="seleccionarArticuloSalida($event.value)">
-        </p-dropdown>
+        </div>
 
       </div>
 
-    </div>
 
-    <div class="field col-12 lg:col-12 md:col-12 sm:col-12">
-      <p-table [tableStyle]="{'min-width': '50rem'}" [value]="lstSalida" [tableStyle]="getTableStyleSalida()">
 
-        <ng-template pTemplate="caption">
+      <div class="field col-12 lg:col-12 md:col-12 sm:col-12">
 
-          <button pButton label="Agregar fila" icon="pi pi-plus" (click)="agregarRegistroSalida()" class="m-2"></button>
-          <br>
-          <div class="flex flex-column gap-2">
-            <p-inputNumber [(ngModel)]="cantHjsSalida" prefix="HJS " [min]="0"
-              aria-describedby="hojas-help"></p-inputNumber>
-            <small id="hojas-help">Cambie la cantidad de hojas solo si es necesario.</small>
+        <p-table [tableStyle]="{'min-width': '50rem'}" [value]="lstIngreso" [tableStyle]="getTableStyle()">
+
+          <ng-template pTemplate="caption">
+            <button pButton label="Agregar fila" type="button" icon="pi pi-plus" (click)="agregarRegistroIngreso()"
+              class="m-2"></button>
+          </ng-template>
+
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th># </th>
+              <th>Peso Kilos</th>
+              <th>Balanza</th>
+              <th>...</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-product let-i="rowIndex">
+            <tr>
+              <td> {{ i+1 }} </td>
+              <td [pEditableColumn]="product.pesoKilos" pEditableColumnField="pesoKilos">
+                <p-cellEditor>
+
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="product.pesoKilos" [ngModelOptions]="{standalone: true}"/>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.pesoKilos | number }}
+                  </ng-template>
+
+                </p-cellEditor>
+              </td>
+
+              <td [pEditableColumn]="product.balanza" pEditableColumnField="balanza">
+
+                <p-cellEditor>
+
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="product.balanza" [ngModelOptions]="{standalone: true}" />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.balanza | number }}
+                  </ng-template>
+
+                </p-cellEditor>
+
+              </td>
+
+              <td> <p-button icon="pi pi-times" styleClass="p-button-danger" pTooltip="Eliminar"
+                  (onClick)="eliminarRegistroIngreso(product.uuid)"></p-button> </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr>
+              <td colspan="1">Totales</td>
+              <td colspan="1" class="text-left">{{ totalIngresosKilos | number }}</td>
+              <td colspan="1" class="text-left">{{ totalBalanza | number }}</td>
+              <td colspan="1"></td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+
+      </div>
+
+
+    </p-panel>
+
+
+    <!-- Datos material de salida -->
+
+    <p-panel class="col-12 lg:col-12 md:col-12 sm:col-12 mt-5">
+
+      <ng-template pTemplate="header"> <span class="text-orange-500 font-bold text-xl">MATERIAL DE SALIDA</span></ng-template>
+
+      <div class="field col-12 lg:col-8 md:col-12 sm:col-12">
+        <label for="articuloS">Seleccione Articulo de Salida</label>
+
+        <div>
+
+          <p-dropdown id="articuloS" [options]="lstArticuloSalida" [filter]="true" filterBy="articulo"
+            placeholder="-Seleccione-" styleClass="max-w-min md:max-w-max " optionValue="codArticulo"
+            optionLabel="articulo" (onChange)="seleccionarArticuloSalida($event.value)">
+          </p-dropdown>
+
+          <div class="flex flex-column gap-2 mt-3">
+            <label class="text-2xl font-bold">UTM: {{ articuloSalida?.utm | number }}</label>
           </div>
 
-        </ng-template>
+          <div class="flex flex-column gap-2 mt-3">
+            <label class="text-2xl font-bold">Cantidad Estimada Resmas: {{ cantidadEstimadaResma | number }}</label>
+          </div>
+        </div>
 
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Numero Paleta </th>
-            <th>Peso Resma</th>
-            <th>Peso Paleta</th>
-            <th>Peso Material</th>
-            <th>Cantidad Resma</th>
-            <th>Cantidad Hojas</th>
-            <th>...</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product let-i="rowIndex">
-          <tr>
-            <td>{{ i+1 }}</td>
+      </div>
 
-            <td [pEditableColumn]="product.pesoReama" pEditableColumnField="pesoResma">
+      <div class="field col-12 lg:col-12 md:col-12 sm:col-12">
 
-              <p-cellEditor>
+        <p-table [tableStyle]="{'min-width': '50rem'}" [value]="lstSalida" [tableStyle]="getTableStyleSalida()">
 
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="product.pesoResma" />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.pesoResma | number }}
-                </ng-template>
+          <ng-template pTemplate="caption">
 
-              </p-cellEditor>
+            <button pButton label="Agregar fila" type="button" icon="pi pi-plus" (click)="agregarRegistroSalida()"
+              class="m-2"></button>
+            <br>
+            <div class="flex flex-column gap-2">
+              <p-inputNumber [(ngModel)]="cantHjsSalida" prefix="HJS " [min]="1" [ngModelOptions]="{standalone: true}" aria-describedby="hojas-help"></p-inputNumber>
+              <small id="hojas-help">Cambie la cantidad de hojas solo si es necesario.</small>
 
-            </td>
-            <td [pEditableColumn]="product.pesoPaleta" pEditableColumnField="pesoPaleta">
+            </div>
 
-              <p-cellEditor>
+          </ng-template>
 
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="product.pesoPaleta" />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.pesoPaleta | number }}
-                </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Numero Paleta </th>
+              <th>Peso Resma</th>
+              <th>Peso Paleta</th>
+              <th>Peso Material</th>
+              <th>Cantidad Resma</th>
+              <th>Cantidad Hojas</th>
+              <th>...</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-product let-i="rowIndex">
+            <tr>
+              <td>{{ i+1 }}</td>
 
-              </p-cellEditor>
+              <td [pEditableColumn]="product.pesoReama" pEditableColumnField="pesoResma">
 
-            </td>
+                <p-cellEditor>
 
-            <td>
-              {{ product.pesoResma - product.pesoPaleta | number }}
-            </td>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="product.pesoResma" [ngModelOptions]="{standalone: true}"/>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.pesoResma | number }}
+                  </ng-template>
 
-            <td [pEditableColumn]="product.cantidadResma" pEditableColumnField="cantidadResma">
+                </p-cellEditor>
 
-              <p-cellEditor>
+              </td>
+              <td [pEditableColumn]="product.pesoPaleta" pEditableColumnField="pesoPaleta">
 
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="product.cantidadResma" />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.cantidadResma }}
-                </ng-template>
+                <p-cellEditor>
 
-              </p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="product.pesoPaleta" [ngModelOptions]="{standalone: true}"/>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.pesoPaleta | number }}
+                  </ng-template>
 
-            </td>
-            <td [pEditableColumn]="product.cantidadHojas" pEditableColumnField="cantidadHojas">
+                </p-cellEditor>
 
-              <p-cellEditor>
+              </td>
 
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="product.cantidadHojas" />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.cantidadHojas }}
-                </ng-template>
+              <td>
+                {{ product.pesoResma - product.pesoPaleta | number }}
+              </td>
 
-              </p-cellEditor>
+              <td [pEditableColumn]="product.cantidadResma" pEditableColumnField="cantidadResma">
 
-            </td>
+                <p-cellEditor>
 
-            <td> <p-button icon="pi pi-times" pTooltip="Eliminar" styleClass="p-button-danger"
-                (onClick)="eliminarRegistroSalida(product.uuid)"></p-button> </td>
-          </tr>
-        </ng-template>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="product.cantidadResma" [ngModelOptions]="{standalone: true}"/>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.cantidadResma }}
+                  </ng-template>
 
-        <ng-template pTemplate="footer">
-          <tr>
-            <td colspan="1">Totales</td>
-            <td colspan="1" class="text-center">{{ totalPesoResma | number }}</td>
-            <td colspan="1" class="text-center">{{ totalPesoPaleta | number }}</td>
-            <td colspan="1" class="text-center">{{ totalPesoMaterial | number }}</td>
-            <td colspan="1" class="text-center">{{ totalCantidadResma | number }}</td>
-            <td colspan="1" class="text-center">{{ totalCantidadHojas | number }}</td>
-            <td colspan="1" class="text-center"></td>
-          </tr>
-          <tr>
-            <td colspan="1">Total</td>
-            <td colspan="6" class="text-center">{{ totalDifCantResmaCantHojas | number }}</td>
-          </tr>
-        </ng-template>
+                </p-cellEditor>
 
+              </td>
+              <td [pEditableColumn]="product.cantidadHojas" pEditableColumnField="cantidadHojas">
 
-      </p-table>
+                <p-cellEditor>
 
-    </div>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="product.cantidadHojas" [ngModelOptions]="{standalone: true}"/>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.cantidadHojas }}
+                  </ng-template>
 
-  </p-panel>
+                </p-cellEditor>
 
-  <!-- Datos merma -->
+              </td>
 
-  <p-panel class="col-12 lg:col-12 md:col-12 sm:col-12 mt-5">
+              <td> <p-button icon="pi pi-times" pTooltip="Eliminar" styleClass="p-button-danger"
+                  (onClick)="eliminarRegistroSalida(product.uuid)"></p-button> </td>
+            </tr>
+          </ng-template>
 
-    <ng-template pTemplate="header"> <span class="text-purple-800 font-bold text-xl">MERMA EN PRODUCCION</span></ng-template>
-
-    <div class="field col-12 lg:col-12 md:col-12 sm:col-12">
-      <p-table [tableStyle]="{'min-width': '50rem'}" [value]="lstMerma">
-        <ng-template pTemplate="caption">
-          <button pButton label="Agregar fila" icon="pi pi-plus" (click)="agregarRegistroMerma()" class="m-2"></button>
-          <br>
-          {{ validarListMerma }}
-        </ng-template>
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th>#</th>
-            <th>Codigo Merma</th>
-            <th>Descripcion</th>
-            <th>Peso</th>
-            <th>...</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-product let-i="rowIndex">
-          <tr>
-            <td>{{ i+1 }}</td>
-            <td>{{ product.datoArt?.codArticulo }}</td>
-
-            <td [pEditableColumn]="product.datoArt" pEditableColumnField="datoArt">
-
-              <p-cellEditor>
-
-                <ng-template pTemplate="input">
-                  <p-autoComplete appendTo="body" [(ngModel)]="product.datoArt" [suggestions]="lstArticuloMermaFilter"
-                    (onSelect)="onSelectMerma(product)" placeholder="Descripcion Articulo"
-                    (completeMethod)="filtroMerma($event)" field="datoArt"></p-autoComplete>
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.datoArt?.datoArt }}
-                </ng-template>
-
-              </p-cellEditor>
-
-            </td>
-
-            <td [pEditableColumn]="product.peso" pEditableColumnField="peso">
-
-              <p-cellEditor>
-
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="product.peso" />
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{ product.peso | number }}
-                </ng-template>
-
-              </p-cellEditor>
-
-            </td>
-
-            <td>
-              <p-button icon="pi pi-times" pTooltip="Eliminar" styleClass="p-button-danger"
-                (onClick)="eliminarRegistroMerma(product.uuid)"></p-button>
-            </td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="footer">
-          <tr>
-            <td colspan="1">Totales</td>
-            <td colspan="3" class="text-right">{{ totalMerma | number }}</td>
-            <td colspan="1" class="text-right"> </td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-
-    </div>
-
-  </p-panel>
+          <ng-template pTemplate="footer">
+            <tr>
+              <td colspan="1">Totales</td>
+              <td colspan="1" class="text-left">{{ totalPesoResma | number }}</td>
+              <td colspan="1" class="text-left">{{ totalPesoPaleta | number }}</td>
+              <td colspan="1" class="text-left">{{ totalPesoMaterial | number }}</td>
+              <td colspan="1" class="text-left">{{ totalCantidadResma | number }}</td>
+              <td colspan="1" class="text-left">{{ totalCantidadHojas | number }}</td>
+              <td colspan="1" class="text-left"></td>
+            </tr>
+            <tr>
+              <td colspan="1">Total</td>
+              <td colspan="6" class="text-center">{{ totalDifCantResmaCantHojas | number }}</td>
+            </tr>
+          </ng-template>
 
 
+        </p-table>
+
+      </div>
+
+    </p-panel>
+
+    <!-- Datos merma -->
+
+    <p-panel class="col-12 lg:col-12 md:col-12 sm:col-12 mt-5">
+
+      <ng-template pTemplate="header"> <span class="text-purple-800 font-bold text-xl">MERMA EN PRODUCCION</span></ng-template>
+
+      <div class="field col-12 lg:col-12 md:col-12 sm:col-12">
+
+        <p-table [tableStyle]="{'min-width': '50rem'}" [value]="lstMerma">
+          <ng-template pTemplate="caption">
+            <button pButton label="Agregar fila"  type="button"  icon="pi pi-plus" (click)="agregarRegistroMerma()"
+              class="m-2"></button>
+            <br>
+
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th>#</th>
+              <th>Codigo Merma</th>
+              <th>Descripcion</th>
+              <th>Peso</th>
+              <th>...</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-product let-i="rowIndex">
+            <tr>
+              <td>{{ i+1 }}</td>
+              <td>{{ product.datoArt?.codArticulo }}</td>
+
+              <td [pEditableColumn]="product.datoArt" pEditableColumnField="datoArt">
+
+                <p-cellEditor>
+
+                  <ng-template pTemplate="input">
+                    <p-autoComplete appendTo="body" [(ngModel)]="product.datoArt" [suggestions]="lstArticuloMermaFilter"
+                      (onSelect)="onSelectMerma(product)" placeholder="Descripcion Articulo"
+                      (completeMethod)="filtroMerma($event)" field="datoArt" [ngModelOptions]="{standalone: true}"></p-autoComplete>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.datoArt?.datoArt }}
+                  </ng-template>
+
+                </p-cellEditor>
+
+              </td>
+
+              <td [pEditableColumn]="product.peso" pEditableColumnField="peso">
+
+                <p-cellEditor>
+
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="product.peso" [ngModelOptions]="{standalone: true}"/>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.peso | number }}
+                  </ng-template>
+
+                </p-cellEditor>
+
+              </td>
+
+              <td>
+                <p-button icon="pi pi-times" pTooltip="Eliminar" styleClass="p-button-danger"
+                  (onClick)="eliminarRegistroMerma(product.uuid)"></p-button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr>
+              <td colspan="3">Totales</td>
+              <td colspan="1" class="text-left">{{ totalMerma | number }}</td>
+              <td colspan="1" class="text-left"> </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+
+      </div>
+
+    </p-panel>
+
+    <p-toolbar class="col-12 lg:col-12 md:col-12 sm:col-12">
+
+      <div class="p-toolbar-group-start justify-content-evenly">
+        <label class="font-bold text-xl"> Diferencia de Producción Kilos = {{ calcularDifProduccion | number }}</label>
+      </div>
+
+      <div class="p-toolbar-group-start justify-content-evenly">
+        <label class="font-bold text-xl"> Diferencia de Resma = {{ calcularDifResma | number }}</label>
+      </div>
+
+      <div class="p-toolbar-group-end">
+
+        <button pButton type="submit" icon="pi pi-arrow-right" class="p-button-success" label="Siguiente" [disabled]="!formLoteProduccion.valid || !validarListas"></button>
+
+      </div>
+
+    </p-toolbar>
+
+  </form>
 </div>
 
 <!-- DATOS DE PREVIEW -->
@@ -422,7 +437,7 @@
   [draggable]="false" [resizable]="false" [modal]="true">
 
   <div class="formgrid grid">
-    {{ lstSalida.length }}
+
     <div class="col-12 lg:col-12 md:col-12 sm:col-12 mb-5">
       <label class=" font-bold text-2xl">Lote: {{ registro.numLote }}/{{ registro.anio}} </label>
     </div>
@@ -453,7 +468,7 @@
     </div>
 
     <div class="col-12 lg:col-12 md:col-12 sm:col-12 mb-5">
-      <p-divider align="center" >
+      <p-divider align="center">
         <span class="p-tag">Datos Generales</span>
       </p-divider>
     </div>
@@ -469,7 +484,7 @@
         <label class="font-bold text-center text-orange-500">{{ articuloIngreso?.articulo }}</label>
       </div>
 
-      <p-table [value]="lstIngreso" styleClass="p-datatable-striped mt-5" >
+      <p-table [value]="lstIngreso" styleClass="p-datatable-striped mt-5">
 
         <ng-template pTemplate="header" let-columns>
           <tr>
@@ -494,7 +509,8 @@
           <tr>
             <td colspan="1">Totales</td>
             <td colspan="1" class="text-left">{{ totalIngresosKilos | number }}</td>
-            <td colspan="2"></td>
+            <td colspan="1" class="text-left">{{ totalBalanza | number}}</td>
+            <td colspan="1"></td>
           </tr>
         </ng-template>
 
@@ -512,6 +528,13 @@
       </div>
       <div class="align-content-center">
         <label class="font-bold text-center text-orange-500">{{ articuloSalida?.articulo }}</label>
+      </div>
+      <div class="flex flex-column gap-2 mt-3">
+        <label class="text-2xl font-bold">UTM: {{ articuloSalida?.utm | number }}</label>
+      </div>
+
+      <div class="flex flex-column gap-2 mt-3">
+        <label class="text-2xl font-bold">Cantidad Estimada Resmas: {{ cantidadEstimadaResma | number }}</label>
       </div>
 
       <p-table [value]="lstSalida" styleClass="p-datatable-striped mt-5">
@@ -557,12 +580,12 @@
         <ng-template pTemplate="footer">
           <tr>
             <td colspan="1">Totales</td>
-            <td colspan="1" class="text-center">{{ totalPesoResma | number }}</td>
-            <td colspan="1" class="text-center">{{ totalPesoPaleta | number }}</td>
-            <td colspan="1" class="text-center">{{ totalPesoMaterial | number }}</td>
-            <td colspan="1" class="text-center">{{ totalCantidadResma | number }}</td>
-            <td colspan="1" class="text-center">{{ totalCantidadHojas | number }}</td>
-            <td colspan="1" class="text-center"></td>
+            <td colspan="1" class="text-left">{{ totalPesoResma | number }}</td>
+            <td colspan="1" class="text-left">{{ totalPesoPaleta | number }}</td>
+            <td colspan="1" class="text-left">{{ totalPesoMaterial | number }}</td>
+            <td colspan="1" class="text-left">{{ totalCantidadResma | number }}</td>
+            <td colspan="1" class="text-left">{{ totalCantidadHojas | number }}</td>
+            <td colspan="1" class="text-left"></td>
           </tr>
           <tr>
             <td colspan="1">Total</td>
@@ -594,7 +617,7 @@
             <td>{{ product.codArticulo }}</td>
 
             <td>
-                {{ product.descripcion }}
+              {{ product.descripcion }}
             </td>
 
             <td>
@@ -618,15 +641,19 @@
 
 
     <div class="col-12 lg:col-12 md:col-12 sm:col-12 mb-5">
-      <p-divider align="center" >
+      <p-divider align="center">
         <span class="p-tag">DIFERENCIA DE PRODUCCION</span>
       </p-divider>
     </div>
 
     <div class="col-12 lg:col-12 md:col-12 sm:col-12">
       <div class="align-content-center">
-        <label class="font-bold text-3xl">DIFERENCIA DE PRODUCCION: </label>
+        <label class="font-bold text-3xl">DIFERENCIA DE PRODUCCION KILOS: </label>
         <label class="font-bold text-center text-orange-500 text-3xl">{{ calcularDifProduccion | number }}</label>
+      </div>
+      <div class="align-content-center">
+        <label class="font-bold text-3xl">DIFERENCIA DE RESMA: </label>
+        <label class="font-bold text-center text-orange-500 text-3xl">{{ calcularDifResma | number }}</label>
       </div>
     </div>
 
@@ -638,7 +665,7 @@
     <div class="col-12 lg:col-12 md:col-12 sm:col-12 mt-3 flex justify-content-center flex-wrap ">
 
       <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
-      <p-button label="Guardar" styleClass="p-button-success"  icon="pi pi-save" (click)="confirmarLoteProduccion()"></p-button>
+      <p-button label="Guardar" styleClass="p-button-success" icon="pi pi-save"  (click)="confirmarLoteProduccion()"  ></p-button>
 
     </div>
 
