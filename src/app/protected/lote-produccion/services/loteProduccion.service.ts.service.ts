@@ -160,7 +160,7 @@ export class LoteProduccionService {
     const url = `${this.baseUrl}/loteProduccion/registroMerma`;
 
 
-   return this.http.post<Merma[]>(url,  regMerma  )
+   return this.http.post<Merma[]>(url,  regMerma)
       .pipe(
         tap(resp => {
           if (!resp) {

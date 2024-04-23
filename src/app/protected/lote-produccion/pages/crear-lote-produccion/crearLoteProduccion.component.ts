@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { concatMap } from 'rxjs/internal/operators/concatMap';
 import { LoginService } from 'src/app/auth/services/login.service';
@@ -293,7 +293,7 @@ export class CrearLoteProduccionComponent implements OnInit {
       catchError((err) => {
         console.error(err);
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error durante el proceso de registro' });
-        return of(null); // Continúa la ejecución incluso después de un error
+        return throwError(() => new Error('Proceso de registro fallido'));
       })
     ).subscribe({
       complete: () => {
