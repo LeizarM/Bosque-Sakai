@@ -356,9 +356,25 @@
           <ng-template pTemplate="body" let-product let-i="rowIndex">
             <tr>
               <td>{{ i+1 }}</td>
-              <td>{{ product.datoArt?.codArticulo }}</td>
+              <td [pEditableColumn]="product.codArticulo" pEditableColumnField="codArticulo">
 
-              <td [pEditableColumn]="product.datoArt" pEditableColumnField="datoArt">
+                <p-cellEditor>
+
+                  <ng-template pTemplate="input">
+                    <p-autoComplete appendTo="body" [(ngModel)]="product.datoArt" [suggestions]="lstArticuloMermaFilter"
+                      (onSelect)="onSelectMerma(product)" placeholder="Codigo Articulo"
+                      (completeMethod)="filtroMerma($event)" field="codArticulo" [ngModelOptions]="{standalone: true}"></p-autoComplete>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{ product.datoArt?.codArticulo }}
+                  </ng-template>
+
+                </p-cellEditor>
+
+
+              </td>
+
+              <!-- <td [pEditableColumn]="product.datoArt" pEditableColumnField="datoArt">
 
                 <p-cellEditor>
 
@@ -373,6 +389,9 @@
 
                 </p-cellEditor>
 
+              </td> -->
+              <td>
+                {{ product.datoArt?.datoArt }}
               </td>
 
               <td [pEditableColumn]="product.peso" pEditableColumnField="peso">

@@ -374,8 +374,8 @@ export class CrearLoteProduccionComponent implements OnInit {
 
     let query = event.query;
     this.lstArticuloMermaFilter = this.lstArticuloMerma.filter(item => {
-      const nombre = item.datoArt?.toLowerCase();
-      return nombre?.includes(query);
+      const codigoArticulo = item.codArticulo?.toLowerCase();
+      return codigoArticulo?.includes(query);
     });
 
   }
@@ -667,7 +667,7 @@ export class CrearLoteProduccionComponent implements OnInit {
 
 
   get cantidadEstimadaResma(): number {
-    return  this.totalIngresosKilos / this.articuloSalida?.utm! || 1
+    return   ( Number(this.totalBalanza  - this.totalMerma ) /  1000 ) * Number(this.articuloSalida?.utm!);
   }
 
   get calcularDifResma(): number {
