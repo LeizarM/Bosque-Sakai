@@ -4,10 +4,13 @@ import { Observable } from 'rxjs/internal/Observable';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { DetalleResmado } from '../../interfaces/DetalleResmado';
+import { GrupoProduccion } from '../../interfaces/GrupoProduccion';
 import { LoteProduccion } from '../../interfaces/LoteProduccion';
 import { MaterialIngreso } from '../../interfaces/MaterialIngreso';
 import { MaterialSalida } from '../../interfaces/MaterialSalida';
 import { Merma } from '../../interfaces/Merma';
+import { Resmado } from '../../interfaces/Resmado';
 
 @Injectable({
   providedIn: 'root'
@@ -173,5 +176,78 @@ export class LoteProduccionService {
 
   }
 
+  /**
+   * ===============================================
+   * ============= PARA EL RESMADO =================
+   * ===============================================
+   */
+
+  /**
+   * Para obtener los grupos de resmado por maquina
+   * @returns
+   */
+  obtenerGrupoProduccion(): Observable<GrupoProduccion[]>{
+
+    const url = `${this.baseUrl}/resmado/grupoProduccion`;
+    const data = { };
+    return this.http.post<GrupoProduccion[]>(url, data).pipe(
+      catchError((e) => {
+        if (e.status === 401) {
+          return throwError(() => e);
+        }
+        console.error(e.error?.error);
+        return throwError(() => e);
+      })
+    );
+
+  }
+
+
+  /**
+   * Metodo para registrar el resmado
+   * @param regResmado
+   * @returns
+   */
+  registrarResmado( regResmado : Resmado  ): Observable<Resmado> {
+
+    const url = `${this.baseUrl}/resmado/registroResmado`;
+
+
+    return this.http.post<Resmado>(url, regResmado)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+  }
+
+
+
+  /**
+   * Para registrar el detalle de resmado
+   * @param regDetResmado
+   * @returns
+   */
+  registroDetalleResmado( regDetResmado : DetalleResmado[] ): Observable<DetalleResmado[]> {
+
+    const url = `${this.baseUrl}/resmado/registroDetResmado`;
+
+
+   return this.http.post<Merma[]>(url,  regDetResmado)
+      .pipe(
+        tap(resp => {
+          if (!resp) {
+            console.log(resp);
+          }
+        }),
+        map(resp => resp),
+        catchError(err => throwError(()=> err))
+      );
+
+  }
 
 }

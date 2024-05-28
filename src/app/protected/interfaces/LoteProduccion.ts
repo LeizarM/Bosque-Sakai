@@ -1,5 +1,6 @@
 export interface LoteProduccion {
 
+
   idLp?:                    number;
   numLote?:                 number;
   anio?:                    number;
