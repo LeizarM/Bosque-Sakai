@@ -6,6 +6,7 @@ import { FichaTrabajadorComponent } from './ficha-trabajador/pages/ficha-trabaja
 import { LayoutComponent } from "./layout/layout.component";
 import { CrearLoteProduccionComponent } from './lote-produccion/pages/crear-lote-produccion/crearLoteProduccion.component';
 import { ResmadoComponent } from './lote-produccion/pages/resmado/resmado.component';
+import { PollaMainComponent } from './polla/polla-main/polla-main.component';
 import { AutorizacionComponent } from './precios/pages/autorizacion/autorizacion.component';
 import { FamiliasComponent } from './precios/pages/familias/familias.component';
 import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
@@ -59,6 +60,10 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
       {
         path: 'tprod_loteProduccion/Resmado',
         component: ResmadoComponent
+      },
+      {
+        path: 'tpolla_Polla/Polla',
+        component: PollaMainComponent
       },
       {
         path: '**',
