@@ -4,5 +4,7 @@ export interface Resmado {
   codEmpleado?: number;
   fecha?:       Date;
   total?:       number;
+  hraInicio?:   string;
+  hraFin?:      string;
   audUsuario?:  number;
 }

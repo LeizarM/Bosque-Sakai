@@ -34,8 +34,34 @@
         appendTo="body" placeholder="Seleccione Grupo">
       </p-dropdown>
 
+
     </div>
 
+    <div class="field col-12 lg:col-6 md:col-6 sm:col-12">
+      <label for="horaInicio">Hora Inicio: </label>
+      <p-inputMask mask="99:99" id="horaInicio" type="text" formControlName="hraInicio" styleClass="min-w-full"
+        placeholder="00:00">
+      </p-inputMask>
+      <div *ngIf="formResmado.get('hraInicio')?.touched && formResmado.get('hraInicio')?.invalid"
+        class="error-message">
+
+        <span class="text-red-500">La hora de inicio es obligatoria.</span>
+
+      </div>
+    </div>
+
+    <div class="field col-12 lg:col-6 md:col-6 sm:col-12">
+      <label for="horaFin">Hora Fin: </label>
+      <p-inputMask mask="99:99" id="horaFin" type="text" formControlName="hraFin" styleClass="min-w-full"
+        placeholder="00:00">
+      </p-inputMask>
+      <div *ngIf="formResmado.get('hraFin')?.touched && formResmado.get('hraFin')?.invalid"
+        class="error-message">
+
+        <span class="text-red-500">La hora de fin es obligatoria.</span>
+
+      </div>
+    </div>
 
     <p-messages [(value)]="messages" [enableService]="false" [closable]="false"></p-messages>
 

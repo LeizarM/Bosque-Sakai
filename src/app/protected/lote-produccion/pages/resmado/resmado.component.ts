@@ -104,6 +104,8 @@ export class ResmadoComponent implements OnInit {
       fecha: new FormControl(new Date(), [Validators.required]),
       codEmpleado: new FormControl(this.getCodEmpleado, [Validators.required]),
       total: new FormControl(1, [Validators.required, Validators.min(1)]),
+      hraInicio: new FormControl('',[Validators.required, Validators.minLength(1)]),
+      hraFin: new FormControl('',[Validators.required, Validators.minLength(1)]),
       detalles: this.fb.array([],[Validators.required, Validators.minLength(1)])
     });
 
@@ -221,7 +223,7 @@ export class ResmadoComponent implements OnInit {
        return;
     }
 
-    const  {  idGrupo, fecha, total, detalles  } = this.formResmado.value;
+    const  {  idGrupo, fecha, total, hraInicio, hraFin ,detalles  } = this.formResmado.value;
 
     const regResmado : Resmado = {
 
@@ -229,6 +231,8 @@ export class ResmadoComponent implements OnInit {
       fecha,
       codEmpleado : this.getCodEmpleado(),
       total,
+      hraInicio,
+      hraFin,
       audUsuario : this.getUser()
 
     };
