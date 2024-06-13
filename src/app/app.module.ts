@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TokenInterceptorInterceptor } from './auth/interceptor/token-interceptor.interceptor';
@@ -17,7 +16,7 @@ import { TokenInterceptorInterceptor } from './auth/interceptor/token-intercepto
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-    IonicModule.forRoot(),
+    
   ],
   providers: [
     {
@@ -25,10 +24,7 @@ import { TokenInterceptorInterceptor } from './auth/interceptor/token-intercepto
       useClass: TokenInterceptorInterceptor,
       multi: true
     },
-    {
-      provide: RouteReuseStrategy,
-      useClass: IonicRouteStrategy
-    }
+   
 
   ],
   bootstrap: [
