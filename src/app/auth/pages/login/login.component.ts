@@ -16,11 +16,12 @@ import { LoginService } from '../../services/login.service';
 export class LoginComponent {
 
   hayError : boolean = false;
+  isLoading: boolean = false; // Bandera de carga
 
   //Objeto formulario
   frmLogin: FormGroup = this.fb.group({
-    usuario: [ , [ Validators.required, Validators.minLength(1) ]   ],
-    password2: [ , [ Validators.required, Validators.minLength(1)] ],
+    usuario: [ , [ Validators.required, Validators.minLength(3) ]   ],
+    password2: [ , [ Validators.required, Validators.minLength(3)] ],
   })
 
 
@@ -47,26 +48,35 @@ export class LoginComponent {
       this.frmLogin.markAllAsTouched();
       return;
     }
-    const { usuario, password2 } = this.frmLogin.value; //desestructuracion del objecto form
 
 
-    this.loginService.verificarLogin(usuario, password2).subscribe({
-      next: (resp) => {
+    this.isLoading = true; // Activar el indicador de carga
+    setTimeout(() => {
 
-        if (resp != null && resp != undefined) {
+      const { usuario, password2 } = this.frmLogin.value; //desestructuracion del objecto form
 
-          if (resp.token != null && resp.token != undefined) this.router.navigate(["./bosque/dashboard"]);
 
-        } else {
-          this.hayError = true;
-        }
-      },
-      error: (err) => {
-        if (err.status === 400) {
-          console.log("error de credenciales");
-        }
-      },
-    });
+      this.loginService.verificarLogin(usuario, password2).subscribe({
+        next: (resp) => {
+
+          if (resp != null && resp != undefined && resp.codUsuario! > 0  ) {
+            this.hayError = false;
+            if (resp.token != null && resp.token != undefined) this.router.navigate(["./bosque/dashboard"]);
+
+          } else {
+            this.hayError = true;
+          }
+          this.isLoading = false; // Desactivar el indicador de carga
+        },
+        error: (err) => {
+          this.isLoading = false; // Desactivar el indicador de carga en caso de error
+          if (err.status === 400) {
+            console.log("error de credenciales");
+          }
+        },
+      });
+    }, 1500);
+
 
   }
 

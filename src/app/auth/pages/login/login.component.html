@@ -1,40 +1,47 @@
 <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
-  <div class="flex flex-column align-items-center justify-content-center">
-
-      <div style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
-          <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
-
-            <p-message severity="error"
-              text="Usuario o contraseña invalidos, por favor verifique los datos ingresados"
-              styleClass="p-mr-2"
-              *ngIf="hayError"
-              showTransitionOptions=200ms>
-            </p-message>
-              <div class="text-center mb-5">
-
-                  <div class="text-900 text-3xl font-medium mb-3">¡Bienvenido(a)!</div>
-                  <span class="text-600 font-medium">Acceso</span>
-              </div>
-              <form autocomplete="off" [formGroup]="frmLogin" (ngSubmit)="verficarLogin()">
-                <div>
-                    <label for="usuario" class="block text-900 text-xl font-medium mb-2">Usuario</label>
-                    <input id="usuario" type="text" formControlName="usuario" placeholder="Usuario" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem" required >
-                    <p-message severity="error" text="* Usuario es requerido" *ngIf="esValido('usuario')"></p-message>
-
-                    <label for="password2" class="block text-900 font-medium text-xl mb-2">Contraseña</label>
-                    <p-password id="password2" formControlName="password2" placeholder="Contraseña"  [feedback]="false" styleClass="mb-5"  inputStyleClass="w-full p-3 md:w-30rem" required/>
-                    <p-message severity="error" text="* Contraseña es requerida" *ngIf="esValido('password2')"></p-message>
-
-                    <div class="flex align-items-center justify-content-between mb-5 gap-5">
-                      <div class="flex align-items-center">
-
-                      </div>
-                  </div>
-
-                    <button pButton pRipple label="Iniciar Sesión" class="w-full p-3 text-xl"></button>
-                </div>
-            </form>
+  <div class="flex flex-column align-items-center justify-content-center w-full">
+    <div class="w-full sm:w-26rem md:w-30rem">
+      <div class="surface-card p-4 sm:p-6 shadow-8 border-round-xl">
+        <p-message severity="error" text="Usuario o contraseña inválidos, por favor verifique los datos ingresados"
+          styleClass="mb-4 w-full" *ngIf="hayError">
+        </p-message>
+        <div class="text-center mb-6">
+          <img src="assets/images/bosque.svg" alt="Logo" class="mb-4" width="100">
+          <div class="text-900 text-3xl font-bold mb-2">¡Bienvenido(a)!</div>
+          <span class="text-600 font-medium">Inicia sesión para continuar</span>
+        </div>
+        <form autocomplete="off" [formGroup]="frmLogin" (ngSubmit)="verficarLogin()">
+          <div class="mb-4">
+            <label for="usuario" class="block text-900 font-medium mb-2">Usuario</label>
+            <span class="p-input-icon-left w-full">
+              <i class="pi pi-user"></i>
+              <input id="usuario" type="text" formControlName="usuario" placeholder="Ingresa tu usuario" pInputText
+                class="w-full" required>
+            </span>
+            <small class="p-error block mt-1" *ngIf="esValido('usuario')">Usuario es requerido</small>
           </div>
+          <div class="mb-4">
+            <label for="password2" class="block text-900 font-medium mb-2">Contraseña</label>
+
+            <p-password id="password2" formControlName="password2" placeholder="Ingresa tu contraseña" [feedback]="false"
+              styleClass="w-full"   required [style]="{'width':'100%'}" [inputStyle]="{'width':'100%', 'padding-right': '2.5rem'}">
+              <ng-template pTemplate="header">
+                <h6>
+                  <i class="pi pi-user"></i>
+                  Ingresa tu contraseña
+                </h6>
+              </ng-template>
+            </p-password>
+            <small class="p-error block mt-1" *ngIf="esValido('password2')">Contraseña es requerida</small>
+          </div>
+
+          <button pButton pRipple type="submit" [label]="isLoading ? 'Autenticando...' : 'Iniciar Sesión'"
+            class="w-full p-3" [disabled]="isLoading || frmLogin.invalid">
+            <p-progressSpinner *ngIf="isLoading" [style]="{'width': '20px', 'height': '20px'}"
+              strokeWidth="4" fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+          </button>
+        </form>
       </div>
+    </div>
   </div>
 </div>

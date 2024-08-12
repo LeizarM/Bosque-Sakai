@@ -22,6 +22,8 @@ export interface LoteProduccion {
   pesoBalanzaTotal?:        number;
   estado?:                  number;
   obs?:                     string;
+  numCorte?:                number;
+  anioCorte?:               number;
   audUsuario?:              number;
 
   codArticulo?:             string;
