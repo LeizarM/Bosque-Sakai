@@ -7,6 +7,7 @@ import { FichaTrabajadorModule } from './ficha-trabajador/ficha-trabajador.modul
 import { AppConfigModule } from "./layout/config/config.module";
 import { LayoutComponent } from './layout/layout.component';
 import { LoteProduccionModule } from './lote-produccion/LoteProduccion.module';
+import { MaterialMalEstadoModule } from './material-mal-estado/material-mal-estado.module';
 import { PreciosModule } from './precios/precios.module';
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { RrhhModule } from './rrhh/rrhh.module';
@@ -30,6 +31,8 @@ import { SharedModule } from './shared/shared.module';
         FichaTrabajadorModule,
         ChangePasswordModule,
         LoteProduccionModule,
+        MaterialMalEstadoModule,
+
 
     ]
 })

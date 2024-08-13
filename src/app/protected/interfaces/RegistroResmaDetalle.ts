@@ -5,6 +5,7 @@ export interface RegistroResmaDetalle {
   codArticulo:    string;
   descripcion:    string;
   cantidad:       number;
+  porcentaje :    number;
   precioUnitario: number;
   subtotalUsd:    number;
   placa:          string;

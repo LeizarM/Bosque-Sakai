@@ -1,3 +1,71 @@
-<p>
-  registro-resma works!
-</p>
+<div class="surface-ground p-2 sm:p-4 md:p-6 lg:p-1">
+  <div class="surface-card shadow-2 border-round w-full p-3 sm:p-4 md:p-6">
+    <h2 class="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-900">Registro Resmas en Mal Estado</h2>
+
+    <div class="grid">
+      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+        <label for="fecha" class="block text-900 font-medium mb-2">Fecha</label>
+        <p-calendar id="fecha" [showIcon]="true" dateFormat="dd/mm/yy" styleClass="w-full">
+        </p-calendar>
+      </div>
+
+      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+        <label for="empresa" class="block text-900 font-medium mb-2">Empresa</label>
+        <p-dropdown id="empresa" [options]="empresas"   placeholder="Seleccione una empresa" optionValue="codEmpresa"  optionLabel="nombre" (onChange)="onEmpresaChange($event)"
+          styleClass="w-full"></p-dropdown>
+      </div>
+
+      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+        <label for="numero" class="block text-900 font-medium mb-2">Número</label>
+        <p-dropdown id="docNum" [options]="registroResma"  optionLabel="docNum" [filter]="true"  (onChange)="onNumeroChange($event)"
+          [disabled]="!empresaSeleccionada" styleClass="w-full"></p-dropdown>
+      </div>
+
+      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+        <label for="articulo" class="block text-900 font-medium mb-2">Artículo</label>
+        <p-scroller [items]="articulos" [itemSize]="50" styleClass="w-full" [style]="{'height': '200px'}"
+          [disabled]="!numeroSeleccionado">
+          <ng-template pTemplate="item" let-item>
+            <div class="flex align-items-center p-2" [ngClass]="{'surface-hover': item === selectedArticulo}"
+              (click)="selectArticulo(item)" style="cursor: pointer;">
+              {{item.nombre}}
+            </div>
+          </ng-template>
+        </p-scroller>
+      </div>
+    </div>
+
+    <div class="mb-3 sm:mb-4">
+      <p-table [value]="resmas" [paginator]="true" [rows]="5" styleClass="p-datatable-sm p-datatable-responsive-demo"
+        [breakpoint]="'960px'" [scrollable]="true" [tableStyle]="{'min-width': '50rem'}">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID</th>
+            <th>Tipo de Resma</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-resma>
+          <tr>
+            <td><span class="p-column-title">ID</span>{{resma.id}}</td>
+            <td><span class="p-column-title">Tipo de Resma</span>{{resma.tipo}}</td>
+            <td><span class="p-column-title">Cantidad</span>{{resma.cantidad}}</td>
+            <td><span class="p-column-title">Estado</span>{{resma.estado}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="mb-3 sm:mb-4">
+      <label for="observaciones" class="block text-900 font-medium mb-2">Observaciones</label>
+      <textarea id="observaciones" pInputTextarea [rows]="3" [autoResize]="true" class="w-full"></textarea>
+    </div>
+
+    <div class="flex justify-content-center sm:justify-content-end">
+      <p-button label="Guardar" icon="pi pi-check" styleClass="p-button-raised w-full sm:w-auto"></p-button>
+    </div>
+  </div>
+
+
+</div>

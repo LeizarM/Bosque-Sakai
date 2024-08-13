@@ -7,5 +7,12 @@ export interface RegistroDanoBobina {
   totalKilosDanadosReal: number;
   totalUsd:              number;
   obs:                   string;
+  docNum:                number;
   audUsuario:            number;
+
+
+  codArticulo:           string;
+  descripcion:           string;
+  docNumB:               number;
+  db:                    string;
 }
