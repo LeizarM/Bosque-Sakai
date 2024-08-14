@@ -1,20 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { LoginService } from 'src/app/auth/services/login.service';
 import { Empresa } from 'src/app/protected/interfaces/Empresa';
 import { RegistroResma } from 'src/app/protected/interfaces/RegistroResma';
 import { MaterialMalEstadoService } from '../../services/materialMalEstado.service';
 
-interface Resma {
-  id: number;
-  tipo: string;
-  cantidad: number;
-  estado: string;
+interface tempArticulo  {
+
+  codArticulo: string;
+  descripcion: string;
+  articulo: string
+
 }
 
-
-interface Articulo {
-  id: number;
-  nombre: string;
-}
 
 @Component({
   selector: 'app-resmas-mal-estado',
@@ -26,35 +24,86 @@ export class RegistroResmaComponent implements OnInit {
 
   empresas: Empresa[] = [];
   registroResma : RegistroResma[] = [];
-
+  articulos : RegistroResma[] = [];
+  tempArticulo : tempArticulo[] = [];
   errorMessage: string = '';
+  empresaSeleccionada: number = 0;
+  numeroSeleccionado: number = 0;
 
-  selectedArticulo: Articulo | null = null;
+  formResmaMalEstado: FormGroup = this.fb.group({ });
 
-  resmas: Resma[] = [
-    { id: 1, tipo: 'Tipo A', cantidad: 100, estado: 'Dañado' },
-    { id: 2, tipo: 'Tipo B', cantidad: 150, estado: 'Mojado' },
-    { id: 3, tipo: 'Tipo C', cantidad: 200, estado: 'Arrugado' },
-    { id: 4, tipo: 'Tipo A', cantidad: 120, estado: 'Dañado' },
-    { id: 5, tipo: 'Tipo B', cantidad: 180, estado: 'Mojado' },
-  ];
-
-
-
-  numeros: number[] = [];
-  articulos: Articulo[] = [];
-
-  empresaSeleccionada: Empresa | null = null;
-  numeroSeleccionado: number | null = null;
-
-  constructor ( private materialMalEstado : MaterialMalEstadoService ){
-
+  constructor (
+    private fb: FormBuilder,
+    private materialMalEstado : MaterialMalEstadoService,
+    private loginService: LoginService,
+  ){
+    this.inicializarFormulario();
   }
 
   ngOnInit() {
     this.cargarEmpresas();
   }
 
+
+  inicializarFormulario(): void {
+
+    this.formResmaMalEstado = new FormGroup({
+
+      // Definir los FormControl para los campos del formulario
+      fecha: new FormControl(new Date(), [Validators.required]),
+      totalPeso: new FormControl(0, [Validators.required, Validators.min(1)]),
+      totalUSD: new FormControl(0, [Validators.required, Validators.min(1)]),
+      obs: new FormControl(''),
+      codEmpleado: new FormControl(this.getCodEmpleado, [Validators.required]),
+      docNum: new FormControl(0,[Validators.required, Validators.minLength(1)]),
+      audUsuario: this.fb.array([],[Validators.required, Validators.minLength(1)]),
+      detalles: this.fb.array([],[Validators.required, Validators.minLength(1)])
+
+    });
+
+  }
+
+
+  get detalles(): FormArray {
+
+    return this.formResmaMalEstado.get('detalles') as FormArray;
+  }
+
+
+  lstFormDetMalEstadoRes(): FormArray {
+
+    return this.formResmaMalEstado.get('detalles') as FormArray;
+  }
+
+
+  agregarFila(): void {
+    const nuevaFila = this.fb.group({
+      articulo: ['', Validators.required],
+      codArticulo: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      cantidad: [0, [Validators.required, Validators.min(1)]],
+      porcentajeDanado: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      precioUnitario: [0, [Validators.required, Validators.min(0)]],
+      subTotalUSD: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0)]],
+      placa: ['', Validators.required],
+      chofer: ['', Validators.required],
+    });
+
+    // Escuchar cambios en el dropdown de articulo
+    nuevaFila.get('articulo')?.valueChanges.subscribe(codArticulo => {
+      const articuloSeleccionado = this.tempArticulo.find(art => art.codArticulo === codArticulo);
+      if (articuloSeleccionado) {
+          nuevaFila.patchValue({
+              codArticulo: articuloSeleccionado.codArticulo,
+              descripcion: articuloSeleccionado.descripcion
+          });
+      }
+    });
+
+    console.log(this.formResmaMalEstado.value);
+
+    this.detalles.push(nuevaFila);
+  }
 
   /**
    * Cargara las empresas registradas
@@ -77,6 +126,7 @@ export class RegistroResmaComponent implements OnInit {
 
     this.empresaSeleccionada = event.value;
     this.registroResma = [];
+    this.articulos = [];
     this.materialMalEstado.obtenerDocNumXEmpresa( event.value ).subscribe({
       next: (registroResma) => {
         this.registroResma = registroResma;
@@ -90,17 +140,68 @@ export class RegistroResmaComponent implements OnInit {
     });
   }
 
-  onNumeroChange(event: any) {
+  onDocNumChange(event: any) {
     this.numeroSeleccionado = event.value;
-    this.selectedArticulo = null;
-    // Genera artículos aleatorios para el ejemplo
-    this.articulos = Array.from({length: 20}, (_, i) => ({
-      id: i + 1,
-      nombre: `Artículo ${i + 1}`
-    }));
+    this.tempArticulo = []; // Limpiar la lista antes de llenarla
+
+    this.materialMalEstado.obtenerArticulosXDocNum(this.empresaSeleccionada, event.value).subscribe({
+      next: (articulo) => {
+        this.articulos = articulo;
+
+        articulo.forEach(item => {
+          this.tempArticulo.push({
+            codArticulo: item.codArticulo,
+            descripcion: item.descripcion,
+            articulo: item.articulo
+          });
+        });
+
+        console.log("el array: ", this.tempArticulo);
+        this.errorMessage = '';
+      },
+      error: (error) => {
+        console.error('Error al Cargar los Articulo:', error);
+        this.errorMessage = 'No se pudieron cargar los DocNums. Por favor, intente de nuevo más tarde.';
+      }
+    });
   }
 
-  selectArticulo(articulo: Articulo) {
-    this.selectedArticulo = articulo;
+
+
+  calcularSubTotal(index: number): void {
+    const fila = this.detalles.at(index) as FormGroup;
+    const porcentajeDanado = fila.get('porcentajeDanado')?.value || 0;
+    const precioUnitario = fila.get('precioUnitario')?.value || 0;
+    const cantidad = fila.get('cantidad')?.value || 0;
+    const subTotal = (porcentajeDanado / 100) * precioUnitario * cantidad;
+
+    fila.get('subTotalUSD')?.setValue(subTotal.toFixed(2));
   }
+
+
+  /**
+   * Elimina un item de la tabla
+   * @param index
+   */
+  eliminarFila(index: number): void {
+    this.detalles.removeAt(index);
+
+  }
+
+  /**
+   * obtendra el codigo de usuario actual
+   */
+  getUser(): number {
+    return this.loginService.codUsuario;
+  }
+
+
+  /**
+   * obtendra el codigo de empleado actual
+   */
+  getCodEmpleado(): number {
+    return this.loginService.codEmpleado;
+  }
+
+
 }

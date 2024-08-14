@@ -60,6 +60,27 @@ export class MaterialMalEstadoService {
       );
   }
 
+  /**
+   * Obtendra los articulos por DocNum y por Empresa
+   * @param codEmpresa
+   * @param docNum
+   * @returns
+   */
+  obtenerArticulosXDocNum( codEmpresa : number, docNum : number ): Observable<RegistroResma[]> {
+
+    const url = `${this.baseUrl}/material-mal-estado/lstArticuloXEntrada`;
+    const data = {
+      "codEmpresa" : codEmpresa,
+      "docNum" : docNum
+    };
+
+    return this.http.post<RegistroResma[]>( url, data ).pipe(
+        retry(3), // Reintenta la petición hasta 3 veces en caso de fallo
+        timeout(5000), // Establece un tiempo límite de 5 segundos
+        catchError(this.handleError)
+      );
+  }
+
 
 
   /**

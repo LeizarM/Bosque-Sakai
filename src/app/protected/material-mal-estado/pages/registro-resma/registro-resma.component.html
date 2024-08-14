@@ -2,69 +2,133 @@
   <div class="surface-card shadow-2 border-round w-full p-3 sm:p-4 md:p-6">
     <h2 class="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-900">Registro Resmas en Mal Estado</h2>
 
-    <div class="grid">
-      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
-        <label for="fecha" class="block text-900 font-medium mb-2">Fecha</label>
-        <p-calendar id="fecha" [showIcon]="true" dateFormat="dd/mm/yy" styleClass="w-full">
-        </p-calendar>
+    <form id="frmMalEstadoResma" [formGroup]="formResmaMalEstado" autocomplete="off">
+
+      <div class="grid">
+        <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+          <label for="fecha" class="block text-900 font-medium mb-2">Fecha</label>
+          <p-calendar id="fecha" [showIcon]="true" dateFormat="dd/mm/yy" formControlName="fecha" styleClass="w-full">
+          </p-calendar>
+        </div>
+
+        <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+          <label for="empresa" class="block text-900 font-medium mb-2">Empresa</label>
+          <p-dropdown id="empresa" [options]="empresas" placeholder="Seleccione una empresa" optionValue="codEmpresa"
+            optionLabel="nombre" (onChange)="onEmpresaChange($event)" styleClass="w-full"></p-dropdown>
+        </div>
+
+        <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+          <label for="numero" class="block text-900 font-medium mb-2">Número de Documento</label>
+          <p-dropdown id="docNum" [options]="registroResma" placeholder="Seleccione Num. Documento" optionLabel="docNum"
+            optionValue="docNum" formControlName="docNum" [filter]="true" (onChange)="onDocNumChange($event)"
+            [disabled]="!empresaSeleccionada" styleClass="w-full"></p-dropdown>
+        </div>
+
+        <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+          <label *ngIf="articulos.length > 0" for="articulos" class="block text-900 font-medium mb-2">Se han encontrado
+            los sgtes Articulos:</label>
+          <p-scroller [items]="articulos" [itemSize]="50" styleClass="w-full" [style]="{'height': '200px'}"
+            [disabled]="!numeroSeleccionado">
+            <ng-template pTemplate="item" let-item>
+              <div class="flex align-items-center p-2">
+                {{item.articulo}}
+              </div>
+            </ng-template>
+          </p-scroller>
+        </div>
       </div>
 
-      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
-        <label for="empresa" class="block text-900 font-medium mb-2">Empresa</label>
-        <p-dropdown id="empresa" [options]="empresas"   placeholder="Seleccione una empresa" optionValue="codEmpresa"  optionLabel="nombre" (onChange)="onEmpresaChange($event)"
-          styleClass="w-full"></p-dropdown>
+      <div class="mb-3 sm:mb-4">
+
+        <div formArrayName="detalles">
+
+          <p-table
+              [value]="detalles.controls"
+              [paginator]="true"
+              [rows]="15"
+              [totalRecords]="detalles.length"
+              styleClass="p-datatable-sm p-datatable-responsive-demo"
+              [breakpoint]="'960px'"
+              [scrollable]="true"
+             >
+
+            <ng-template pTemplate="caption">
+              <button pButton pRipple label="Agregar Fila" type="button" icon="pi pi-plus" class="m-2 p-button-info"
+                (click)="agregarFila()">
+              </button>
+            </ng-template>
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th>#</th>
+                <th>Articulo</th>
+                <th>Cantidad</th>
+                <th>Porcentaje Dañado (%)</th>
+                <th>Precio Unitario (USD)</th>
+                <th>SubTotal USD</th>
+                <th>Placa</th>
+                <th>Chofer</th>
+                <th>...</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-row let-i="rowIndex">
+              <tr [formGroupName]="i">
+                <td>
+                  {{ i + 1 }}
+                </td>
+                <td>
+                  <p-dropdown formControlName="articulo" [options]="tempArticulo" optionLabel="articulo" appendTo="body"
+                    optionValue="codArticulo" placeholder="Seleccione un articulo" styleClass="w-full"
+                    [disabled]="tempArticulo.length === 0">
+                </p-dropdown>
+                </td>
+
+                <td>
+                  <input pInputText type="number" formControlName="cantidad" class="w-full" min="a" max="100">
+                </td>
+
+                <td>
+                  <input pInputText type="number" formControlName="porcentajeDanado" placeholder="%" class="w-full" min="0"
+                    max="100">
+                </td>
+                <td>
+                  <input pInputText type="number" formControlName="precioUnitario" placeholder="USD" class="w-full" min="0"
+                    (input)="calcularSubTotal(i)">
+                </td>
+                <td>
+                  <input pInputText type="number" formControlName="subTotalUSD" placeholder="USD" class="w-full" [readonly]="true">
+                </td>
+                <td>
+                  <input pInputText type="text" formControlName="placa" placeholder="Placa" class="w-full">
+                </td>
+                <td>
+                  <input pInputText type="text" formControlName="chofer" placeholder="Chofer" class="w-full">
+                </td>
+
+                <td>
+                  <button pButton type="button" icon="pi pi-times" class="p-button-danger" pTooltip="Eliminar"
+                    (click)="eliminarFila(i)"></button>
+                </td>
+
+              </tr>
+            </ng-template>
+          </p-table>
+
+
+        </div>
       </div>
 
-      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
-        <label for="numero" class="block text-900 font-medium mb-2">Número</label>
-        <p-dropdown id="docNum" [options]="registroResma"  optionLabel="docNum" [filter]="true"  (onChange)="onNumeroChange($event)"
-          [disabled]="!empresaSeleccionada" styleClass="w-full"></p-dropdown>
+      <div class="mb-3 sm:mb-4">
+        <label for="observaciones" class="block text-900 font-medium mb-2">Observaciones</label>
+        <textarea id="observaciones" pInputTextarea [rows]="3" [autoResize]="true" formControlName="obs"
+          class="w-full"></textarea>
       </div>
 
-      <div class="col-12 sm:col-6 mb-3 sm:mb-4">
-        <label for="articulo" class="block text-900 font-medium mb-2">Artículo</label>
-        <p-scroller [items]="articulos" [itemSize]="50" styleClass="w-full" [style]="{'height': '200px'}"
-          [disabled]="!numeroSeleccionado">
-          <ng-template pTemplate="item" let-item>
-            <div class="flex align-items-center p-2" [ngClass]="{'surface-hover': item === selectedArticulo}"
-              (click)="selectArticulo(item)" style="cursor: pointer;">
-              {{item.nombre}}
-            </div>
-          </ng-template>
-        </p-scroller>
+      <div class="flex justify-content-center sm:justify-content-end">
+        <p-button label="Guardar" icon="pi pi-check" styleClass="p-button-raised w-full sm:w-auto"></p-button>
       </div>
-    </div>
-
-    <div class="mb-3 sm:mb-4">
-      <p-table [value]="resmas" [paginator]="true" [rows]="5" styleClass="p-datatable-sm p-datatable-responsive-demo"
-        [breakpoint]="'960px'" [scrollable]="true" [tableStyle]="{'min-width': '50rem'}">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>ID</th>
-            <th>Tipo de Resma</th>
-            <th>Cantidad</th>
-            <th>Estado</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-resma>
-          <tr>
-            <td><span class="p-column-title">ID</span>{{resma.id}}</td>
-            <td><span class="p-column-title">Tipo de Resma</span>{{resma.tipo}}</td>
-            <td><span class="p-column-title">Cantidad</span>{{resma.cantidad}}</td>
-            <td><span class="p-column-title">Estado</span>{{resma.estado}}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-
-    <div class="mb-3 sm:mb-4">
-      <label for="observaciones" class="block text-900 font-medium mb-2">Observaciones</label>
-      <textarea id="observaciones" pInputTextarea [rows]="3" [autoResize]="true" class="w-full"></textarea>
-    </div>
-
-    <div class="flex justify-content-center sm:justify-content-end">
-      <p-button label="Guardar" icon="pi pi-check" styleClass="p-button-raised w-full sm:w-auto"></p-button>
-    </div>
+    </form>
   </div>
 
 

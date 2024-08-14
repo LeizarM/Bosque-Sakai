@@ -15,4 +15,5 @@ export interface RegistroResma {
   descripcion:           string;
   docNumB:               number;
   db:                    string;
+  articulo:              string;
 }

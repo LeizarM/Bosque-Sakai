@@ -15,4 +15,5 @@ export interface RegistroDanoBobina {
   descripcion:           string;
   docNumB:               number;
   db:                    string;
+  articulo:              string;
 }
