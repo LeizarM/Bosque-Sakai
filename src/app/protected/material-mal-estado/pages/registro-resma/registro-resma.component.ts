@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { LoginService } from 'src/app/auth/services/login.service';
 import { Empresa } from 'src/app/protected/interfaces/Empresa';
 import { RegistroResma } from 'src/app/protected/interfaces/RegistroResma';
+import { TipoDano } from 'src/app/protected/interfaces/TipoDano';
 import { MaterialMalEstadoService } from '../../services/materialMalEstado.service';
 
 interface tempArticulo  {
@@ -22,6 +23,7 @@ interface tempArticulo  {
 export class RegistroResmaComponent implements OnInit {
 
 
+  tipoDano: TipoDano[] = [];
   empresas: Empresa[] = [];
   registroResma : RegistroResma[] = [];
   articulos : RegistroResma[] = [];
@@ -42,6 +44,7 @@ export class RegistroResmaComponent implements OnInit {
 
   ngOnInit() {
     this.cargarEmpresas();
+    this.cargarTipoDano();
   }
 
 
@@ -78,6 +81,7 @@ export class RegistroResmaComponent implements OnInit {
 
   agregarFila(): void {
     const nuevaFila = this.fb.group({
+      idTd: [0, Validators.required],
       articulo: ['', Validators.required],
       codArticulo: ['', Validators.required],
       descripcion: ['', Validators.required],
@@ -120,6 +124,22 @@ export class RegistroResmaComponent implements OnInit {
         // Aquí podrías también mostrar un mensaje de error al usuario, por ejemplo con un componente de toast
       }
     });
+  }
+
+
+  cargarTipoDano(){
+
+    this.materialMalEstado.obtenerTiposDeDano().subscribe({
+      next: (tipoDano) => {
+        this.tipoDano = tipoDano;
+        this.errorMessage = '';
+      },
+      error: (error) => {
+        console.error('Error al cargar tipo de daño:', error);
+        this.errorMessage = 'No se pudieron cargar los tipos de daño. Por favor, intente de nuevo más tarde.';
+      }
+    });
+
   }
 
   onEmpresaChange(event: any) {

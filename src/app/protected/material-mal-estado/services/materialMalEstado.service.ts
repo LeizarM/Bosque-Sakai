@@ -4,6 +4,7 @@ import { catchError, Observable, retry, throwError, timeout } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { Empresa } from '../../interfaces/Empresa';
 import { RegistroResma } from '../../interfaces/RegistroResma';
+import { TipoDano } from '../../interfaces/TipoDano';
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +76,22 @@ export class MaterialMalEstadoService {
     };
 
     return this.http.post<RegistroResma[]>( url, data ).pipe(
+        retry(3), // Reintenta la petición hasta 3 veces en caso de fallo
+        timeout(5000), // Establece un tiempo límite de 5 segundos
+        catchError(this.handleError)
+      );
+  }
+
+  /**
+   * Para obtener los tipos de daño
+   * @returns
+   */
+  obtenerTiposDeDano(): Observable<TipoDano[]> {
+
+    const url = `${this.baseUrl}/material-mal-estado/lstTipoDano`;
+    const data = { };
+
+    return this.http.post<TipoDano[]>( url, data ).pipe(
         retry(3), // Reintenta la petición hasta 3 veces en caso de fallo
         timeout(5000), // Establece un tiempo límite de 5 segundos
         catchError(this.handleError)

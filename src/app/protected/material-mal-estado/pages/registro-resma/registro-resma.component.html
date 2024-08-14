@@ -63,6 +63,7 @@
                 <th>#</th>
                 <th>Articulo</th>
                 <th>Cantidad</th>
+                <th>Dañado por:</th>
                 <th>Porcentaje Dañado (%)</th>
                 <th>Precio Unitario (USD)</th>
                 <th>SubTotal USD</th>
@@ -86,6 +87,13 @@
 
                 <td>
                   <input pInputText type="number" formControlName="cantidad" class="w-full" min="a" max="100">
+                </td>
+
+                <td>
+                  <p-dropdown formControlName="articulo" [options]="tipoDano" optionLabel="descripcion" appendTo="body"
+                    optionValue="idTd" placeholder="Seleccione Tipo Daño" styleClass="w-full" formControlName="idTd"
+                    [disabled]="tempArticulo.length === 0">
+                  </p-dropdown>
                 </td>
 
                 <td>
