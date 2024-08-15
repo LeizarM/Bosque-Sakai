@@ -1,27 +1,43 @@
 <div class="surface-ground p-2 sm:p-4 md:p-6 lg:p-1">
   <div class="surface-card shadow-2 border-round w-full p-3 sm:p-4 md:p-6">
-    <h2 class="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-900">Registro Resmas en Mal Estado</h2>
-
+    <h2 class="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-900">
+     REGISTRO RESMAS EN MAL ESTADO
+    </h2>
+    <p-messages></p-messages>
     <form id="frmMalEstadoResma" [formGroup]="formResmaMalEstado" autocomplete="off">
 
       <div class="grid">
+        <!-- Fecha -->
         <div class="col-12 sm:col-6 mb-3 sm:mb-4">
           <label for="fecha" class="block text-900 font-medium mb-2">Fecha</label>
           <p-calendar id="fecha" [showIcon]="true" dateFormat="dd/mm/yy" formControlName="fecha" styleClass="w-full">
           </p-calendar>
+          <small *ngIf="formResmaMalEstado.get('fecha')?.hasError('required') && formResmaMalEstado.get('fecha')?.touched" class="p-error">
+            La fecha es requerida.
+          </small>
         </div>
 
+        <!-- Empresa -->
         <div class="col-12 sm:col-6 mb-3 sm:mb-4">
           <label for="empresa" class="block text-900 font-medium mb-2">Empresa</label>
           <p-dropdown id="empresa" [options]="empresas" placeholder="Seleccione una empresa" optionValue="codEmpresa"
-            optionLabel="nombre" (onChange)="onEmpresaChange($event)" styleClass="w-full"></p-dropdown>
+            optionLabel="nombre" (onChange)="onEmpresaChange($event)" styleClass="w-full">
+          </p-dropdown>
+          <small *ngIf="formResmaMalEstado.get('empresa')?.hasError('required') && formResmaMalEstado.get('empresa')?.touched" class="p-error">
+            La empresa es requerida.
+          </small>
         </div>
 
+        <!-- Número de Documento -->
         <div class="col-12 sm:col-6 mb-3 sm:mb-4">
           <label for="numero" class="block text-900 font-medium mb-2">Número de Documento</label>
           <p-dropdown id="docNum" [options]="registroResma" placeholder="Seleccione Num. Documento" optionLabel="docNum"
             optionValue="docNum" formControlName="docNum" [filter]="true" (onChange)="onDocNumChange($event)"
-            [disabled]="!empresaSeleccionada" styleClass="w-full"></p-dropdown>
+            [disabled]="!empresaSeleccionada" styleClass="w-full">
+          </p-dropdown>
+          <small *ngIf="formResmaMalEstado.get('docNum')?.hasError('required') && formResmaMalEstado.get('docNum')?.touched" class="p-error">
+            El número de documento es requerido.
+          </small>
         </div>
 
         <div class="col-12 sm:col-6 mb-3 sm:mb-4">
@@ -39,18 +55,30 @@
       </div>
 
       <div class="mb-3 sm:mb-4">
-
         <div formArrayName="detalles">
 
           <p-table
               [value]="detalles.controls"
               [paginator]="true"
-              [rows]="15"
+              [rows]="10"
               [totalRecords]="detalles.length"
               styleClass="p-datatable-sm p-datatable-responsive-demo"
               [breakpoint]="'960px'"
               [scrollable]="true"
-             >
+              [tableStyle]="{'min-width': '100rem'}">
+
+            <!-- Define ancho de las columnas -->
+            <colgroup>
+              <col style="width: 5%">
+              <col style="width: 25%">
+              <col style="width: 10%">
+              <col style="width: 15%">
+              <col style="width: 10%">
+              <col style="width: 10%">
+              <col style="width: 10%">
+              <col style="width: 10%">
+              <col style="width: 5%">
+            </colgroup>
 
             <ng-template pTemplate="caption">
               <button pButton pRipple label="Agregar Fila" type="button" icon="pi pi-plus" class="m-2 p-button-info"
@@ -75,54 +103,99 @@
 
             <ng-template pTemplate="body" let-row let-i="rowIndex">
               <tr [formGroupName]="i">
-                <td>
-                  {{ i + 1 }}
-                </td>
+                <td class="text-center">{{ i + 1 }}</td>
+
+                <!-- Artículo -->
                 <td>
                   <p-dropdown formControlName="articulo" [options]="tempArticulo" optionLabel="articulo" appendTo="body"
                     optionValue="codArticulo" placeholder="Seleccione un articulo" styleClass="w-full"
                     [disabled]="tempArticulo.length === 0">
-                </p-dropdown>
+                  </p-dropdown>
+                  <small *ngIf="detalles.at(i).get('articulo')?.hasError('required') && detalles.at(i).get('articulo')?.touched" class="p-error">
+                    El artículo es requerido.
+                  </small>
                 </td>
 
+                <!-- Cantidad -->
                 <td>
-                  <input pInputText type="number" formControlName="cantidad" class="w-full" min="a" max="100">
+                  <input pInputText type="number" formControlName="cantidad" class="w-full p-inputtext-sm" min="0" (input)="calcularSubTotal(i)">
+                  <small *ngIf="detalles.at(i).get('cantidad')?.hasError('min') && detalles.at(i).get('cantidad')?.touched" class="p-error">
+                    La cantidad debe ser mayor a 0.
+                  </small>
                 </td>
 
+                <!-- Dañado por -->
                 <td>
-                  <p-dropdown formControlName="articulo" [options]="tipoDano" optionLabel="descripcion" appendTo="body"
-                    optionValue="idTd" placeholder="Seleccione Tipo Daño" styleClass="w-full" formControlName="idTd"
+                  <p-dropdown formControlName="idTd" [options]="tipoDano" optionLabel="descripcion" appendTo="body"
+                    optionValue="idTd" placeholder="Seleccione Tipo Daño" styleClass="w-full"
                     [disabled]="tempArticulo.length === 0">
                   </p-dropdown>
+                  <small *ngIf="detalles.at(i).get('idTd')?.hasError('required') && detalles.at(i).get('idTd')?.touched" class="p-error">
+                    Seleccione un tipo de daño.
+                  </small>
                 </td>
 
+                <!-- Porcentaje Dañado -->
                 <td>
-                  <input pInputText type="number" formControlName="porcentajeDanado" placeholder="%" class="w-full" min="0"
-                    max="100">
-                </td>
-                <td>
-                  <input pInputText type="number" formControlName="precioUnitario" placeholder="USD" class="w-full" min="0"
-                    (input)="calcularSubTotal(i)">
-                </td>
-                <td>
-                  <input pInputText type="number" formControlName="subTotalUSD" placeholder="USD" class="w-full" [readonly]="true">
-                </td>
-                <td>
-                  <input pInputText type="text" formControlName="placa" placeholder="Placa" class="w-full">
-                </td>
-                <td>
-                  <input pInputText type="text" formControlName="chofer" placeholder="Chofer" class="w-full">
+                  <input pInputText type="number" formControlName="porcentajeDanado" placeholder="%" class="w-full p-inputtext-sm" min="0" max="100" (input)="calcularSubTotal(i)">
+                  <small *ngIf="detalles.at(i).get('porcentajeDanado')?.hasError('min') && detalles.at(i).get('porcentajeDanado')?.touched" class="p-error">
+                    El porcentaje debe ser mayor a 0.
+                  </small>
+                  <small *ngIf="detalles.at(i).get('porcentajeDanado')?.hasError('max') && detalles.at(i).get('porcentajeDanado')?.touched" class="p-error">
+                    El porcentaje no puede ser mayor a 100.
+                  </small>
                 </td>
 
+                <!-- Precio Unitario -->
                 <td>
-                  <button pButton type="button" icon="pi pi-times" class="p-button-danger" pTooltip="Eliminar"
+                  <input pInputText type="number" formControlName="precioUnitario" placeholder="USD" class="w-full p-inputtext-sm" min="0.01" (input)="calcularSubTotal(i)">
+                  <small *ngIf="detalles.at(i).get('precioUnitario')?.hasError('min') && detalles.at(i).get('precioUnitario')?.touched" class="p-error">
+                    El precio unitario debe ser mayor a 0.
+                  </small>
+                </td>
+
+                <!-- SubTotal USD -->
+                <td>
+                  <input pInputText type="number" formControlName="subTotalUSD" placeholder="USD" class="w-full p-inputtext-sm" [readonly]="true">
+                </td>
+
+                <!-- Placa -->
+                <td>
+                  <input pInputText type="text" formControlName="placa" placeholder="Placa" class="w-full p-inputtext-sm">
+                  <small *ngIf="detalles.at(i).get('placa')?.hasError('required') && detalles.at(i).get('placa')?.touched" class="p-error">
+                    La placa es requerida.
+                  </small>
+                </td>
+
+                <!-- Chofer -->
+                <td>
+                  <input pInputText type="text" formControlName="chofer" placeholder="Chofer" class="w-full p-inputtext-sm">
+                  <small *ngIf="detalles.at(i).get('chofer')?.hasError('required') && detalles.at(i).get('chofer')?.touched" class="p-error">
+                    El nombre del chofer es requerido.
+                  </small>
+                </td>
+
+                <!-- Eliminar Fila -->
+                <td class="text-center">
+                  <button pButton type="button" icon="pi pi-times" class="p-button-danger p-button-sm" pTooltip="Eliminar"
                     (click)="eliminarFila(i)"></button>
                 </td>
 
               </tr>
             </ng-template>
-          </p-table>
 
+            <!-- Footer con Totales -->
+            <ng-template pTemplate="footer">
+              <tr>
+                <td colspan="2" class="text-right font-bold">Totales:</td>
+                <td class="text-center font-bold">{{ totalCantidad | number }}</td>
+                <td colspan="3"></td>
+                <td class="text-center font-bold">{{ totalSubTotalUSD | number }}</td>
+                <td colspan="2"></td>
+              </tr>
+            </ng-template>
+
+          </p-table>
 
         </div>
       </div>
@@ -134,10 +207,13 @@
       </div>
 
       <div class="flex justify-content-center sm:justify-content-end">
-        <p-button label="Guardar" icon="pi pi-check" styleClass="p-button-raised w-full sm:w-auto"></p-button>
+
+        <p-button label="Guardar" icon="pi pi-check" styleClass="p-button-success w-full sm:w-auto"
+          [disabled]="formResmaMalEstado.invalid"
+          (click)="guardarFormulario()">
+        </p-button>
+
       </div>
     </form>
   </div>
-
-
 </div>

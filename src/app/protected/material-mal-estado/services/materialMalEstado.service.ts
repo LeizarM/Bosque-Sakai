@@ -4,6 +4,7 @@ import { catchError, Observable, retry, throwError, timeout } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { Empresa } from '../../interfaces/Empresa';
 import { RegistroResma } from '../../interfaces/RegistroResma';
+import { RegistroResmaDetalle } from '../../interfaces/RegistroResmaDetalle';
 import { TipoDano } from '../../interfaces/TipoDano';
 
 @Injectable({
@@ -98,6 +99,42 @@ export class MaterialMalEstadoService {
       );
   }
 
+
+  /**
+   * Para registrar el resmado de mal estado
+   * @param mb
+   * @returns
+   */
+  registrarResmaMalEstado(mb: RegistroResma): Observable<RegistroResma> {
+
+    const url = `${this.baseUrl}/material-mal-estado/registroResmaMalEstado`;
+    const data = mb;
+
+    // Realiza la petición POST al backend
+    return this.http.post<RegistroResma>(url, data )
+      .pipe(
+        retry(2), // Reintenta la petición hasta 2 veces en caso de fallo
+        catchError(this.handleError) // Maneja errores usando el método handleError
+      );
+  }
+
+  /**
+   * Para registrar el detalle del resmado de mal estado
+   * @param mb
+   * @returns
+   */
+  registrarResmaMalEstadoDet(mb: RegistroResmaDetalle[]): Observable<RegistroResmaDetalle[]> {
+
+    const url = `${this.baseUrl}/material-mal-estado/detRegistroResmaMalEstado`;
+    const data = mb;
+
+    // Realiza la petición POST al backend
+    return this.http.post<RegistroResmaDetalle[]>(url, data )
+      .pipe(
+        retry(2), // Reintenta la petición hasta 2 veces en caso de fallo
+        catchError(this.handleError) // Maneja errores usando el método handleError
+      );
+  }
 
 
   /**

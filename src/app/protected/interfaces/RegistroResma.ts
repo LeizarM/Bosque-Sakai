@@ -1,19 +1,19 @@
 export interface RegistroResma {
-  idReg:                 string;
-  fecha:                 Date;
-  codEmpleado:           number;
-  totalKilosBobinas:     number;
-  totalKilosDanados:     number;
-  totalKilosDanadosReal: number;
-  totalUsd:              number;
-  obs:                   string;
-  docNum:                number;
-  audUsuario:            number;
+  idMer?:       number;
+  fecha?:       Date;
+  totalPeso?:   number;
+  totalUSD?:    number;
+  obs?:         string;
+  codEmpleado?: number;
+  docNum?:      number;
+  audUsuario?:  number;
 
 
-  codArticulo:           string;
-  descripcion:           string;
-  docNumB:               number;
-  db:                    string;
-  articulo:              string;
+
+  codArticulo?: string;
+  descripcion?: string;
+  docNumB?:     number;
+  db?:          string;
+  codEmpresa?:  number;
+  articulo?:    string;
 }

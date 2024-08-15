@@ -1,0 +1,50 @@
+.surface-ground {
+  padding: 2rem;
+}
+
+.surface-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.p-datatable-sm {
+  font-size: 0.875rem;
+}
+
+.p-datatable-responsive-demo {
+  overflow: auto;
+}
+
+.p-button-raised {
+  padding: 0.75rem 2rem;
+}
+
+.text-900 {
+  color: #212121;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.block {
+  display: block;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.p-error {
+  color: red;
+  font-size: 0.875rem;
+}
+
+.p-button {
+  margin-top: 1rem;
+}

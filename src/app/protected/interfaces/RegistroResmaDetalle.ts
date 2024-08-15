@@ -1,5 +1,5 @@
 export interface RegistroResmaDetalle {
-  idRmd:          string;
+  idRmd?:          string;
   idMer:          number;
   idTd:           number;
   codArticulo:    string;
