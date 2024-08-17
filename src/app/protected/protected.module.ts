@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { PrimeNgModule } from '../prime-ng/prime-ng.module';
 import { ChangePasswordModule } from './change-password/change-password.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { FacturaSantaCruzModule } from './facturas-santa-cruz/factura-santa-cruz.module';
 import { FichaTrabajadorModule } from './ficha-trabajador/ficha-trabajador.module';
 import { AppConfigModule } from "./layout/config/config.module";
 import { LayoutComponent } from './layout/layout.component';
@@ -32,6 +33,7 @@ import { SharedModule } from './shared/shared.module';
         ChangePasswordModule,
         LoteProduccionModule,
         MaterialMalEstadoModule,
+        FacturaSantaCruzModule
 
 
     ]
