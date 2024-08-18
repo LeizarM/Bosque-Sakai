@@ -1,70 +1,74 @@
-<div class="p-fluid grid formgrid">
-  <div class="field col-12 md:col-6">
-    <label for="tipoFactura">Tipo de Factura</label>
-    <input
-      id="numeroFactura"
-      type="text"
-      pInputText
+<form [formGroup]="facturaForm" (ngSubmit)="onSubmit()">
 
-      placeholder="Ingrese el número de factura">
+  <div class="p-fluid grid formgrid">
+
+    <div class="field col-12 md:col-6">
+      <label for="tipoFact">Tipo Factura</label>
+      <p-dropdown id="tipoFact" [options]="lstTipoFactura" placeholder="Seleccione tipo Factura" optionLabel="nombre" optionValue="codTipos" formControlName="tipoFact" (onChange)="onTipoFacturaChange($event.value)"></p-dropdown>
+      <div *ngIf="facturaForm.get('tipoFact')?.invalid && facturaForm.get('tipoFact')?.touched" class="p-error">Tipo de factura es requerido.</div>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="empresa">Empresa</label>
+      <p-dropdown id="empresa" [options]="lstEmpresas" placeholder="Seleccione empresa" optionLabel="nombreEmpresa" formControlName="empresa"></p-dropdown>
+      <div *ngIf="facturaForm.get('empresa')?.invalid && facturaForm.get('empresa')?.touched" class="p-error">Empresa es requerida.</div>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="fecha">Fecha Factura</label>
+      <p-calendar id="fecha" placeholder="Ingrese fecha de la factura" dateFormat="dd/mm/yy" [showIcon]="true" formControlName="fecha"></p-calendar>
+      <div *ngIf="facturaForm.get('fecha')?.invalid && facturaForm.get('fecha')?.touched" class="p-error">Fecha de factura es requerida.</div>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="numFact">Número de Factura</label>
+      <input id="numFact" type="text" pInputText placeholder="Ingrese el número de factura" formControlName="numFact">
+      <div *ngIf="facturaForm.get('numFact')?.invalid && facturaForm.get('numFact')?.touched" class="p-error">Número de factura es requerido.</div>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="proveedor">Proveedor</label>
+      <input id="proveedor" type="text" pInputText placeholder="Ingrese el nombre del proveedor" formControlName="proveedor">
+      <div *ngIf="facturaForm.get('proveedor')?.invalid && facturaForm.get('proveedor')?.touched" class="p-error">Proveedor es requerido.</div>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="nit">NIT</label>
+      <input id="nit" type="text" pInputText placeholder="Ingrese el NIT del proveedor" formControlName="nit">
+      <div *ngIf="facturaForm.get('nit')?.invalid && facturaForm.get('nit')?.touched" class="p-error">NIT es requerido y debe ser numérico.</div>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="monto">Monto</label>
+      <input id="monto" type="number" pInputText placeholder="Ingrese el monto de la factura" formControlName="monto">
+      <div *ngIf="facturaForm.get('monto')?.invalid && facturaForm.get('monto')?.touched" class="p-error">Monto es requerido y debe ser mayor o igual a 0.</div>
+    </div>
+
+    <div class="field col-12">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" pInputTextarea rows="3" placeholder="Ingrese una descripción" formControlName="descripcion"></textarea>
+    </div>
+
+    <div *ngIf="mostrarCUF" class="field col-12 md:col-6">
+      <label for="cuf">CUF</label>
+      <input id="cuf" type="text" pInputText placeholder="Ingrese el CUF" formControlName="cuf">
+      <div *ngIf="facturaForm.get('cuf')?.invalid && facturaForm.get('cuf')?.touched" class="p-error">CUF es requerido.</div>
+    </div>
+
+    <div *ngIf="mostrarAutorizacionControl" class="field col-12 md:col-6">
+      <label for="nroAutorizacion">Número de Autorización</label>
+      <input id="nroAutorizacion" type="text" pInputText placeholder="Ingrese el número de autorización" formControlName="nroAutorizacion">
+      <div *ngIf="facturaForm.get('nroAutorizacion')?.invalid && facturaForm.get('nroAutorizacion')?.touched" class="p-error">Número de autorización es requerido.</div>
+    </div>
+
+    <div *ngIf="mostrarAutorizacionControl" class="field col-12 md:col-6">
+      <label for="codControl">Código de Control</label>
+      <input id="codControl" type="text" pInputText placeholder="Ingrese el código de control" formControlName="codControl">
+      <div *ngIf="facturaForm.get('codControl')?.invalid && facturaForm.get('codControl')?.touched" class="p-error">Código de control es requerido.</div>
+    </div>
+
+    <div class="col-12 flex justify-content-center mt-4">
+      <button pButton type="submit" label="Guardar" class="p-button-rounded p-button-success"></button>
+    </div>
   </div>
-
-  <div class="field col-12 md:col-6">
-    <label for="fechaFactura">Fecha de Factura</label>
-    <input
-      id="numeroFactura"
-      type="text"
-      pInputText
-
-      placeholder="Ingrese el número de factura">
-  </div>
-
-  <div class="field col-12 md:col-6">
-    <label for="numeroFactura">Número de Factura</label>
-    <input
-      id="numeroFactura"
-      type="text"
-      pInputText
-
-      placeholder="Ingrese el número de factura">
-  </div>
-
-  <div class="field col-12 md:col-6">
-    <label for="CUF">CUF</label>
-    <input
-      id="CUF"
-      type="text"
-      pInputText
-
-      placeholder="Ingrese el CUF">
-  </div>
-
-  <div class="field col-12 md:col-6">
-    <label for="proveedor">Proveedor</label>
-    <input
-      id="proveedor"
-      type="text"
-      pInputText
-
-      placeholder="Ingrese el proveedor">
-  </div>
-
-  <div class="field col-12 md:col-6">
-    <label for="monto">Monto</label>
-    <input
-      id="monto"
-      type="number"
-      pInputText
-
-      placeholder="Ingrese el monto">
-  </div>
-
-  <div class="col-12 flex justify-content-center mt-4">
-    <button
-      pButton
-      type="submit"
-      label="Guardar"
-      class="p-button-rounded p-button-success">
-    </button>
-  </div>
-</div>
+</form>

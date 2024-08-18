@@ -507,3 +507,30 @@ export function lstGaranteYReferencia(): Tipos[]{
   return lstTemp;
 
 }
+
+/**
+ * Para listar el tipo de facturas
+ * @returns
+ */
+export function lstTipoFacturas(): Tipos[]{
+
+  const lstTemp: TiposMod[] = [];
+  lstTemp.push(
+    {
+      codTipos: '1',
+      nombre: 'Factura Electronica',
+      codGrupo: 60,
+      label:'Factura Electronica',
+      value:'1'
+    },
+    {
+      codTipos: '2',
+      nombre: 'Factura Computarizada',
+      codGrupo: 60,
+      label:'Factura Computarizada',
+      value:'2'
+    }
+  );
+  return lstTemp;
+
+}
