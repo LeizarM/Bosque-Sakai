@@ -42,6 +42,22 @@ export class FacturaSantaCruzService {
       );
   }
 
+  obtenerFacturasRegistradas( fechaSistema : Date ): Observable<RegistroFacturas[]> {
+
+    const url = `${this.baseUrl}/registro-facturas/lstFacturasRegistradas`;
+    const data = {
+
+      "fechaSistema" : fechaSistema
+
+     };
+
+    return this.http.post<RegistroFacturas[]>( url, data ).pipe(
+        retry(3), // Reintenta la petición hasta 3 veces en caso de fallo
+        timeout(5000), // Establece un tiempo límite de 5 segundos
+        catchError(this.handleError)
+    );
+  }
+
 
 
   /**

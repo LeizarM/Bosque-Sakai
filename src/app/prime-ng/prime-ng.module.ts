@@ -22,6 +22,7 @@ import { KeyFilterModule } from 'primeng/keyfilter';
 import { ListboxModule } from 'primeng/listbox';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
+import { PaginatorModule } from 'primeng/paginator';
 import { PanelModule } from 'primeng/panel';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { PasswordModule } from 'primeng/password';
@@ -77,7 +78,8 @@ import { ToolbarModule } from 'primeng/toolbar';
     FieldsetModule,
     InputMaskModule,
     AutoCompleteModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    PaginatorModule,
 
   ]
 })

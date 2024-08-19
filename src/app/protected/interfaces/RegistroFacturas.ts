@@ -17,4 +17,7 @@ export interface RegistroFacturas {
   audUsuario?:      number;
 
   nombreEmpresa?:   string;
+  descripcionTf?:   string;
+  direccion?:       string;
+  qrCadena?:        string;
 }

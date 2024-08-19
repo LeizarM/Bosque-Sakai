@@ -1,3 +1,60 @@
-<p>
-  revision-factura-santa-cruz works!
-</p>
+<h2 class="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-900">
+  FACTURAS REGISTRADAS
+</h2>
+
+<div class="p-fluid">
+  <div class="p-grid justify-content-between align-items-center mb-4">
+    <div class="p-col-12 p-md-8"></div> <!-- Espacio vacío para alinear los botones a la derecha -->
+
+    <div class="p-col-12 p-md-4 text-right">
+      <div class="p-inputgroup">
+        <p-calendar id="filterDate" [(ngModel)]="filterDate" dateFormat="dd/mm/yy" placeholder="Seleccione una fecha" [showIcon]="true"></p-calendar>
+        <button pButton type="button" icon="pi pi-search" label="Buscar" (click)="onBuscar()" class="ml-2"></button>
+        <button pButton type="button" icon="pi pi-file-excel" label="Exportar" (click)="exportarExcel()" class="ml-2 p-button-success" [disabled]="lstFacturasRegistradas.length < 0"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-datatable-wrapper mt-2">
+    <p-table [value]="lstFacturasRegistradas" [paginator]="true" [rows]="10" [globalFilterFields]="['fecha']">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>#</th>
+          <th>Descripción</th>
+          <th>Nombre</th>
+          <th>Fecha</th>
+          <th>Número Factura</th>
+          <th>Proveedor</th>
+          <th>NIT</th>
+          <th>Monto</th>
+          <th>Descripción</th>
+          <th>CUF</th>
+          <th>Número de Autorización</th>
+          <th>Código de Control</th>
+          <th>NIT Empresa</th>
+          <th>Dirección</th>
+          <th>Cadena QR</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-factura let-i="rowIndex">
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ factura.descripcionTf }}</td>
+          <td>{{ factura.nombreEmpresa }}</td>
+          <td>{{ factura.fecha | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ factura.numFact }}</td>
+          <td>{{ factura.proveedor }}</td>
+          <td>{{ factura.nit }}</td>
+          <td>{{ factura.monto }}</td>
+          <td>{{ factura.descripcion }}</td>
+          <td>{{ factura.cuf }}</td>
+          <td>{{ factura.nroAutorizacion }}</td>
+          <td>{{ factura.codControl }}</td>
+          <td>{{ factura.nitEmpresa }}</td>
+          <td>{{ factura.direccion }}</td>
+          <td>{{ factura.qrCadena }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
