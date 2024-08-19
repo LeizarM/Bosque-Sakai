@@ -3,9 +3,9 @@
     REGISTRO DE FACTURAS
   </h2>
 
+  <p-messages></p-messages>
 
-
-  <form [formGroup]="facturaForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="facturaForm" (ngSubmit)="onSubmit()" autocomplete="off">
 
     <div class="p-fluid grid formgrid">
 

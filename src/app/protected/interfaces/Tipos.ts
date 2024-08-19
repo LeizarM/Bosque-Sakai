@@ -529,7 +529,15 @@ export function lstTipoFacturas(): Tipos[]{
       codGrupo: 60,
       label:'Factura Computarizada',
       value:'2'
+    },
+    {
+      codTipos: '3',
+      nombre: 'Recibo',
+      codGrupo: 60,
+      label:'Recibo',
+      value:'3'
     }
+
   );
   return lstTemp;
 

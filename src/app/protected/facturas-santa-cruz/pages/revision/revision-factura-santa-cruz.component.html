@@ -32,14 +32,21 @@
           <th>Número de Autorización</th>
           <th>Código de Control</th>
           <th>NIT Empresa</th>
-          <th>Dirección</th>
-          <th>Cadena QR</th>
+          <th>Direccion / Cadena QR</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-factura let-i="rowIndex">
         <tr>
           <td>{{ i + 1 }}</td>
-          <td>{{ factura.descripcionTf }}</td>
+          <!-- Aplica clases condicionales dependiendo del valor de 'descripcionTf' -->
+          <td>
+
+            <p [ngClass]="factura.descripcionTf === 'Factura Computarizada' ? 'bg-orange-500 text-white p-2 border-round' :
+              (factura.descripcionTf === 'Recibo' ? 'bg-pink-500 text-white p-2 border-round' :
+              'bg-green-700 text-white p-2 border-round')">
+              {{ factura.descripcionTf }}
+            </p>
+          </td>
           <td>{{ factura.nombreEmpresa }}</td>
           <td>{{ factura.fecha | date: 'dd/MM/yyyy' }}</td>
           <td>{{ factura.numFact }}</td>
@@ -52,7 +59,7 @@
           <td>{{ factura.codControl }}</td>
           <td>{{ factura.nitEmpresa }}</td>
           <td>{{ factura.direccion }}</td>
-          <td>{{ factura.qrCadena }}</td>
+
         </tr>
       </ng-template>
     </p-table>

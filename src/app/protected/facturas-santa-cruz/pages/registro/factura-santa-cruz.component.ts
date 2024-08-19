@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Message, MessageService } from 'primeng/api';
 import { catchError, concatMap, of, throwError } from 'rxjs';
 import { LoginService } from 'src/app/auth/services/login.service';
 import { RegistroFacturas } from 'src/app/protected/interfaces/RegistroFacturas';
@@ -9,7 +10,8 @@ import { FacturaSantaCruzService } from '../../services/factura-santa-cruz.servi
 @Component({
   selector: 'app-factura-santa-cruz',
   templateUrl: './factura-santa-cruz.component.html',
-  styleUrls: ['./factura-santa-cruz.component.css']
+  styleUrls: ['./factura-santa-cruz.component.css'],
+  providers: [MessageService]
 })
 export class FacturaSantaCruzComponent implements OnInit {
 
@@ -17,12 +19,15 @@ export class FacturaSantaCruzComponent implements OnInit {
   lstEmpresas: RegistroFacturas[] = [];
   facturaForm!: FormGroup;
 
+  messages!: Message[];
+
   mostrarCUF = true;
   mostrarAutorizacionControl = false;
 
   constructor( private registroFacturaService : FacturaSantaCruzService,
                private fb: FormBuilder,
                private loginService: LoginService,
+               private messageService: MessageService
   ) {
 
    }
@@ -62,7 +67,7 @@ export class FacturaSantaCruzComponent implements OnInit {
   inicializarFormulario() {
     this.facturaForm = this.fb.group({
       tipoFact: [0, Validators.required],
-      empresa: [0, Validators.required],
+      empresa: [{}, Validators.required],
       fecha: [new Date(), Validators.required],
       numFact: ['', Validators.required],
       proveedor: ['', Validators.required],
@@ -82,7 +87,26 @@ export class FacturaSantaCruzComponent implements OnInit {
     if (this.facturaForm.valid) {
 
 
+
       const  { codControl, empresa, cuf, descripcion, fecha, monto, nit, nroAutorizacion, numFact, proveedor, tipoFact } = this.facturaForm.value;
+
+      console.log(tipoFact);
+
+      if (Number(tipoFact) === 3) {
+        if (Number(numFact) > 0) {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El número de factura debe ser 0' });
+          return;
+        }
+        if (Number(nit) > 0) {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'El NIT debe ser 0' });
+          return;
+        }
+        setTimeout(() => {
+          this.messageService.clear();
+        }, 4000);
+      }
+
+
       const  { codEmpresa , nitEmpresa } = empresa;
 
       const factura : RegistroFacturas  = {
@@ -110,20 +134,24 @@ export class FacturaSantaCruzComponent implements OnInit {
         // Manejo de errores
         catchError((err) => {
           console.error(err);
-          //this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error durante el proceso de registro' });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error durante el proceso de registro' });
 
           return throwError(() => new Error('Proceso de registro fallido'));
         })
       ).subscribe({
         complete: () => {
           //Mensaje de éxito después de que todos los procesos se han completado correctamente
-          //this.messageService.add({ severity: 'success', summary: 'Completo', detail: 'Todos los registros se completaron con éxito' });
+          this.messageService.add({ severity: 'success', summary: 'Completo', detail: 'Todos los registros se completaron con éxito' });
           //this.visible = false;
           this.inicializarFormulario();
           this.ngOnInit(); // Llamar a ngOnInit manualmente para reiniciar
         }
       });
 
+
+      setTimeout(() => {
+        this.messageService.clear();
+      }, 4000);
 
 
     } else {
@@ -134,22 +162,36 @@ export class FacturaSantaCruzComponent implements OnInit {
 
   onTipoFacturaChange(tipoFact: number) {
 
-    console.log(Number(tipoFact));
-
     if (Number(tipoFact) === 2) {
       this.mostrarCUF = false;
       this.mostrarAutorizacionControl = true;
-      //this.facturaForm.get('cuf')?.disable();
-      //this.facturaForm.get('nroAutorizacion')?.enable();
-      //this.facturaForm.get('codControl')?.enable();
+
+
     } else if (Number(tipoFact) === 1) {
       this.mostrarCUF = true;
       this.mostrarAutorizacionControl = false;
-      //this.facturaForm.get('cuf')?.enable();
-      //this.facturaForm.get('nroAutorizacion')?.disable();
-      //this.facturaForm.get('codControl')?.disable();
+
+
+
+    } else if (Number(tipoFact) === 3) {
+
+      this.mostrarCUF = false;
+      this.mostrarAutorizacionControl = false;
+
+      // Opcional: establece los valores de numFact y nit a 0
+      this.facturaForm.patchValue({
+        numFact: 0,
+        nit: 0
+      });
+
+
     }
+
+    // Actualiza el estado de las validaciones
+    //this.facturaForm.get('numFact')?.updateValueAndValidity();
+    //this.facturaForm.get('nit')?.updateValueAndValidity();
   }
+
 
 
   /**
