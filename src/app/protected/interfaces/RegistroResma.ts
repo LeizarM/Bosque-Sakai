@@ -6,6 +6,7 @@ export interface RegistroResma {
   obs?:         string;
   codEmpleado?: number;
   docNum?:      number;
+  codEmpresa?:  number;
   audUsuario?:  number;
 
 
@@ -14,6 +15,5 @@ export interface RegistroResma {
   descripcion?: string;
   docNumB?:     number;
   db?:          string;
-  codEmpresa?:  number;
   articulo?:    string;
 }

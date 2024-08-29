@@ -19,5 +19,6 @@ export interface RegistroDanoBobinaDetalle {
   subtotalUsd:      number;
   placa:            string;
   chofer:           string;
+  numImportacion:   string;
   audUsuario:       number;
 }

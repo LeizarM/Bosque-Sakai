@@ -1,19 +1,20 @@
 <div class="surface-ground p-2 sm:p-4 md:p-6 lg:p-1">
   <div class="surface-card shadow-2 border-round w-full p-3 sm:p-4 md:p-6">
     <h2 class="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-900">
-      REGISTRO BOBINAS EN MAL ESTADO
+      Registro de Bobinas en Mal Estado
     </h2>
 
     <form id="frmMalEstadoResma" [formGroup]="formBobinaMalEstado" autocomplete="off">
-
       <div class="grid">
         <!-- Fecha -->
         <div class="col-12 sm:col-6 mb-3 sm:mb-4">
           <label for="fecha" class="block text-900 font-medium mb-2">Fecha</label>
           <p-calendar id="fecha" [showIcon]="true" dateFormat="dd/mm/yy" formControlName="fecha" styleClass="w-full">
           </p-calendar>
-          <small *ngIf="formBobinaMalEstado.get('fecha')?.hasError('required') && formBobinaMalEstado.get('fecha')?.touched" class="p-error">
-            La fecha es requerida.
+          <small
+            *ngIf="formBobinaMalEstado.get('fecha')?.hasError('required') && formBobinaMalEstado.get('fecha')?.touched"
+            class="p-error">
+            La fecha es obligatoria.
           </small>
         </div>
 
@@ -21,38 +22,48 @@
         <div class="col-12 sm:col-6 mb-3 sm:mb-4">
           <label for="empresa" class="block text-900 font-medium mb-2">Empresa</label>
           <p-dropdown id="empresa" [options]="empresas" placeholder="Seleccione una empresa" optionValue="codEmpresa"
-            optionLabel="nombre" styleClass="w-full">
+            optionLabel="nombre" (onChange)="onEmpresaChange($event)" styleClass="w-full">
           </p-dropdown>
-          <small *ngIf="formBobinaMalEstado.get('empresa')?.hasError('required') && formBobinaMalEstado.get('empresa')?.touched" class="p-error">
-            La empresa es requerida.
+          <small
+            *ngIf="formBobinaMalEstado.get('empresa')?.hasError('required') && formBobinaMalEstado.get('empresa')?.touched"
+            class="p-error">
+            La empresa es obligatoria.
           </small>
         </div>
 
         <!-- Número de Documento -->
         <div class="col-12 sm:col-6 mb-3 sm:mb-4">
-          <label for="numero" class="block text-900 font-medium mb-2">Número de Documento</label>
-          <p-dropdown id="docNum" [options]="registroResma" placeholder="Seleccione Num. Documento" optionLabel="docNum"
-            optionValue="docNum" formControlName="docNum" [filter]="true"
-             styleClass="w-full">
+          <label for="docNum" class="block text-900 font-medium mb-2">Número de Documento</label>
+          <p-dropdown id="docNum" [options]="registroDanoBobina" placeholder="Seleccione un número de documento"
+            optionLabel="docNum" optionValue="docNum" formControlName="docNum" [filter]="true"
+            (onChange)="onDocNumChange($event)" styleClass="w-full">
           </p-dropdown>
-          <small *ngIf="formBobinaMalEstado.get('docNum')?.hasError('required') && formBobinaMalEstado.get('docNum')?.touched" class="p-error">
-            El número de documento es requerido.
+          <small
+            *ngIf="formBobinaMalEstado.get('docNum')?.hasError('required') && formBobinaMalEstado.get('docNum')?.touched"
+            class="p-error">
+            El número de documento es obligatorio.
           </small>
+        </div>
+
+        <!-- Artículos -->
+        <div class="col-12 sm:col-6 mb-3 sm:mb-4">
+          <label *ngIf="articulos.length > 0" for="articulos" class="block text-900 font-medium mb-2">Artículos encontrados:</label>
+          <p-scroller [items]="articulos" [itemSize]="50" styleClass="w-full" [style]="{'height': '200px'}"
+            [disabled]="!numeroSeleccionado">
+            <ng-template pTemplate="item" let-item>
+              <div class="flex align-items-center p-2">
+                {{item.articulo}}
+              </div>
+            </ng-template>
+          </p-scroller>
         </div>
       </div>
 
       <div class="mb-3 sm:mb-4">
         <div formArrayName="detalles">
-
-          <p-table
-              [value]="detalles.controls"
-              [paginator]="true"
-              [rows]="10"
-              [totalRecords]="detalles.length"
-              styleClass="p-datatable-sm p-datatable-responsive-demo"
-              [breakpoint]="'960px'"
-              [scrollable]="true"
-              [tableStyle]="{'min-width': '120rem'}">
+          <p-table [value]="detalles.controls" [paginator]="true" [rows]="10" [totalRecords]="detalles.length"
+            styleClass="p-datatable-sm p-datatable-responsive-demo" [breakpoint]="'960px'" [scrollable]="true"
+            [tableStyle]="{'min-width': '120rem'}">
 
             <!-- Define ancho de las columnas -->
             <colgroup>
@@ -64,12 +75,12 @@
               <col style="width: 10%">
               <col style="width: 10%">
               <col style="width: 10%">
+              <col style="width: 10%">
               <col style="width: 5%">
             </colgroup>
 
             <ng-template pTemplate="caption">
-              <button pButton pRipple label="Agregar Fila" type="button" icon="pi pi-plus" class="m-2 p-button-info"
-                >
+              <button pButton pRipple label="Agregar Fila" type="button" icon="pi pi-plus" class="m-2 p-button-info" (click)="agregarFila()">
               </button>
             </ng-template>
 
@@ -77,14 +88,18 @@
               <tr>
                 <th>#</th>
                 <th>Artículo</th>
-                <th>Cantidad</th>
-                <th>Dañado por:</th>
-                <th>Porcentaje Dañado (%)</th>
+                <th>Daño</th>
+                <th>Peso de Bobina (kg)</th>
+                <th>Diámetro (cm)</th>
+                <th>Cm Dañado</th>
+                <th>Ancho (cm)</th>
+                <th>Kilos Dañados Reales (kg)</th>
+                <th>Kilos Dañados (kg)</th>
                 <th>Precio Unitario (USD)</th>
-                <th>SubTotal USD</th>
+                <th>SubTotal (USD)</th>
+                <th>Num. Importacion</th>
                 <th>Placa</th>
                 <th>Chofer</th>
-                <th>...</th>
               </tr>
             </ng-template>
 
@@ -95,105 +110,165 @@
                 <!-- Artículo -->
                 <td>
                   <p-dropdown formControlName="articulo" [options]="tempArticulo" optionLabel="articulo" appendTo="body"
-                    optionValue="codArticulo" placeholder="Seleccione un articulo" styleClass="w-full"
+                    optionValue="codArticulo" placeholder="Seleccione un artículo" styleClass="w-full"
                     [disabled]="tempArticulo.length === 0">
                   </p-dropdown>
-                  <small *ngIf="detalles.at(i).get('articulo')?.hasError('required') && detalles.at(i).get('articulo')?.touched" class="p-error">
-                    El artículo es requerido.
+                  <small
+                    *ngIf="detalles.at(i).get('articulo')?.hasError('required') && detalles.at(i).get('articulo')?.touched"
+                    class="p-error">
+                    El artículo es obligatorio.
                   </small>
                 </td>
 
-                <!-- Cantidad -->
-                <td>
-                  <input pInputText type="number" formControlName="cantidad" class="w-full p-inputtext-sm" min="0" >
-                  <small *ngIf="detalles.at(i).get('cantidad')?.hasError('min') && detalles.at(i).get('cantidad')?.touched" class="p-error">
-                    La cantidad debe ser mayor a 0.
-                  </small>
-                </td>
-
-                <!-- Dañado por -->
+                <!-- Tipo de Daño -->
                 <td>
                   <p-dropdown formControlName="idTd" [options]="tipoDano" optionLabel="descripcion" appendTo="body"
-                    optionValue="idTd" placeholder="Seleccione Tipo Daño" styleClass="w-full"
+                    optionValue="idTd" placeholder="Seleccione el tipo de daño" styleClass="w-full"
                     [disabled]="tempArticulo.length === 0">
                   </p-dropdown>
-                  <small *ngIf="detalles.at(i).get('idTd')?.hasError('required') && detalles.at(i).get('idTd')?.touched" class="p-error">
-                    Seleccione un tipo de daño.
+                  <small *ngIf="detalles.at(i).get('idTd')?.hasError('required') && detalles.at(i).get('idTd')?.touched"
+                    class="p-error">
+                    El tipo de daño es obligatorio.
                   </small>
                 </td>
 
-                <!-- Porcentaje Dañado -->
+                <!-- Peso de la Bobina -->
                 <td>
-                  <input pInputText type="number" formControlName="porcentajeDanado" placeholder="%" class="w-full p-inputtext-sm" min="0" max="100" >
-                  <small *ngIf="detalles.at(i).get('porcentajeDanado')?.hasError('min') && detalles.at(i).get('porcentajeDanado')?.touched" class="p-error">
-                    El porcentaje debe ser mayor a 0.
+                  <input pInputText type="number" formControlName="pesoBobina" class="w-full p-inputtext-sm" min="0">
+                  <small
+                    *ngIf="detalles.at(i).get('pesoBobina')?.hasError('min') && detalles.at(i).get('pesoBobina')?.touched"
+                    class="p-error">
+                    El peso de la bobina debe ser mayor a 0.
                   </small>
-                  <small *ngIf="detalles.at(i).get('porcentajeDanado')?.hasError('max') && detalles.at(i).get('porcentajeDanado')?.touched" class="p-error">
-                    El porcentaje no puede ser mayor a 100.
+                </td>
+
+                <!-- Diámetro -->
+                <td>
+                  <input pInputText type="number" formControlName="diametro" class="w-full p-inputtext-sm" min="0">
+                  <small
+                    *ngIf="detalles.at(i).get('diametro')?.hasError('min') && detalles.at(i).get('diametro')?.touched"
+                    class="p-error">
+                    El diámetro debe ser mayor a 0.
+                  </small>
+                </td>
+
+                <!-- Cm Dañado -->
+                <td>
+                  <input pInputText type="number" formControlName="cmDanado" class="w-full p-inputtext-sm" min="0">
+                  <small
+                    *ngIf="detalles.at(i).get('cmDanado')?.hasError('min') && detalles.at(i).get('cmDanado')?.touched"
+                    class="p-error">
+                    Los centímetros dañados deben ser mayores a 0.
+                  </small>
+                </td>
+
+                <!-- Ancho -->
+                <td>
+                  <input pInputText type="number" formControlName="ancho" class="w-full p-inputtext-sm" min="0">
+                  <small
+                    *ngIf="detalles.at(i).get('ancho')?.hasError('min') && detalles.at(i).get('ancho')?.touched"
+                    class="p-error">
+                    El ancho debe ser mayor a 0.
+                  </small>
+                </td>
+
+                <!-- Kilos Dañados Reales -->
+                <td>
+                  <input pInputText type="number" formControlName="kilosDanadosReal" class="w-full p-inputtext-sm" min="0">
+                  <small
+                    *ngIf="detalles.at(i).get('kilosDanadosReal')?.hasError('min') && detalles.at(i).get('kilosDanadosReal')?.touched"
+                    class="p-error">
+                    Los kilos dañados reales deben ser mayores a 0.
+                  </small>
+                </td>
+
+                <!-- Kilos Dañados -->
+                <td>
+                  <input pInputText type="number" formControlName="kilosDanados" class="w-full p-inputtext-sm" min="0">
+                  <small
+                    *ngIf="detalles.at(i).get('kilosDanados')?.hasError('min') && detalles.at(i).get('kilosDanados')?.touched"
+                    class="p-error">
+                    Los kilos dañados deben ser mayores a 0.
                   </small>
                 </td>
 
                 <!-- Precio Unitario -->
                 <td>
-                  <input pInputText type="number" formControlName="precioUnitario" placeholder="USD" class="w-full p-inputtext-sm" min="0.01" >
-                  <small *ngIf="detalles.at(i).get('precioUnitario')?.hasError('min') && detalles.at(i).get('precioUnitario')?.touched" class="p-error">
+                  <input pInputText type="number" formControlName="precioUnitario" placeholder="USD"
+                    class="w-full p-inputtext-sm" min="0.01">
+                  <small
+                    *ngIf="detalles.at(i).get('precioUnitario')?.hasError('min') && detalles.at(i).get('precioUnitario')?.touched"
+                    class="p-error">
                     El precio unitario debe ser mayor a 0.
                   </small>
                 </td>
 
                 <!-- SubTotal USD -->
                 <td>
-                  <input pInputText type="number" formControlName="subTotalUSD" placeholder="USD" class="w-full p-inputtext-sm" [readonly]="true">
+                  <input pInputText type="number" formControlName="subTotalUSD" placeholder="USD"
+                    class="w-full p-inputtext-sm" [readonly]="true">
                 </td>
+
+                <!--Num Importacion-->
+                <td>
+                  <input pInputText type="text" formControlName="numImportacion" placeholder="Num. Importacion"
+                    class="w-full p-inputtext-sm">
+
+                </td>
+
 
                 <!-- Placa -->
                 <td>
-                  <input pInputText type="text" formControlName="placa" placeholder="Placa" class="w-full p-inputtext-sm">
-                  <small *ngIf="detalles.at(i).get('placa')?.hasError('required') && detalles.at(i).get('placa')?.touched" class="p-error">
-                    La placa es requerida.
+                  <input pInputText type="text" formControlName="placa" placeholder="Placa"
+                    class="w-full p-inputtext-sm">
+                  <small
+                    *ngIf="detalles.at(i).get('placa')?.hasError('required') && detalles.at(i).get('placa')?.touched"
+                    class="p-error">
+                    La placa es obligatoria.
                   </small>
                 </td>
 
                 <!-- Chofer -->
                 <td>
-                  <input pInputText type="text" formControlName="chofer" placeholder="Chofer" class="w-full p-inputtext-sm">
-                  <small *ngIf="detalles.at(i).get('chofer')?.hasError('required') && detalles.at(i).get('chofer')?.touched" class="p-error">
-                    El nombre del chofer es requerido.
+                  <input pInputText type="text" formControlName="chofer" placeholder="Chofer"
+                    class="w-full p-inputtext-sm">
+                  <small
+                    *ngIf="detalles.at(i).get('chofer')?.hasError('required') && detalles.at(i).get('chofer')?.touched"
+                    class="p-error">
+                    El nombre del chofer es obligatorio.
                   </small>
                 </td>
 
                 <!-- Eliminar Fila -->
                 <td class="text-center">
-                  <button pButton type="button" icon="pi pi-times" class="p-button-danger p-button-sm" pTooltip="Eliminar"
-                   ></button>
+                  <button pButton type="button" icon="pi pi-times" class="p-button-danger p-button-sm" (click)="eliminarFila(i)" pTooltip="Eliminar">
+                  </button>
                 </td>
-
               </tr>
             </ng-template>
 
             <!-- Footer con Totales -->
             <ng-template pTemplate="footer">
               <tr>
-                <td colspan="2" class="text-right font-bold">Totales:</td>
-                <td class="text-center font-bold">{{ totalCantidad | number }}</td>
+                <td colspan="3" class="text-right font-bold">Totales:</td>
+                <td class="text-center font-bold">{{ totalKilosBobinas | number:'1.2-2' }}</td>
                 <td colspan="3"></td>
-                <td class="text-center font-bold">{{ totalSubTotalUSD | number }}</td>
+                <td class="text-center font-bold">{{ totalKilosDanadosReal | number:'1.2-2' }}</td>
+                <td class="text-center font-bold">{{ totalKilosDanados | number:'1.2-2' }}</td>
+                <td colspan="1"></td>
+                <td class="text-center font-bold">{{ totalUSD | currency:'USD':'symbol':'1.2-2' }}</td>
                 <td colspan="2"></td>
               </tr>
             </ng-template>
 
           </p-table>
-
         </div>
       </div>
 
       <div class="flex justify-content-center sm:justify-content-end">
-
         <p-button label="Guardar" icon="pi pi-check" styleClass="p-button-raised w-full sm:w-auto"
-          [disabled]="formBobinaMalEstado.invalid"
-         >
+          [disabled]="formBobinaMalEstado.invalid">
         </p-button>
-
       </div>
     </form>
   </div>

@@ -259,6 +259,7 @@ export class RegistroResmaComponent implements OnInit {
       totalUSD,
       obs,
       codEmpleado: this.getCodEmpleado(),
+      codEmpresa: this.empresaSeleccionada,
       audUsuario: this.getUser()
     };
 

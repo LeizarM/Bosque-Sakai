@@ -8,6 +8,7 @@ export interface RegistroDanoBobina {
   totalUsd:              number;
   obs:                   string;
   docNum:                number;
+  codEmpresa:            number;
   audUsuario:            number;
 
 

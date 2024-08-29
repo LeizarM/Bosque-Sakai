@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, retry, throwError, timeout } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { Empresa } from '../../interfaces/Empresa';
+import { RegistroDanoBobina } from '../../interfaces/RegistroDanoBobina';
 import { RegistroResma } from '../../interfaces/RegistroResma';
 import { RegistroResmaDetalle } from '../../interfaces/RegistroResmaDetalle';
 import { TipoDano } from '../../interfaces/TipoDano';
@@ -137,6 +138,49 @@ export class MaterialMalEstadoService {
   }
 
 
+
+
+  /**
+   * Para obtener los docNum por empresas
+   * @returns
+   */
+  obtenerDocNumXEmpresaBob( codEmpresa : number ): Observable<RegistroDanoBobina[]> {
+
+    const url = `${this.baseUrl}/material-mal-estado/lstDocNumBob`;
+    const data = {
+      "codEmpresa" : codEmpresa
+    };
+
+    return this.http.post<RegistroDanoBobina[]>( url, data ).pipe(
+        retry(1), // Reintenta la petición hasta 3 veces en caso de fallo
+        timeout(5000), // Establece un tiempo límite de 5 segundos
+        catchError(this.handleError)
+      );
+  }
+
+
+
+  /**
+   * Obtendra los articulos por DocNum y por Empresa
+   * @param codEmpresa
+   * @param docNum
+   * @returns
+   */
+  obtenerArticulosXDocNumBob( codEmpresa : number, docNum : number ): Observable<RegistroDanoBobina[]> {
+
+    const url = `${this.baseUrl}/material-mal-estado/lstArticuloXEntradaBob`;
+    const data = {
+      "codEmpresa" : codEmpresa,
+      "docNum" : docNum
+    };
+
+    return this.http.post<RegistroDanoBobina[]>( url, data ).pipe(
+        retry(2), // Reintenta la petición hasta 3 veces en caso de fallo
+        timeout(5000), // Establece un tiempo límite de 5 segundos
+        catchError(this.handleError)
+      );
+  }
+
   /**
    * Manejo de errores
    * @param error
@@ -155,4 +199,8 @@ export class MaterialMalEstadoService {
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
+
+
+
+
 }
