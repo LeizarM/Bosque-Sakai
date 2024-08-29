@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
+import { catchError, concatMap, of, Subscription, throwError } from 'rxjs';
 import { LoginService } from 'src/app/auth/services/login.service';
 import { Empresa } from 'src/app/protected/interfaces/Empresa';
 import { RegistroDanoBobina } from 'src/app/protected/interfaces/RegistroDanoBobina';
+import { RegistroDanoBobinaDetalle } from 'src/app/protected/interfaces/RegistroDanoBobinaDetalle';
 import { TipoDano } from 'src/app/protected/interfaces/TipoDano';
 import { MaterialMalEstadoService } from '../../services/materialMalEstado.service';
 
@@ -135,11 +136,21 @@ export class RegistroBobinaComponent implements OnInit, OnDestroy {
       ccc: [0, Validators.required],
       kilosDanados: [0, Validators.required],
       precioUnitario: [0, Validators.required],
-      subTotalUSD: [0, Validators.required],
+      subTotalUsd: [0, Validators.required],
       numImportacion: [''],
       placa: ['', Validators.required],
       chofer: ['', Validators.required],
       audUsuario: this.getUser()
+    });
+
+    nuevaFila.get('articulo')?.valueChanges.subscribe(codArticulo => {
+      const articuloSeleccionado = this.tempArticulo.find(art => art.codArticulo === codArticulo);
+      if (articuloSeleccionado) {
+          nuevaFila.patchValue({
+              codArticulo: articuloSeleccionado.codArticulo,
+              descripcion: articuloSeleccionado.descripcion
+          });
+      }
     });
 
     // Escuchar cambios en los inputs relacionados para recalcular valores
@@ -182,16 +193,16 @@ export class RegistroBobinaComponent implements OnInit, OnDestroy {
     // Cálculo del porcentaje y subTotal
     const ccc = Math.round((kilosDanadosReal * 100) / totalKilosDanadosReal * 100) / 100;
     const kilosDanados = Math.round((totalKilosDanadosReal * ccc) / 100 * 100) / 100;
-    const subTotalUSD = Math.round(kilosDanados * precioUnitario * 100) / 100;
+    const subTotalUsd = Math.round(kilosDanados * precioUnitario * 100) / 100;
 
-    fila.patchValue({ ccc, kilosDanados, subTotalUSD });
+    fila.patchValue({ ccc, kilosDanados, subTotalUsd });
   }
 
   private recalcularTotalesGenerales(): void {
     this.totalKilosBobinas = this.detalles.controls.reduce((total, grupo) => total + (grupo.get('pesoBobina')?.value || 0), 0);
     this.totalKilosDanados = this.detalles.controls.reduce((total, grupo) => total + (grupo.get('kilosDanados')?.value || 0), 0);
     this.totalKilosDanadosReal = this.detalles.controls.reduce((total, grupo) => total + (grupo.get('kilosDanadosReal')?.value || 0), 0);
-    this.totalUSD = this.detalles.controls.reduce((total, grupo) => total + (grupo.get('subTotalUSD')?.value || 0), 0);
+    this.totalUSD = this.detalles.controls.reduce((total, grupo) => total + (grupo.get('subTotalUsd')?.value || 0), 0);
 
     // Actualizar los valores en el formulario
     this.formBobinaMalEstado.patchValue({
@@ -217,6 +228,91 @@ export class RegistroBobinaComponent implements OnInit, OnDestroy {
     console.error(mensaje, error);
     this.errorMessage = mensaje;
     // Aquí podrías también mostrar un mensaje de error al usuario con un componente de toast
+  }
+
+  guardarFormulario(): void {
+
+    if (this.formBobinaMalEstado.invalid) {
+      return; // No hacer nada si el formulario es inválido
+    }
+
+    const regDetalles : RegistroDanoBobinaDetalle[] = [];
+
+    const { fecha,  docNum, obs } = this.formBobinaMalEstado.value;
+    const detalles = this.detalles.value; // Obtener el array de detalles
+
+    // Ahora puedes enviar estos valores a tu servicio para guardarlos
+    const dataToSave : RegistroDanoBobina = {
+      fecha,
+      codEmpleado: this.getCodEmpleado(),
+      totalKilosBobinas : this.totalKilosBobinas,
+      totalKilosDanados : this.totalKilosDanados,
+      totalKilosDanadosReal : this.totalKilosDanadosReal,
+      totalUsd: this.totalUSD,
+      docNum,
+      obs,
+      codEmpresa: this.empresaSeleccionada,
+      audUsuario: this.getUser()
+    };
+
+    detalles.forEach((detalle : RegistroDanoBobinaDetalle) => {
+      const regDetalle: RegistroDanoBobinaDetalle = {
+        idTd: detalle.idTd,
+        codArticulo: detalle.codArticulo,
+        descripcion: detalle.descripcion,
+        pesoBobina: detalle.pesoBobina,
+        diametro: detalle.diametro,
+        cmDanado: detalle.cmDanado,
+        ancho: detalle.ancho,
+        cca: detalle.cca,
+        ccb: detalle.ccb,
+        kilosDanadosReal: detalle.kilosDanadosReal,
+        ccc: detalle.ccc,
+        kilosDanados: detalle.kilosDanados,
+        precioUnitario : detalle.precioUnitario,
+        subTotalUsd: detalle.subTotalUsd,
+        numImportacion: detalle.numImportacion,
+        placa: detalle.placa,
+        chofer: detalle.chofer,
+        audUsuario: this.getUser()
+      };
+      regDetalles.push(regDetalle);
+    });
+
+
+    of(null).pipe(
+      // Primero, registra el lote de producción
+      concatMap(() => this.materialMalEstado.registrarBobinaMalEstado(dataToSave)),
+
+      // Luego, registra todos los materiales de ingreso
+      concatMap(() => this.materialMalEstado.registrarBobinaMalEstadoDet(regDetalles)),
+
+      // Manejo de errores
+      catchError((err) => {
+        console.error(err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error durante el proceso de registro' });
+        return throwError(() => new Error('Proceso de registro fallido'));
+      })
+    ).subscribe({
+      complete: () => {
+        // Mensaje de éxito después de que todos los procesos se han completado correctamente
+        this.messageService.add({ severity: 'success', summary: 'Completo', detail: 'Todos los registros se completaron con éxito' });
+
+        // Reiniciar el formulario y los detalles a su estado inicial
+        this.inicializarFormulario();
+        this.detalles.clear();
+        this.tempArticulo = [];
+        this.cargarDatosIniciales();
+        this.recalcularTotalesGenerales();
+
+        // Recargar datos iniciales
+        this.cargarDatosIniciales();
+      }
+    });
+
+    setTimeout(() => {
+      this.messageService.clear();
+    }, 3000);
   }
 
   private getUser(): number {

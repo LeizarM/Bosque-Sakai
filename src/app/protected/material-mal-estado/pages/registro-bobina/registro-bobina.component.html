@@ -3,7 +3,7 @@
     <h2 class="text-center text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-900">
       Registro de Bobinas en Mal Estado
     </h2>
-
+    <p-messages></p-messages>
     <form id="frmMalEstadoResma" [formGroup]="formBobinaMalEstado" autocomplete="off">
       <div class="grid">
         <!-- Fecha -->
@@ -205,7 +205,7 @@
 
                 <!-- SubTotal USD -->
                 <td>
-                  <input pInputText type="number" formControlName="subTotalUSD" placeholder="USD"
+                  <input pInputText type="number" formControlName="subTotalUsd" placeholder="USD"
                     class="w-full p-inputtext-sm" [readonly]="true">
                 </td>
 
@@ -267,7 +267,8 @@
 
       <div class="flex justify-content-center sm:justify-content-end">
         <p-button label="Guardar" icon="pi pi-check" styleClass="p-button-raised w-full sm:w-auto"
-          [disabled]="formBobinaMalEstado.invalid">
+          [disabled]="formBobinaMalEstado.invalid"
+          (click)="guardarFormulario()">
         </p-button>
       </div>
     </form>

@@ -4,6 +4,7 @@ import { catchError, Observable, retry, throwError, timeout } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { Empresa } from '../../interfaces/Empresa';
 import { RegistroDanoBobina } from '../../interfaces/RegistroDanoBobina';
+import { RegistroDanoBobinaDetalle } from '../../interfaces/RegistroDanoBobinaDetalle';
 import { RegistroResma } from '../../interfaces/RegistroResma';
 import { RegistroResmaDetalle } from '../../interfaces/RegistroResmaDetalle';
 import { TipoDano } from '../../interfaces/TipoDano';
@@ -180,6 +181,46 @@ export class MaterialMalEstadoService {
         catchError(this.handleError)
       );
   }
+
+
+
+  /**
+   * Para registrar el resmado de mal estado
+   * @param mb
+   * @returns
+   */
+  registrarBobinaMalEstado(mb: RegistroDanoBobina): Observable<RegistroDanoBobina> {
+
+    const url = `${this.baseUrl}/material-mal-estado/registroBobinaMalEstado`;
+    const data = mb;
+
+    // Realiza la petición POST al backend
+    return this.http.post<RegistroDanoBobina>(url, data )
+      .pipe(
+        retry(2), // Reintenta la petición hasta 2 veces en caso de fallo
+        catchError(this.handleError) // Maneja errores usando el método handleError
+      );
+  }
+
+  /**
+   * Para registrar el detalle del resmado de mal estado
+   * @param mb
+   * @returns
+   */
+  registrarBobinaMalEstadoDet(mb: RegistroDanoBobinaDetalle[]): Observable<RegistroDanoBobinaDetalle[]> {
+
+    const url = `${this.baseUrl}/material-mal-estado/detRegistroBobinaMalEstado`;
+    const data = mb;
+
+    // Realiza la petición POST al backend
+    return this.http.post<RegistroDanoBobinaDetalle[]>(url, data )
+      .pipe(
+        retry(2), // Reintenta la petición hasta 2 veces en caso de fallo
+        catchError(this.handleError) // Maneja errores usando el método handleError
+      );
+  }
+
+
 
   /**
    * Manejo de errores
