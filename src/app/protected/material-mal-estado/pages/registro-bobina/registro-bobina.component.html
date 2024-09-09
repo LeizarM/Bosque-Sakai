@@ -63,20 +63,20 @@
         <div formArrayName="detalles">
           <p-table [value]="detalles.controls" [paginator]="true" [rows]="10" [totalRecords]="detalles.length"
             styleClass="p-datatable-sm p-datatable-responsive-demo" [breakpoint]="'960px'" [scrollable]="true"
-            [tableStyle]="{'min-width': '120rem'}">
+            [tableStyle]="{'min-width': '156rem'}">
 
-            <!-- Define ancho de las columnas -->
+            <!-- Definición de Anchos de Columnas Actualizados -->
             <colgroup>
-              <col style="width: 5%">
-              <col style="width: 20%">
-              <col style="width: 10%">
-              <col style="width: 15%">
-              <col style="width: 10%">
-              <col style="width: 10%">
-              <col style="width: 10%">
-              <col style="width: 10%">
-              <col style="width: 10%">
-              <col style="width: 5%">
+              <col style="width: 6.5%">
+              <col style="width: 26%">
+              <col style="width: 19.5%">
+              <col style="width: 19.5%">
+              <col style="width: 19.5%">
+              <col style="width: 19.5%">
+              <col style="width: 19.5%">
+              <col style="width: 19.5%">
+              <col style="width: 19.5%">
+              <col style="width: 6.5%">
             </colgroup>
 
             <ng-template pTemplate="caption">
@@ -97,9 +97,10 @@
                 <th>Kilos Dañados (kg)</th>
                 <th>Precio Unitario (USD)</th>
                 <th>SubTotal (USD)</th>
-                <th>Num. Importacion</th>
+                <th>Num. Importación</th>
                 <th>Placa</th>
                 <th>Chofer</th>
+                <th>Acciones</th>
               </tr>
             </ng-template>
 
@@ -174,22 +175,12 @@
 
                 <!-- Kilos Dañados Reales -->
                 <td>
-                  <input pInputText type="number" formControlName="kilosDanadosReal" class="w-full p-inputtext-sm" min="0">
-                  <small
-                    *ngIf="detalles.at(i).get('kilosDanadosReal')?.hasError('min') && detalles.at(i).get('kilosDanadosReal')?.touched"
-                    class="p-error">
-                    Los kilos dañados reales deben ser mayores a 0.
-                  </small>
+                  <input pInputText type="number" formControlName="kilosDanadosReal" class="w-full p-inputtext-sm" min="0" readonly>
                 </td>
 
                 <!-- Kilos Dañados -->
                 <td>
-                  <input pInputText type="number" formControlName="kilosDanados" class="w-full p-inputtext-sm" min="0">
-                  <small
-                    *ngIf="detalles.at(i).get('kilosDanados')?.hasError('min') && detalles.at(i).get('kilosDanados')?.touched"
-                    class="p-error">
-                    Los kilos dañados deben ser mayores a 0.
-                  </small>
+                  <input pInputText type="number" formControlName="kilosDanados" class="w-full p-inputtext-sm" min="0" readonly>
                 </td>
 
                 <!-- Precio Unitario -->
@@ -206,16 +197,14 @@
                 <!-- SubTotal USD -->
                 <td>
                   <input pInputText type="number" formControlName="subTotalUsd" placeholder="USD"
-                    class="w-full p-inputtext-sm" [readonly]="true">
+                    class="w-full p-inputtext-sm" readonly>
                 </td>
 
-                <!--Num Importacion-->
+                <!--Num Importación-->
                 <td>
-                  <input pInputText type="text" formControlName="numImportacion" placeholder="Num. Importacion"
+                  <input pInputText type="text" formControlName="numImportacion" placeholder="Num. Importación"
                     class="w-full p-inputtext-sm">
-
                 </td>
-
 
                 <!-- Placa -->
                 <td>
@@ -257,7 +246,7 @@
                 <td class="text-center font-bold">{{ totalKilosDanados | number:'1.2-2' }}</td>
                 <td colspan="1"></td>
                 <td class="text-center font-bold">{{ totalUSD | currency:'USD':'symbol':'1.2-2' }}</td>
-                <td colspan="2"></td>
+                <td colspan="3"></td>
               </tr>
             </ng-template>
 

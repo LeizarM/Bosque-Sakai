@@ -2,6 +2,7 @@ export interface LoteProduccion {
 
 
   idLp?:                    number;
+  idMa?:                    number;
   numLote?:                 number;
   anio?:                    number;
   fecha?:                   Date;

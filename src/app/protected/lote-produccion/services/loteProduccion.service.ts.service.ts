@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { DetalleResmado } from '../../interfaces/DetalleResmado';
 import { GrupoProduccion } from '../../interfaces/GrupoProduccion';
 import { LoteProduccion } from '../../interfaces/LoteProduccion';
+import { MaquinaProduccion } from '../../interfaces/MaquinaProduccion';
 import { MaterialIngreso } from '../../interfaces/MaterialIngreso';
 import { MaterialSalida } from '../../interfaces/MaterialSalida';
 import { Merma } from '../../interfaces/Merma';
@@ -37,10 +38,12 @@ export class LoteProduccionService {
    * Obtendra los datos limpios para un nuevo lote de Produccion
    * @returns
    */
-  obtenerLoteProduccionNew(): Observable<LoteProduccion[]>{
+  obtenerLoteProduccionNew( idMa : number ): Observable<LoteProduccion[]>{
 
     const url = `${this.baseUrl}/loteProduccion/newLoteProduccion`;
-    const data = { };
+    const data = {
+      idMa : idMa
+    };
     return this.http.post<LoteProduccion[]>( url, data )
     .pipe(
 
@@ -69,6 +72,32 @@ export class LoteProduccionService {
     const url = `${this.baseUrl}/loteProduccion/articulos`;
     const data = { };
     return this.http.post<LoteProduccion[]>( url, data )
+    .pipe(
+
+      catchError(e => {
+        if (e.status == 401) {
+          return throwError(() => e);
+        }
+        if (e.ok === false) {
+          console.error(e.error.error);
+          return throwError(() => e);
+        }
+        return throwError(() => e);
+      })
+    );
+
+  }
+
+
+  /**
+   * Obtendra las maquinas de produccion
+   * @returns
+   */
+  obtenerMaquina(): Observable<MaquinaProduccion[]>{
+
+    const url = `${this.baseUrl}/loteProduccion/maquina`;
+    const data = { };
+    return this.http.post<MaquinaProduccion[]>( url, data )
     .pipe(
 
       catchError(e => {

@@ -5,6 +5,7 @@ import { of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { concatMap } from 'rxjs/internal/operators/concatMap';
 import { LoginService } from 'src/app/auth/services/login.service';
+import { MaquinaProduccion } from 'src/app/protected/interfaces/MaquinaProduccion';
 import { MaterialIngreso } from 'src/app/protected/interfaces/MaterialIngreso';
 import * as uuid from 'uuid';
 import { LoteProduccion } from '../../../interfaces/LoteProduccion';
@@ -55,7 +56,7 @@ export class CrearLoteProduccionComponent implements OnInit {
 
 
   registro: LoteProduccion = {
-
+    idMa: 0,
     numLote: 0,
     anio: 0,
     fecha: new Date(),
@@ -71,10 +72,10 @@ export class CrearLoteProduccionComponent implements OnInit {
     cantHojasSalida: 0,
     mermaTotal: 0,
     diferenciaProduccion: 0,
-    diferenciaProdResma : 0,
-    cantEstimadaResma : 0,
-    pesoBalanzaTotal : 0,
-    estado : 1,
+    diferenciaProdResma: 0,
+    cantEstimadaResma: 0,
+    pesoBalanzaTotal: 0,
+    estado: 1,
     obs: ''
 
   };
@@ -95,7 +96,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   lstIngreso: MaterialIngreso[] = [];
   lstSalida: MaterialSalida[] = [];
   lstMerma: Merma[] = [];
-
+  lstMaquina: MaquinaProduccion[] = [];
 
 
 
@@ -114,7 +115,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   }
   ngOnInit(): void {
 
-    this.obtenerLoteProduccionNew();
+
     this.obtenerArticulos();
 
     //llenara la lista de ingreso de material por default
@@ -123,13 +124,15 @@ export class CrearLoteProduccionComponent implements OnInit {
     this.llenarListaSalida();
     //llenara la lista de merma por default
     this.llenarMerma();
+    //llenara la lista de maquinas de produccion
+    this.obtenerMaquinaProduccion();
 
 
   }
   /**
    * Llena las variables y listas a inicializar
    */
-  inicializarAll() : void {
+  inicializarAll(): void {
 
     this.lstIngreso = [];
     this.lstSalida = [];
@@ -166,7 +169,8 @@ export class CrearLoteProduccionComponent implements OnInit {
     this.formLoteProduccion = new FormGroup({
 
       // Definir los FormControl para los campos del formulario
-      numLote: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      idMa: new FormControl(0, [Validators.required, Validators.min(1)]),
+      numLote: new FormControl(0, [Validators.required, Validators.min(1)]),
       fecha: new FormControl(new Date(), [Validators.required]),
       hraInicio: new FormControl('', [Validators.required, Validators.minLength(4)]),
       hraInicioCorte: new FormControl('', [Validators.required, Validators.minLength(4)]),
@@ -183,10 +187,10 @@ export class CrearLoteProduccionComponent implements OnInit {
   previewLoteProduccion(): void {
 
 
-    const { numLote, anio, fecha, hraInicio, hraInicioCorte, hraFin, obs } = this.formLoteProduccion.value;
+    const { idMa, numLote, anio, fecha, hraInicio, hraInicioCorte, hraFin, obs } = this.formLoteProduccion.value;
 
     this.registro = {
-
+      idMa,
       numLote,
       anio,
       fecha,
@@ -211,11 +215,11 @@ export class CrearLoteProduccionComponent implements OnInit {
 
     this.lstIngreso = this.lstIngreso.map(item => {
 
-        return {
-          ...item,
-          codArticulo: this.articuloIngreso?.codArticulo,
-          descripcion: this.articuloIngreso?.datoArt
-        };
+      return {
+        ...item,
+        codArticulo: this.articuloIngreso?.codArticulo,
+        descripcion: this.articuloIngreso?.datoArt
+      };
 
     });
 
@@ -230,7 +234,7 @@ export class CrearLoteProduccionComponent implements OnInit {
         pesoMaterial: (item.pesoResma! - item.pesoPaleta!),
       };
 
-  });
+    });
 
 
     if (this.registro.numLote! > 0 && this.registro.anio! > 0 && this.registro.hraInicioCorte?.length! > 0 && this.registro.hraInicio?.length! > 0 && this.registro.hraFin?.length! > 0) {
@@ -251,21 +255,21 @@ export class CrearLoteProduccionComponent implements OnInit {
       message: 'Esta seguro de Enviar el lote de produccion?',
       header: 'Confirmacion',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel:'Si',
-      rejectLabel:'No',
+      acceptLabel: 'Si',
+      rejectLabel: 'No',
       accept: () => {
-          this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Usted confirmo el envio' });
-          this.registroLoteProduccion();
+        this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Usted confirmo el envio' });
+        this.registroLoteProduccion();
       },
       reject: (type: any) => {
-          switch (type) {
-              case ConfirmEventType.REJECT:
-                  this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'Usted No confirmo el envio' });
-                  break;
-              case ConfirmEventType.CANCEL:
-                  this.messageService.add({ severity: 'warn', summary: 'Cancelado', detail: 'Usted a cancelado el envio' });
-                  break;
-          }
+        switch (type) {
+          case ConfirmEventType.REJECT:
+            this.messageService.add({ severity: 'error', summary: 'Rechazado', detail: 'Usted No confirmo el envio' });
+            break;
+          case ConfirmEventType.CANCEL:
+            this.messageService.add({ severity: 'warn', summary: 'Cancelado', detail: 'Usted a cancelado el envio' });
+            break;
+        }
       }
     });
 
@@ -273,7 +277,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   /**
    * Para registrar el lote de produccion
    */
-  registroLoteProduccion(): void{
+  registroLoteProduccion(): void {
 
 
     of(null).pipe(
@@ -302,21 +306,39 @@ export class CrearLoteProduccionComponent implements OnInit {
         this.visible = false;
         this.inicializarAll();
         this.ngOnInit(); // Llamar a ngOnInit manualmente para reiniciar
+        this.obtenerLoteProduccionNew(0);
       }
     });
 
 
+
+
+
   }
 
+  /**
+   * Para llenar la lista de maquinas de produccion
+   */
+  obtenerMaquinaProduccion() : void {
 
+    this.loteProduccionService.obtenerMaquina().subscribe({
+      next: (resp) => {
+        this.lstMaquina = resp;
+      },
+      error: (err) => {
+        console.error('Error al obtener datos', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo cargar las maquinas de producción' });
+      },
+    });
+  }
 
 
   /**
    * Obtendra los datos limpios para un nuevo lote de Produccion
    */
-  obtenerLoteProduccionNew(): void {
+  obtenerLoteProduccionNew( event: number ): void {
 
-    this.loteProduccionService.obtenerLoteProduccionNew().subscribe({
+    this.loteProduccionService.obtenerLoteProduccionNew( event ).subscribe({
       next: (resp) => {
         this.registro = resp[0];
         //this.formLoteProduccion.setValue(this.registro);--para setear todos los valores en el formulario con un objeto
@@ -342,19 +364,19 @@ export class CrearLoteProduccionComponent implements OnInit {
 
         this.lstArticuloIngreso = [...resp];
         this.lstArticuloIngreso = this.lstArticuloIngreso.filter((item) =>
-                                    item.datoArt?.toLowerCase().includes('bobina'.toLowerCase())
-                                  );
+          item.datoArt?.toLowerCase().includes('bobina'.toLowerCase())
+        );
 
         this.lstArticuloSalida = [...resp];
 
         this.lstArticuloSalida = this.lstArticuloSalida.filter((item) =>
-                                    !item.datoArt?.toLowerCase().includes('bobina'.toLowerCase())
-                                  );
+          !item.datoArt?.toLowerCase().includes('bobina'.toLowerCase())
+        );
 
         this.lstArticuloMerma = [...resp];
         this.lstArticuloMerma = this.lstArticuloMerma.filter((item) =>
-                                    item.datoArt?.toLowerCase().includes('merma'.toLowerCase())
-                                  );
+          item.datoArt?.toLowerCase().includes('merma'.toLowerCase())
+        );
 
       },
       error: (err) => {
@@ -463,7 +485,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   /**
    * Obtendra y calculara el total de peso en balanza de la lista de ingresos
    */
-  get totalBalanza(){
+  get totalBalanza() {
     return this.lstIngreso.reduce((acc, item) => acc + Number(item.balanza), 0);
   }
 
@@ -667,12 +689,12 @@ export class CrearLoteProduccionComponent implements OnInit {
 
 
   get cantidadEstimadaResma(): number {
-    return   ( Number(this.totalBalanza  - this.totalMerma ) /  1000 ) * Number(this.articuloSalida?.utm!);
+    return (Number(this.totalBalanza - this.totalMerma) / 1000) * Number(this.articuloSalida?.utm!);
   }
 
   get calcularDifResma(): number {
 
-    return  this.totalCantidadResma - this.cantidadEstimadaResma;
+    return this.totalCantidadResma - this.cantidadEstimadaResma;
   }
 
   getTableStyle() {
@@ -690,23 +712,23 @@ export class CrearLoteProduccionComponent implements OnInit {
     return this.loginService.codUsuario;
   }
 
-  get validIngresos() : boolean {
+  get validIngresos(): boolean {
     //return this.lstIngreso.filter(item => item.pesoKilos && item.balanza!  > 0).length;
 
     return this.lstIngreso.every(item => item.pesoKilos! > 0 && item.balanza! > 0);
   }
 
-  get validSalida() : boolean  {
+  get validSalida(): boolean {
 
-    return this.lstSalida.every(item => item.pesoResma! > 0 && item.pesoPaleta! > 0 && item.cantidadResma! > 0 );
+    return this.lstSalida.every(item => item.pesoResma! > 0 && item.pesoPaleta! > 0 && item.cantidadResma! > 0);
   }
 
-  get validMerma() : boolean  {
+  get validMerma(): boolean {
 
-    return this.lstMerma.every(item => item.peso! > 0 && item.descripcion?.length! > 0 );
+    return this.lstMerma.every(item => item.peso! > 0 && item.descripcion?.length! > 0);
   }
 
-  get validarListas() : boolean  {
+  get validarListas(): boolean {
 
     return this.validIngresos && this.validSalida && this.validMerma;
   }

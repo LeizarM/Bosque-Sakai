@@ -16,6 +16,14 @@
   <form id="frmLoteProduccion" class="formgrid grid" [formGroup]="formLoteProduccion" (ngSubmit)="previewLoteProduccion()" autocomplete="off">
 
 
+    <div class="field col-12 lg:col-12 md:col-12 sm:col-12">
+
+      <label for="maquina">Seleccione Maquina</label>
+      <p-dropdown id="maquina" [options]="lstMaquina"  placeholder="-Seleccione-" styleClass="min-w-full" optionLabel="descripcion" optionValue="idMa" formControlName="idMa"
+      (onChange)="obtenerLoteProduccionNew($event.value)">
+      </p-dropdown>
+    </div>
+
     <div class="field col-12 lg:col-6 md:col-6 sm:col-12">
       <label for="numLote">Numero de Lote</label>
       <label id="numLote" type="text" class="min-w-full justify-content-center font-bold text-3xl">{{ registro.numLote}}/{{ registro.anio}}</label>
