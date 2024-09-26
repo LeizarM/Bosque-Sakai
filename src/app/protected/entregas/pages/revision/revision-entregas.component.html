@@ -1,57 +1,67 @@
-<div class="container mx-auto px-4 py-4">
+<div class="container mx-auto px-4 py-4"></div>
   <h2 class="text-center text-4xl font-bold mb-8 text-900">
     REGISTRO DE ENTREGAS
   </h2>
   <div class="card p-4 shadow-2 border-round">
-    <div class="flex justify-content-center align-items-center">
-
+    <div class="flex justify-content-center align-items-center mb-4">
       <div class="p-inputgroup" style="max-width: 500px;">
         <span class="p-float-label flex-grow-1">
-          <p-calendar id="fecha"  [(ngModel)]="filterDate" dateFormat="dd/mm/yy" [showIcon]="true" class="w-full"></p-calendar>
+          <p-calendar id="fecha" [(ngModel)]="filterDate" dateFormat="dd/mm/yy" [showIcon]="true"
+            class="w-full"></p-calendar>
           <label for="fecha">Ingrese Fecha de las entregas</label>
         </span>
-        <button pButton type="button" icon="pi pi-search" label="Buscar" (click)="onBuscar()" class="p-button-raised p-button-primary"></button>
+        <button pButton type="button" icon="pi pi-search" label="Buscar" (click)="onBuscar()"
+          class="p-button-raised p-button-primary"></button>
       </div>
-
     </div>
-
-    <div class="card mt-2">
-      <p-table [value]="lstEntregasRegistradas" [tableStyle]="{ 'min-width': '50rem' }" [rows]="10" [paginator]="true">
-          <ng-template pTemplate="header">
+    <div class="grid">
+      <div class="col-12 md:col-8">
+        <div class="card">
+          <p-table [value]="lstEntregasRegistradas" [tableStyle]="{ 'min-width': '50rem' }" [rows]="10"
+            [paginator]="true" [scrollable]="true" scrollHeight="calc(100vh - 300px)">
+            <ng-template pTemplate="header">
               <tr>
-                  <th>Factura</th>
-                  <th>Cliente</th>
-                  <th>Fecha Nota</th>
-                  <th>Fecha Entrega</th>
-                  <th>Diferencia Minutos</th>
-                  <th>Direccion Entrega</th>
-                  <th>Vendedor</th>
-                  <th>Chofer</th>
-                  <th>...</th>
-
+                <th>Factura</th>
+                <th>Cliente</th>
+                <th>Fecha Nota</th>
+                <th>Fecha Entrega</th>
+                <th>Diferencia Minutos</th>
+                <th>Direccion Entrega</th>
+                <th>Vendedor</th>
+                <th>Chofer</th>
+                <th>...</th>
               </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-entrega >
-            <tr>
-
-              <!-- Aplica clases condicionales dependiendo del valor de 'descripcionTf' -->
-              <td>{{ entrega.factura }}</td>
-              <td>{{ entrega.cardName }}</td>
-              <td>{{ entrega.fechaNota }}</td>
-              <td>{{ entrega.fechaEntrega }}</td>
-              <td>{{ entrega.diferenciaMinutos }}</td>
-              <td>{{ entrega.direccionEntrega }}</td>
-              <td>{{ entrega.vendedor }}</td>
-              <td>{{ entrega.nombreCompleto }}</td>
-              <td>
-                <button pButton type="button" icon="pi pi-eye" label="Ver" (click)="onVerEntrega( entrega )" class="p-button-rounded p-button-info"></button>
-              </td>
-
-
-            </tr>
-          </ng-template>
-      </p-table>
+            </ng-template>
+            <ng-template pTemplate="body" let-entrega>
+              <tr>
+                <td>{{ entrega.factura }}</td>
+                <td>{{ entrega.cardName }}</td>
+                <td>{{ entrega.fechaNota }}</td>
+                <td>{{ entrega.fechaEntrega }}</td>
+                <td>{{ entrega.diferenciaMinutos }}</td>
+                <td>{{ entrega.direccionEntrega }}</td>
+                <td>{{ entrega.vendedor }}</td>
+                <td>{{ entrega.nombreCompleto }}</td>
+                <td>
+                  <button pButton type="button" icon="pi pi-eye" label="Ver" (click)="onVerEntrega(entrega)"
+                    class="p-button-rounded p-button-info"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      <div class="col-12 md:col-4">
+        <div class="card" #mapContainer style="position: sticky; top: 20px; height: calc(100vh - 300px); overflow-y: auto;">
+          <div #map style="width: 100%; height: 250px;"></div>
+          <div *ngIf="selectedEntrega" class="mt-4 p-4">
+            <h3 class="text-xl font-bold mb-3">Detalles de la entrega</h3>
+            <p class="mb-2"><strong>Cliente:</strong> {{ selectedEntrega.cardName }}</p>
+            <p class="mb-2"><strong>Dirección:</strong> {{ selectedEntrega.direccionEntrega }}</p>
+            <p class="mb-2"><strong>Fecha de entrega:</strong> {{ selectedEntrega.fechaEntrega }}</p>
+            <p class="mb-2"><strong>Chofer:</strong> {{ selectedEntrega.nombreCompleto }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  </div>
-</div>
