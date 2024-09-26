@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ChangePasswordComponent } from './change-password/pages/change-password/change-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { RevisionEntregasComponent } from './entregas/pages/revision/revision-entregas.component';
 import { FacturaSantaCruzComponent } from './facturas-santa-cruz/pages/registro/factura-santa-cruz.component';
 import { RevisionFacturaSantaCruzComponent } from './facturas-santa-cruz/pages/revision/revision-factura-santa-cruz.component';
 import { FichaTrabajadorComponent } from './ficha-trabajador/pages/ficha-trabajador/ficha-trabajador.component';
@@ -79,6 +80,10 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
       {
         path: 'tfsc_RegistroFactura/Revision',
         component: RevisionFacturaSantaCruzComponent
+      },
+      {
+        path: 'trch_choferEntrega/Revision',
+        component: RevisionEntregasComponent
       },
       {
         path: '**',

@@ -1,0 +1,57 @@
+<div class="container mx-auto px-4 py-4">
+  <h2 class="text-center text-4xl font-bold mb-8 text-900">
+    REGISTRO DE ENTREGAS
+  </h2>
+  <div class="card p-4 shadow-2 border-round">
+    <div class="flex justify-content-center align-items-center">
+
+      <div class="p-inputgroup" style="max-width: 500px;">
+        <span class="p-float-label flex-grow-1">
+          <p-calendar id="fecha"  [(ngModel)]="filterDate" dateFormat="dd/mm/yy" [showIcon]="true" class="w-full"></p-calendar>
+          <label for="fecha">Ingrese Fecha de las entregas</label>
+        </span>
+        <button pButton type="button" icon="pi pi-search" label="Buscar" (click)="onBuscar()" class="p-button-raised p-button-primary"></button>
+      </div>
+
+    </div>
+
+    <div class="card mt-2">
+      <p-table [value]="lstEntregasRegistradas" [tableStyle]="{ 'min-width': '50rem' }" [rows]="10" [paginator]="true">
+          <ng-template pTemplate="header">
+              <tr>
+                  <th>Factura</th>
+                  <th>Cliente</th>
+                  <th>Fecha Nota</th>
+                  <th>Fecha Entrega</th>
+                  <th>Diferencia Minutos</th>
+                  <th>Direccion Entrega</th>
+                  <th>Vendedor</th>
+                  <th>Chofer</th>
+                  <th>...</th>
+
+              </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-entrega >
+            <tr>
+
+              <!-- Aplica clases condicionales dependiendo del valor de 'descripcionTf' -->
+              <td>{{ entrega.factura }}</td>
+              <td>{{ entrega.cardName }}</td>
+              <td>{{ entrega.fechaNota }}</td>
+              <td>{{ entrega.fechaEntrega }}</td>
+              <td>{{ entrega.diferenciaMinutos }}</td>
+              <td>{{ entrega.direccionEntrega }}</td>
+              <td>{{ entrega.vendedor }}</td>
+              <td>{{ entrega.nombreCompleto }}</td>
+              <td>
+                <button pButton type="button" icon="pi pi-eye" label="Ver" (click)="onVerEntrega( entrega )" class="p-button-rounded p-button-info"></button>
+              </td>
+
+
+            </tr>
+          </ng-template>
+      </p-table>
+  </div>
+
+  </div>
+</div>
