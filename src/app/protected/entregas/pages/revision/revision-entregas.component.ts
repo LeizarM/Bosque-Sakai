@@ -14,7 +14,9 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
 
   filterDate: Date | string = "";
+  codEmpleado: number = 0;
   lstEntregasRegistradas: EntregaChofer[] = [];
+  lstChoferes: EntregaChofer[]=[];
   map!: maplibregl.Map;
   selectedEntrega: EntregaChofer | null = null;
 
@@ -23,7 +25,9 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit {
     private mapaLibreServices: MapaLibreService
   ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.obtenerChoferes();
+  }
 
   ngAfterViewInit() {
     this.initializeMap();
@@ -54,7 +58,7 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit {
 
   onBuscar() {
     if (this.filterDate) {
-      this.revisionEntregaService.obtenerEntregasXFecha(this.filterDate).subscribe({
+      this.revisionEntregaService.obtenerEntregasXFecha(this.filterDate, this.codEmpleado).subscribe({
         next: (res) => {
           this.lstEntregasRegistradas = res;
         },
@@ -63,6 +67,17 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit {
         }
       });
     }
+  }
+
+  obtenerChoferes(){
+    this.revisionEntregaService.obtenerChoferes().subscribe({
+      next: (res) => {
+        this.lstChoferes = res;
+      },
+      error: (e) => {
+        console.log(e);
+      }
+    });
   }
 
   onVerEntrega(entrega: EntregaChofer): void {

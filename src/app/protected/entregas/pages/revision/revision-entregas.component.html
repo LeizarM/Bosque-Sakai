@@ -1,67 +1,80 @@
-<div class="container mx-auto px-4 py-4"></div>
-  <h2 class="text-center text-4xl font-bold mb-8 text-900">
+<div class="container mx-auto p-4">
+  <h2 class="text-center text-4xl font-bold mb-4 text-900">
     REGISTRO DE ENTREGAS
   </h2>
   <div class="card p-4 shadow-2 border-round">
-    <div class="flex justify-content-center align-items-center mb-4">
-      <div class="p-inputgroup" style="max-width: 500px;">
-        <span class="p-float-label flex-grow-1">
+    <div class="grid">
+      <div class="col-12 md:col-4 lg:col-3 mb-3 md:mb-0">
+        <span class="p-float-label w-full">
           <p-calendar id="fecha" [(ngModel)]="filterDate" dateFormat="dd/mm/yy" [showIcon]="true"
             class="w-full"></p-calendar>
-          <label for="fecha">Ingrese Fecha de las entregas</label>
+          <label for="fecha">Ingrese Fecha</label>
         </span>
+      </div>
+      <div class="col-12 md:col-4 lg:col-3 mb-3 md:mb-0">
+        <span class="p-float-label w-full">
+          <p-dropdown id="filtro" [options]="lstChoferes" [(ngModel)]="codEmpleado" optionLabel="nombreCompleto" optionValue="codEmpleado"
+            [filter]="true" filterBy="nombreCompleto" [showClear]="true" placeholder="Seleccione un chofer"
+            class="w-full"></p-dropdown>
+          <label for="filtro">Chofer</label>
+        </span>
+      </div>
+      <div class="col-12 md:col-4 lg:col-3 flex align-items-end">
         <button pButton type="button" icon="pi pi-search" label="Buscar" (click)="onBuscar()"
-          class="p-button-raised p-button-primary"></button>
+          class="p-button-raised p-button-primary w-full"></button>
       </div>
     </div>
-    <div class="grid">
-      <div class="col-12 md:col-8">
-        <div class="card">
-          <p-table [value]="lstEntregasRegistradas" [tableStyle]="{ 'min-width': '50rem' }" [rows]="10"
-            [paginator]="true" [scrollable]="true" scrollHeight="calc(100vh - 300px)">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Factura</th>
-                <th>Cliente</th>
-                <th>Fecha Nota</th>
-                <th>Fecha Entrega</th>
-                <th>Diferencia Minutos</th>
-                <th>Direccion Entrega</th>
-                <th>Vendedor</th>
-                <th>Chofer</th>
-                <th>...</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-entrega>
-              <tr>
-                <td>{{ entrega.factura }}</td>
-                <td>{{ entrega.cardName }}</td>
-                <td>{{ entrega.fechaNota }}</td>
-                <td>{{ entrega.fechaEntrega }}</td>
-                <td>{{ entrega.diferenciaMinutos }}</td>
-                <td>{{ entrega.direccionEntrega }}</td>
-                <td>{{ entrega.vendedor }}</td>
-                <td>{{ entrega.nombreCompleto }}</td>
-                <td>
-                  <button pButton type="button" icon="pi pi-eye" label="Ver" (click)="onVerEntrega(entrega)"
-                    class="p-button-rounded p-button-info"></button>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
+
+    <div class="grid mt-4">
+      <div class="col-12 lg:col-8">
+        <p-table [value]="lstEntregasRegistradas" [tableStyle]="{ 'min-width': '50rem' }" [rows]="10"
+          [paginator]="true" [scrollable]="true" scrollHeight="calc(100vh - 350px)"
+          styleClass="p-datatable-sm p-datatable-gridlines">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="factura">Factura <p-sortIcon field="factura"></p-sortIcon></th>
+              <th pSortableColumn="cardName">Cliente <p-sortIcon field="cardName"></p-sortIcon></th>
+              <th pSortableColumn="fechaNota">Fecha Nota <p-sortIcon field="fechaNota"></p-sortIcon></th>
+              <th pSortableColumn="fechaEntrega">Fecha Entrega <p-sortIcon field="fechaEntrega"></p-sortIcon></th>
+              <th pSortableColumn="diferenciaMinutos">Dif. Min. <p-sortIcon field="diferenciaMinutos"></p-sortIcon></th>
+              <th pSortableColumn="direccionEntrega">Dirección <p-sortIcon field="direccionEntrega"></p-sortIcon></th>
+              <th pSortableColumn="vendedor">Vendedor <p-sortIcon field="vendedor"></p-sortIcon></th>
+              <th pSortableColumn="nombreCompleto">Chofer <p-sortIcon field="nombreCompleto"></p-sortIcon></th>
+              <th pSortableColumn="obs">Observaciones <p-sortIcon field="obs"></p-sortIcon></th>
+              <th>Acciones</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-entrega>
+            <tr>
+              <td>{{ entrega.factura }}</td>
+              <td>{{ entrega.cardName }}</td>
+              <td>{{ entrega.fechaNota | date:'short' }}</td>
+              <td>{{ entrega.fechaEntrega | date:'short' }}</td>
+              <td>{{ entrega.diferenciaMinutos }}</td>
+              <td>{{ entrega.direccionEntrega }}</td>
+              <td>{{ entrega.vendedor }}</td>
+              <td>{{ entrega.nombreCompleto }}</td>
+              <td>{{ entrega.obs }}</td>
+              <td>
+                <button pButton type="button" icon="pi pi-eye" (click)="onVerEntrega(entrega)"
+                  class="p-button-rounded p-button-info p-button-sm"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
-      <div class="col-12 md:col-4">
-        <div class="card" #mapContainer style="position: sticky; top: 20px; height: calc(100vh - 300px); overflow-y: auto;">
+      <div class="col-12 lg:col-4">
+        <div class="card" #mapContainer style="position: sticky; top: 20px; height: calc(100vh - 350px); overflow-y: auto;">
           <div #map style="width: 100%; height: 250px;"></div>
           <div *ngIf="selectedEntrega" class="mt-4 p-4">
             <h3 class="text-xl font-bold mb-3">Detalles de la entrega</h3>
             <p class="mb-2"><strong>Cliente:</strong> {{ selectedEntrega.cardName }}</p>
             <p class="mb-2"><strong>Dirección:</strong> {{ selectedEntrega.direccionEntrega }}</p>
-            <p class="mb-2"><strong>Fecha de entrega:</strong> {{ selectedEntrega.fechaEntrega }}</p>
+            <p class="mb-2"><strong>Fecha de entrega:</strong> {{ selectedEntrega.fechaEntrega | date:'short' }}</p>
             <p class="mb-2"><strong>Chofer:</strong> {{ selectedEntrega.nombreCompleto }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>

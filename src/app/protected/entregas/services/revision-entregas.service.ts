@@ -23,13 +23,18 @@ constructor( private http: HttpClient ) { }
  * @param docDate
  * @returns
  */
-obtenerEntregasXFecha( docDate : string | Date): Observable<EntregaChofer[]> {
+obtenerEntregasXFecha( fechaEntrega : string | Date, codEmpleado: number): Observable<EntregaChofer[]> {
+
+    const d = new Date(fechaEntrega);
+    const year = d.getFullYear();
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
 
   const url = `${this.baseUrl}/entregas/entregas-fecha`;
   const data = {
 
-    "docDate" : docDate
-
+    "fechaEntrega" : `${year}-${month}-${day}`,
+    "codEmpleado" : codEmpleado
    };
 
   return this.http.post<EntregaChofer[]>( url, data ).pipe(
@@ -39,12 +44,21 @@ obtenerEntregasXFecha( docDate : string | Date): Observable<EntregaChofer[]> {
   );
 }
 
+/**
+ * Para Obtener la lista de choferes
+ * @returns
+ */
+obtenerChoferes():Observable<EntregaChofer[]> {
 
+  const url = `${this.baseUrl}/entregas/choferes`;
+  const data = {};
 
-
-
-
-
+  return this.http.post<EntregaChofer[]>( url, data ).pipe(
+      retry(2), // Reintenta la petición hasta 3 veces en caso de fallo
+      timeout(5000), // Establece un tiempo límite de 5 segundos
+      catchError(this.handleError)
+  );
+}
 
 
 /**

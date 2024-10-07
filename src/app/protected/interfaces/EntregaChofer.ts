@@ -29,4 +29,6 @@ export interface EntregaChofer {
   fechaNota:         string;
   nombreCompleto:    string;
   diferenciaMinutos: number;
+  codEmpleado:       number;
+  cargo:             string;
 }
