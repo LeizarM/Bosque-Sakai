@@ -2,6 +2,7 @@ export interface EntregaChofer {
   idEntrega:         number;
   docEntry:          number;
   docNum:            number;
+  docNumF:           number;  
   factura:           number;
   docDate:           string;
   docTime:           string;
@@ -18,6 +19,10 @@ export interface EntregaChofer {
   openQty:           number;
   db:                string;
   valido:            string;
+  peso:              number;
+  cochePlaca:        string;
+  prioridad:         string;
+  tipo:              string;
   fueEntregado:      number;
   fechaEntrega:      string;
   latitud:           number;
