@@ -29,3 +29,94 @@ p-scrollpanel p {
   opacity: 1;
   transition: background-color 0.2s;
 }
+
+
+.gradient-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-600) 100%);
+  color: white;
+}
+
+.custom-card {
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.custom-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.info-badge {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+}
+
+.data-field {
+  background: var(--surface-50);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.data-field:hover {
+  background: var(--surface-100);
+}
+
+.location-item {
+  transition: all 0.2s ease;
+}
+
+.location-item:hover {
+  background: var(--primary-50) !important;
+  color: var(--primary-700) !important;
+
+
+  :host ::ng-deep {
+    .modern-dialog {
+      .p-dialog-header {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .p-dialog-content {
+        padding: 2rem;
+      }
+
+      .p-dropdown {
+        border-radius: 8px;
+      }
+
+      .p-inputtext {
+        border-radius: 8px;
+      }
+
+      .p-button {
+        border-radius: 8px;
+      }
+    }
+
+    .custom-toast {
+      .p-toast-message {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .p-scrollpanel {
+      .p-scrollpanel-wrapper {
+        border-radius: 8px;
+      }
+
+      .p-scrollpanel-bar {
+        background: var(--primary-200);
+        border-radius: 8px;
+
+        &:hover {
+          background: var(--primary-300);
+        }
+      }
+    }
+  }
+}

@@ -37,8 +37,8 @@ import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
-
-
+import { ChartModule } from 'primeng/chart';
+import { TagModule } from 'primeng/tag';
 @NgModule({
 
   exports: [
@@ -80,6 +80,8 @@ import { ToolbarModule } from 'primeng/toolbar';
     AutoCompleteModule,
     ConfirmDialogModule,
     PaginatorModule,
+    ChartModule,
+    TagModule
 
   ]
 })

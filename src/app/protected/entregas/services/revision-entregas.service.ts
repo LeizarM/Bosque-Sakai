@@ -45,6 +45,33 @@ obtenerEntregasXFecha( fechaEntrega : string | Date, codEmpleado: number): Obser
 }
 
 /**
+ * Para obtener el extracto de los choferes entre fechas y sucursales
+ * @param fechaInicio 
+ * @param fechaFin 
+ * @param codSucursal 
+ * @param codEmpleado 
+ * @returns 
+ */
+obtenerExtractoChoferes(  fechaInicio: Date, fechaFin: Date, codSucursal: number, codEmpleado: number  ): Observable<EntregaChofer[]> {
+
+  const url = `${this.baseUrl}/entregas/extracto`;
+  const data = {
+
+    "fechaInicio" : fechaInicio,
+    "fechaFin" : fechaFin,
+    "codSucursal" : codSucursal,
+    "codEmpleado" : codEmpleado
+   };
+
+  return this.http.post<EntregaChofer[]>( url, data ).pipe(
+      retry(3), // Reintenta la petición hasta 3 veces en caso de fallo
+      timeout(5000), // Establece un tiempo límite de 5 segundos
+      catchError(this.handleError)
+  );
+}
+
+
+/**
  * Para Obtener la lista de choferes
  * @returns
  */

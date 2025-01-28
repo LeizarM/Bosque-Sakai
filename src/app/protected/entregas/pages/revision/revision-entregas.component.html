@@ -1,154 +1,234 @@
-<div class="container mx-auto p-4">
-  <h2 class="text-center text-4xl font-bold mb-4 text-900">
-    REGISTRO DE ENTREGAS
-  </h2>
-  <div class="card p-4 shadow-2 border-round">
-    <div class="grid">
-      <div class="col-12 md:col-4 lg:col-3 mb-3 md:mb-0">
-        <span class="p-float-label w-full">
-          <p-calendar
-            id="fecha"
-            [(ngModel)]="filterDate"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            class="w-full"
-          ></p-calendar>
-          <label for="fecha">Ingrese Fecha</label>
-        </span>
-      </div>
-      <div class="col-12 md:col-4 lg:col-3 mb-3 md:mb-0">
-        <span class="p-float-label w-full">
-          <p-dropdown
-            id="filtro"
-            [options]="lstChoferes"
-            [(ngModel)]="codEmpleado"
-            optionLabel="nombreCompleto"
-            optionValue="codEmpleado"
-            [filter]="true"
-            filterBy="nombreCompleto"
-            [showClear]="true"
-            placeholder="Seleccione un chofer"
-            class="w-full"
-          ></p-dropdown>
-          <label for="filtro">Chofer</label>
-        </span>
-      </div>
-      <div class="col-12 md:col-4 lg:col-3 flex align-items-end">
-        <button
-          pButton
-          type="button"
-          icon="pi pi-search"
-          label="Buscar"
-          (click)="onBuscar()"
-          class="p-button-raised p-button-primary w-full"
-        ></button>
-      </div>
+<!-- Modern Delivery Registry with optimized table layout -->
+<div class="surface-ground">
+  <div class="container mx-auto p-4">
+    <!-- Header with modern styling -->
+    <div class="surface-card p-4 shadow-2 border-round mb-4">
+      <h2 class="text-center text-4xl font-bold m-0 text-900">
+        REGISTRO DE ENTREGAS
+      </h2>
     </div>
 
-    <div class="grid mt-4">
-      <div class="col-12 lg:col-8">
-        <p-table
-          [value]="lstEntregasRegistradas"
-          [tableStyle]="{ 'min-width': '50rem' }"
-          [rows]="10"
-          [paginator]="true"
-          [scrollable]="true"
-          scrollHeight="calc(100vh - 350px)"
-          styleClass="p-datatable-sm p-datatable-gridlines"
-        >
-          <ng-template pTemplate="header">
-            <tr>
-              <th pSortableColumn="factura">
-                Factura <p-sortIcon field="factura"></p-sortIcon>
-              </th>
-              <th pSortableColumn="cardName">
-                Cliente <p-sortIcon field="cardName"></p-sortIcon>
-              </th>
-              <th pSortableColumn="fechaNota">
-                Fecha Nota <p-sortIcon field="fechaNota"></p-sortIcon>
-              </th>
-              <th pSortableColumn="fechaEntrega">
-                Fecha Entrega <p-sortIcon field="fechaEntrega"></p-sortIcon>
-              </th>
-              <th pSortableColumn="diferenciaMinutos">
-                Dif. Min. <p-sortIcon field="diferenciaMinutos"></p-sortIcon>
-              </th>
-              <th pSortableColumn="direccionEntrega">
-                Dirección <p-sortIcon field="direccionEntrega"></p-sortIcon>
-              </th>
-              <th pSortableColumn="vendedor">
-                Vendedor <p-sortIcon field="vendedor"></p-sortIcon>
-              </th>
-              <th pSortableColumn="nombreCompleto">
-                Chofer <p-sortIcon field="nombreCompleto"></p-sortIcon>
-              </th>
-              <th pSortableColumn="cochePlaca">
-                Coche <p-sortIcon field="cochePlaca"></p-sortIcon>
-              </th>
-              <th pSortableColumn="peso">
-                Peso (kg) <p-sortIcon field="peso"></p-sortIcon>
-              </th>
-              <th pSortableColumn="obs">
-                Observaciones <p-sortIcon field="obs"></p-sortIcon>
-              </th>
-              <th>Acciones</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-entrega>
-            <!-- Aplicar clase condicionalmente según la prioridad -->
-            <tr
-              [ngClass]="{
-                'bg-orange-500 text-white': entrega.prioridad === 'Alta'
-              }"
-            >
-              <td>{{ entrega.factura }}</td>
-              <td>{{ entrega.cardName }}</td>
-              <td>{{ entrega.fechaNota }}</td>
-              <td>{{ entrega.fechaEntrega }}</td>
-              <td>{{ entrega.diferenciaMinutos }}</td>
-              <td>{{ entrega.direccionEntrega }}</td>
-              <td>{{ entrega.vendedor }}</td>
-              <td>{{ entrega.nombreCompleto }}</td>
-              <td>{{ entrega.cochePlaca }}</td>
-              <td>{{ entrega.peso }}</td>
-              <td>{{ entrega.obs }}</td>
-              <td>
-                <button
-                  pButton
-                  type="button"
-                  icon="pi pi-eye"
-                  (click)="onVerEntrega(entrega)"
-                  class="p-button-rounded p-button-info p-button-sm"
-                ></button>
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-      <div class="col-12 lg:col-4">
-        <div
-          class="card"
-          #mapContainer
-          style="position: sticky; top: 20px; height: calc(100vh - 350px); overflow-y: auto;"
-        >
-          <div #map style="width: 100%; height: 250px;"></div>
-          <div *ngIf="selectedEntrega" class="mt-4 p-4">
-            <h3 class="text-xl font-bold mb-3">Detalles de la entrega</h3>
-            <p class="mb-2">
-              <strong>Cliente:</strong> {{ selectedEntrega.cardName }}
-            </p>
-            <p class="mb-2">
-              <strong>Dirección:</strong> {{ selectedEntrega.direccionEntrega }}
-            </p>
-            <p class="mb-2">
-              <strong>Fecha de entrega:</strong>
-              {{ selectedEntrega.fechaEntrega | date: 'short' }}
-            </p>
-            <p class="mb-2">
-              <strong>Chofer:</strong> {{ selectedEntrega.nombreCompleto }}
-            </p>
-          </div>
-        </div>
+    <!-- Main dashboard container -->
+    <div class="surface-ground">
+      <div class="container mx-auto p-4">
+        <p-tabView>
+          <!-- Panel del Dashboard -->
+          <p-tabPanel header="Dashboard">
+            <div class="grid">
+              <!-- Filtros superiores -->
+              <div class="col-12 mb-4">
+                <div class="surface-card p-4 shadow-2 border-round">
+                  <div class="grid">
+                    <div class="col-12 md:col-6 lg:col-3">
+                      <span class="p-float-label w-full">
+                        <p-calendar [(ngModel)]="fechaInicio" [showIcon]="true" styleClass="w-full"
+                          dateFormat="dd/mm/yy" [showClear]="true" (onSelect)="onFechasChange()">
+                        </p-calendar>
+                        <label>Fecha Inicio</label>
+                      </span>
+                    </div>
+                    <div class="col-12 md:col-6 lg:col-3">
+                      <span class="p-float-label w-full">
+                        <p-calendar [(ngModel)]="fechaFin" [showIcon]="true" styleClass="w-full" dateFormat="dd/mm/yy"
+                          [showClear]="true" (onSelect)="onFechasChange()">
+                        </p-calendar>
+                        <label>Fecha Fin</label>
+                      </span>
+                    </div>
+                    <div class="col-12 md:col-6 lg:col-3">
+                      <button pButton label="Actualizar" icon="pi pi-refresh" class="p-button-outlined w-full"
+                         (click)="actualizarDashboard()">
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- KPI Cards -->
+              <div class="col-12 lg:col-3">
+                <div class="surface-card shadow-2 p-3 border-round">
+                  <div class="flex justify-content-between mb-3">
+                    <div>
+                      <span class="block text-500 font-medium mb-3">Total Rutas</span>
+                      <div class="text-900 font-medium text-xl">{{ getTotalRutas() }}</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                      style="width:2.5rem;height:2.5rem">
+                      <i class="pi pi-truck text-blue-500 text-xl"></i>
+                    </div>
+                  </div>
+                  <span class="text-green-500 font-medium">{{ getRutasCompletadas() }}</span>
+                  <span class="text-500"> completadas</span>
+                </div>
+              </div>
+
+              
+
+              <div class="col-12 lg:col-3">
+                <div class="surface-card shadow-2 p-3 border-round">
+                  <div class="flex justify-content-between mb-3">
+                    <div>
+                      <span class="block text-500 font-medium mb-3">Estado de Rutas</span>
+                      <div class="text-900 font-medium text-xl">{{ getEstatusGeneral() }}</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-green-100 border-round"
+                      style="width:2.5rem;height:2.5rem">
+                      <i class="pi pi-check-circle text-green-500 text-xl"></i>
+                    </div>
+                  </div>
+                  <div class="flex align-items-center justify-content-between">
+                    <p-tag [value]="'Completas '" severity="success" [rounded]="true"> {{ getRutasCompletadas() }} </p-tag>
+                    <p-tag [value]="'En Proceso o Incompleto '" severity="warning" [rounded]="true"> {{ getRutasEnProceso() }} </p-tag>
+                   
+                  </div>
+                </div>
+              </div>
+
+              
+
+              <div class="col-12">
+                <div class="surface-card p-4 shadow-2 border-round">
+                  
+                  
+                  <h5>Resumen de Rutas</h5>
+                  <p-table [value]="lstExtracto" 
+                          [paginator]="true" 
+                          [rows]="35" 
+                          responsiveLayout="scroll"
+                          styleClass="p-datatable-sm p-datatable-gridlines" 
+                          [loading]="loading">
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>Chofer</th>
+                        <th>Ruta Diaria</th>
+                        <th>Fecha</th>
+                        <th>Hora Inicio</th>
+                        <th>Hora Fin</th>
+                        <th>Estado</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-ruta>
+                      <tr [ngClass]="{'bg-blue-100': ruta.flag === -1}">
+                        <td>{{ ruta.nombreCompleto }}</td>
+                        <td class="text-center">{{ ruta.rutaDiaria }}</td>
+                        <td>{{ ruta.fechaEntregaCad }}</td>
+                        <td>{{ ruta.fechaInicioRutaCad }}</td>
+                        <td>{{ ruta.fechaFinRutaCad }}</td>
+                        <td>
+                          <p-tag *ngIf="ruta.flag !== -1" 
+                                [value]="ruta.estatusRuta" 
+                                [severity]="getStatusSeverity(ruta.estatusRuta)">
+                          </p-tag>
+                          <span *ngIf="ruta.flag === -1" class="text-blue-500 font-medium"></span>
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="7" class="text-center p-4">
+                          <i class="pi pi-info-circle mr-2"></i>
+                          No hay datos disponibles
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+
+          <!-- Segunda pestaña para la vista detallada -->
+          <p-tabPanel header="Registro de Entregas">
+            <!-- Main content card -->
+            <div class="surface-card p-4 shadow-2 border-round">
+              <!-- Filters section -->
+              <div class="grid">
+                <div class="col-12 md:col-4 lg:col-3 mb-3 md:mb-0">
+                  <span class="p-float-label w-full">
+                    <p-calendar id="fecha" [(ngModel)]="filterDate" dateFormat="dd/mm/yy" [showIcon]="true"
+                      styleClass="w-full" [inputStyleClass]="'w-full'">
+                    </p-calendar>
+                    <label for="fecha">Ingrese Fecha</label>
+                  </span>
+                </div>
+                <div class="col-12 md:col-4 lg:col-3 mb-3 md:mb-0">
+                  <span class="p-float-label w-full">
+                    <p-dropdown id="filtro" [options]="lstChoferes" [(ngModel)]="codEmpleado"
+                      optionLabel="nombreCompleto" optionValue="codEmpleado" [filter]="true" filterBy="nombreCompleto"
+                      [showClear]="true" placeholder="Seleccione un chofer" styleClass="w-full">
+                    </p-dropdown>
+                    <label for="filtro">Chofer</label>
+                  </span>
+                </div>
+                <div class="col-12 md:col-4 lg:col-3 flex align-items-end">
+                  <button pButton type="button" icon="pi pi-search" label="Buscar" (click)="onBuscar()"
+                    class="p-button-raised w-full">
+                  </button>
+                </div>
+              </div>
+
+              <!-- Table and Map section -->
+              <div class="grid mt-4">
+                <div class="col-12 lg:col-8">
+                  <!-- Leyenda de estados -->
+                  <div class="flex gap-3 mb-3">
+                    <div class="flex align-items-center gap-2">
+                      <div class="w-2rem h-1rem bg-orange-100 border-round"></div>
+                      <span class="text-sm">Prioridad Alta</span>
+                    </div>
+                    <div class="flex align-items-center gap-2">
+                      <div class="w-2rem h-1rem bg-blue-100 border-round"></div>
+                      <span class="text-sm">Inicio</span>
+                    </div>
+                    <div class="flex align-items-center gap-2">
+                      <div class="w-2rem h-1rem bg-green-100 border-round"></div>
+                      <span class="text-sm">Final</span>
+                    </div>
+                  </div>
+
+                  <!-- Tabla detallada -->
+                  <p-table [value]="lstEntregasRegistradas" [rows]="10" [paginator]="true" [scrollable]="true"
+                    scrollHeight="calc(100vh - 400px)" styleClass="p-datatable-sm p-datatable-gridlines surface-card"
+                    [tableStyle]="{'min-width': '50rem'}" [rowHover]="true" responsiveLayout="scroll">
+                    <!-- ... (resto del contenido de la tabla) ... -->
+                  </p-table>
+                </div>
+
+                <!-- Map and details section -->
+                <div class="col-12 lg:col-4">
+                  <div class="surface-card p-4 border-round shadow-2" #mapContainer
+                    style="position: sticky; top: 20px; height: calc(100vh - 350px); overflow-y: auto;">
+                    <div #map style="width: 100%; height: 250px;" class="border-round">
+                    </div>
+
+                    <div *ngIf="selectedEntrega" class="mt-4">
+                      <h3 class="text-xl font-medium mb-3 text-900">Detalles de la entrega</h3>
+                      <div class="surface-ground p-3 border-round">
+                        <p class="mb-2 text-sm">
+                          <i class="pi pi-user mr-2"></i>
+                          <strong>Cliente:</strong> {{ selectedEntrega.cardName }}
+                        </p>
+                        <p class="mb-2 text-sm">
+                          <i class="pi pi-map-marker mr-2"></i>
+                          <strong>Dirección:</strong> {{ selectedEntrega.direccionEntrega }}
+                        </p>
+                        <p class="mb-2 text-sm">
+                          <i class="pi pi-calendar mr-2"></i>
+                          <strong>Fecha de entrega:</strong>
+                          {{ selectedEntrega.fechaEntrega | date: 'short' }}
+                        </p>
+                        <p class="mb-2 text-sm">
+                          <i class="pi pi-truck mr-2"></i>
+                          <strong>Chofer:</strong> {{ selectedEntrega.nombreCompleto }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
       </div>
     </div>
   </div>

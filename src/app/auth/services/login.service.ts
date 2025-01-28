@@ -181,6 +181,22 @@ export class LoginService {
     return JSON.parse(jsonPayload).codEmpleado;
   }
 
+  /**
+   * Para obtener el codigo de sucursal del empleado desde el token de la parte del payload
+   */
+  get codSucursalEmpleado() : number {
+    
+    let token =  this.obtenerToken;
+    if(token == null || token == undefined || token == '') return -1;
+
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload).codSucursal;
+
+  }
 
   /**
    * Obtendra el tipo de rol del usuario

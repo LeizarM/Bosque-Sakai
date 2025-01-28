@@ -1,283 +1,241 @@
-<p-toast></p-toast>
-<p-toast position="top-left" key="tl"></p-toast>
-<p-toast position="top-center" key="tc"></p-toast>
-<p-toast position="bottom-center" key="bc"></p-toast>
-
+<p-toast class="m-2" styleClass="custom-toast"></p-toast>
+<p-toast position="top-left" key="tl" class="m-2"></p-toast>
+<p-toast position="top-center" key="tc" class="m-2"></p-toast>
+<p-toast position="bottom-center" key="bc" class="m-2"></p-toast>
 
 <div class="grid">
   <div class="col-12">
-
-    <div class="card justify-content-center">
-      <h4>DATOS PERSONALES DEL TRABAJADOR</h4>
-      <button pButton type="button" icon="pi pi-pencil" label="Editar" (click)="cargarInformacionPersonal()"
-        class="p-button-info"></button>
-      <hr>
-      <br />
-
-      <div class="flex align-items-baseline p-fluid grid p-formgrid" *ngIf="regPer">
-
-        <div class="field col">
-          <label class="col-12  font-bold text-orange-500">APELLIDO PATERNO</label>
-          <div class="col-12">{{ regPer.apPaterno }}</div>
+    <!-- Tarjeta de Información Personal con diseño moderno -->
+    <div class="card custom-card">
+      <!-- Header con gradiente -->
+      <div class="gradient-header p-4 border-round-top">
+        <div class="flex justify-content-between align-items-center">
+          <h3 class="m-0 font-bold">
+            <i class="pi pi-user mr-2"></i>
+            DATOS PERSONALES DEL TRABAJADOR
+          </h3>
+          <button pButton type="button" 
+            icon="pi pi-pencil" 
+            label="Editar" 
+            (click)="cargarInformacionPersonal()"
+            class="p-button-rounded p-button-outlined p-button-white"></button>
         </div>
-
-        <div class="field col">
-          <label class="col-12  font-bold text-orange-500">APELLIDO MATERNO</label>
-          <div class="col-12">{{ regPer.apMaterno }}</div>
+      </div>
+      
+      <div class="p-4" *ngIf="regPer">
+        <div class="grid">
+          <!-- Información Personal en Cards -->
+          <div class="col-12 md:col-6 lg:col-4 xl:col-3" *ngFor="let field of [
+            {icon: 'pi pi-user', label: 'APELLIDO PATERNO', value: regPer.apPaterno},
+            {icon: 'pi pi-user', label: 'APELLIDO MATERNO', value: regPer.apMaterno},
+            {icon: 'pi pi-user', label: 'NOMBRES', value: regPer.nombres},
+            {icon: 'pi pi-heart', label: 'SEXO', value: regPer.sexo | genero},
+            {icon: 'pi pi-calendar', label: 'FECHA DE NACIMIENTO', value: regPer.fechaNacimiento | date: 'dd/MM/yyyy'},
+            {icon: 'pi pi-map-marker', label: 'LUGAR DE NACIMIENTO', value: regPer.lugarNacimiento},
+            {icon: 'pi pi-id-card', label: 'CEDULA DE IDENTIDAD', value: regPer.ciNumero},
+            {icon: 'pi pi-bookmark', label: 'EXPEDIDO', value: regPer.ciExpedido | ciExpedido},
+            {icon: 'pi pi-calendar-times', label: 'CI VENCIMIENTO', value: regPer.ciFechaVencimiento | date: 'dd/MM/yyyy'},
+            {icon: 'pi pi-heart-fill', label: 'ESTADO CIVIL', value: regPer.estadoCivil | estadoCivil},
+            {icon: 'pi pi-home', label: 'DIRECCION', value: regPer.direccion},
+            {icon: 'pi pi-globe', label: 'NACIONALIDAD', value: regPer.nacionalidad | pais},
+            {icon: 'pi pi-map', label: 'ZONA RESIDENCIA', value: regPer.zona?.zona},
+            {icon: 'pi pi-building', label: 'CIUDAD RESIDENCIA', value: regPer.ciudad?.ciudad}
+          ]">
+            <div class="data-field p-3 mb-3">
+              <div class="flex align-items-center mb-2">
+                <i class="{{field.icon}} text-primary mr-2"></i>
+                <span class="text-600 text-sm">{{field.label}}</span>
+              </div>
+              <div class="text-900 font-medium">{{field.value || 'No especificado'}}</div>
+            </div>
+          </div>
         </div>
-        <div class="field col">
-          <label class="col-12  font-bold text-orange-500">NOMBRES</label>
-          <div class="col-12">{{ regPer.nombres }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">SEXO</label>
-          <div class="col-12">{{ regPer.sexo | genero }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">FECHA DE NACIMIENTO</label>
-          <div class="col-12">{{ regPer.fechaNacimiento | date: 'dd/MM/yyyy' }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold  text-orange-500">LUGAR DE NACIMIENTO</label>
-          <div class="col-12">{{ regPer.lugarNacimiento }}</div>
-        </div>
-
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">CEDULA DE IDENTIDAD</label>
-          <div class="col-12">{{ regPer.ciNumero }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">EXPEDIDO</label>
-          <div class="col-12">{{ regPer.ciExpedido | ciExpedido }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">CI FECHA DE VENCIMIENTO</label>
-          <div class="col-12">{{ regPer.ciFechaVencimiento | date: 'dd/MM/yyyy' }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">ESTADO CIVIL</label>
-          <div class="col-12">{{ regPer.estadoCivil | estadoCivil }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">DIRECCION</label>
-          <div class="col-12">{{ regPer.direccion }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">NACIONALIDAD</label>
-          <div class="col-12">{{ regPer.nacionalidad | pais }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">ZONA RESIDENCIA</label>
-          <div class="col-12">{{ regPer.zona?.zona }}</div>
-        </div>
-        <div class="field col">
-          <label class="col-12 font-bold text-orange-500">CIUDAD DE RESIDENCIA</label>
-          <div class="col-12">{{ regPer.ciudad?.ciudad }}</div>
-        </div>
-
       </div>
     </div>
 
-    <div class="card">
-      <div #mapR class="col-12" style="height: 500px;">
+    <!-- Mapa con estilo moderno -->
+    <div class="card custom-card mt-4">
+      <div class="p-4">
+        <h4 class="text-primary m-0 mb-3">
+          <i class="pi pi-map-marker mr-2"></i>
+          Ubicación
+        </h4>
+        <div #mapR class="w-full border-round" style="height: 500px;"></div>
       </div>
     </div>
-
-
-
   </div>
-  <app-dato-email class="col-12 md:col-12 lg:col-6" *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"></app-dato-email>
 
-  <app-dato-telefonos class="col-12 md:col-12 lg:col-6" *ngIf="regPer.codPersona" [codPersona]="regPer.codPersona"></app-dato-telefonos>
-
+  <!-- Componentes de Contacto -->
+  <div class="col-12 lg:col-6" *ngIf="regPer.codPersona">
+    <app-dato-email [codPersona]="regPer.codPersona" class="block mb-4"></app-dato-email>
+  </div>
+  
+  <div class="col-12 lg:col-6" *ngIf="regPer.codPersona">
+    <app-dato-telefonos [codPersona]="regPer.codPersona" class="block"></app-dato-telefonos>
+  </div>
 </div>
 
+<!-- Modal de Edición Moderno -->
+<p-dialog 
+  header="Editar Información Personal" 
+  [(visible)]="displayModal" 
+  [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+  [style]="{width: '80vw'}" 
+  [modal]="true" 
+  [draggable]="true"
+  styleClass="modern-dialog"
+  class="p-fluid">
 
-
-<!-- Dialog o modal para cargar la informacion personal para poder editarlo -->
-<p-dialog header="Informacion Personal" [(visible)]="displayModal" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
-  [style]="{width: '80vw'}" [modal]="true" [draggable]="true">
-
-  <form [formGroup]="formDatosPersonales" autocomplete="off" (ngSubmit)="guardar()">
-    <div class="formgrid grid">
-
-      <div class="field col-12 md:col-4">
-        <label for="nombres">Nombres</label>
-        <!-- <input pInputText id="nombres" type="text" formControlName="nombres"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
-          <div class="field">
-            <label> {{ regPerEditar.nombres }}</label>
-          </div>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="apPaterno">Apellido Paterno</label>
-        <!-- <input pInputText id="apPaterno" type="text" formControlName="apPaterno"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
-          <div class="field">
-            <label> {{ regPerEditar.apPaterno  }}</label>
-          </div>
-        </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="apMaterno">Apellido Materno</label>
-       <!--  <input pInputText id="apMaterno" type="text" formControlName="apMaterno"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
-          <div class="field">
-            <label> {{ regPerEditar.apMaterno  }}</label>
-          </div>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="sexo">Sexo</label>
-        <!-- <p-dropdown id="sexo" [options]="lstGenero" formControlName="sexo" optionValue="codTipos" optionLabel="nombre"
-          class="flex">
-        </p-dropdown> -->
-        <div class="field">
-          <label> {{ regPerEditar.sexo | genero  }}</label>
+  <form [formGroup]="formDatosPersonales" (ngSubmit)="guardar()" class="p-fluid">
+    <div class="grid formgrid">
+      <!-- Campos de solo lectura con estilo moderno -->
+      <div class="col-12 md:col-4 field">
+        <span class="info-badge block mb-2">
+          <i class="pi pi-user mr-2"></i>
+          Nombres
+        </span>
+        <div class="p-3 border-round surface-50 text-primary font-medium">
+          {{ regPerEditar.nombres }}
         </div>
       </div>
 
-      <div class="field col-12 md:col-4">
-        <label for="fecNac">Fecha Nacimiento</label>
-        <!-- <p-calendar id="fecNac" appendTo="body" formControlName="fecNac"
-          class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
-        </p-calendar> -->
-        <div class="field">
-          <label> {{ regPerEditar.fechaNacimiento | date: 'dd/MM/yyyy'  }}</label>
+      <div class="col-12 md:col-4 field">
+        <span class="info-badge block mb-2">
+          <i class="pi pi-user mr-2"></i>
+          Apellido Paterno
+        </span>
+        <div class="p-3 border-round surface-50 text-primary font-medium">
+          {{ regPerEditar.apPaterno }}
         </div>
       </div>
 
-      <div class="field col-12 md:col-4">
-        <label for="lugarNacimiento">Lugar de Nacimiento</label>
-       <!--  <input id="lugarNacimiento" pInputText type="text" formControlName="lugarNacimiento"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
-          <div class="field">
-            <label> {{ regPerEditar.lugarNacimiento  }}</label>
-          </div>
-        </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="ci">Cedula de Indentidad</label>
-        <!-- <input id="ci" pInputText type="text" formControlName="ci"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"> -->
-          <div class="field">
-            <label> {{ regPerEditar.ciNumero  }}</label>
-          </div>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="expedido">Expedido en</label>
-        <!-- <p-dropdown id="expedido" [options]="lstExpedido" formControlName="expedido" optionValue="codTipos"
-          optionLabel="nombre" class="flex">
-        </p-dropdown> -->
-        <div class="field">
-          <label> {{ regPerEditar.ciExpedido | ciExpedido  }}</label>
+      <div class="col-12 md:col-4 field">
+        <span class="info-badge block mb-2">
+          <i class="pi pi-user mr-2"></i>
+          Apellido Materno
+        </span>
+        <div class="p-3 border-round surface-50 text-primary font-medium">
+          {{ regPerEditar.apMaterno }}
         </div>
       </div>
 
-      <div class="field col-12 md:col-4">
-        <label for="ciVenci">CI Vencimiento</label>
-        <!-- <p-calendar id="ciVenci" appendTo="body" formControlName="ciVenci"
-          class="border-round appearance-none outline-none  w-full" dateFormat="dd/mm/yy">
-        </p-calendar> -->
+      <!-- Campos editables con estilo moderno -->
+      <div class="col-12 md:col-4 field">
+        <label class="block text-600 font-medium mb-2">
+          <i class="pi pi-heart mr-2"></i>
+          Estado Civil
+        </label>
+        <p-dropdown formControlName="estCivil" 
+          [options]="lstEstadoCivil" 
+          optionLabel="nombre"
+          optionValue="codTipos"
+          styleClass="w-full"
+          [style]="{'width': '100%'}"
+          ></p-dropdown>
+      </div>
 
-        <div class="field">
-          <label> {{ regPerEditar.ciFechaVencimiento | date: 'dd/MM/yyyy'   }}</label>
+      <div class="col-12 field">
+        <label class="block text-600 font-medium mb-2">
+          <i class="pi pi-home mr-2"></i>
+          Dirección
+        </label>
+        <textarea pInputTextarea rows="4" formControlName="direccion" 
+          class="w-full"></textarea>
+      </div>
+
+      <!-- Selección de ubicación -->
+      <div class="col-12 md:col-4 field">
+        <label class="block text-600 font-medium mb-2">
+          <i class="pi pi-globe mr-2"></i>
+          País Residencia
+        </label>
+        <p-dropdown formControlName="codPais" 
+          [options]="lstPais"
+          optionLabel="pais" 
+          optionValue="codPais"
+          (onChange)="cargarCiudades($event.value)"
+          placeholder="Seleccione País"
+          appendTo="body"
+          styleClass="w-full"></p-dropdown>
+      </div>
+
+      <div class="col-12 md:col-4 field">
+        <label class="block text-600 font-medium mb-2">
+          <i class="pi pi-building mr-2"></i>
+          Ciudad Residencia
+        </label>
+        <p-dropdown formControlName="ciudad" 
+          [options]="lstCiudad"
+          optionLabel="ciudad" 
+          optionValue="codCiudad"
+          (onChange)="cargarZonas($event.value)"
+          placeholder="Seleccione Ciudad"
+          appendTo="body"
+          styleClass="w-full"></p-dropdown>
+      </div>
+
+      <div class="col-12 md:col-4 field">
+        <label class="block text-600 font-medium mb-2">
+          <i class="pi pi-map mr-2"></i>
+          Zona Residencia
+        </label>
+        <p-dropdown formControlName="codZona" 
+          [options]="lstZona"
+          optionLabel="zona" 
+          optionValue="codZona"
+          placeholder="Seleccione Zona"
+          appendTo="body"
+          styleClass="w-full"></p-dropdown>
+      </div>
+
+      <!-- Sección de Mapa Moderna -->
+      <div class="col-12 surface-ground p-4 border-round mt-4">
+        <div class="flex align-items-center mb-4">
+          <i class="pi pi-map-marker text-primary mr-2 text-xl"></i>
+          <h5 class="m-0 text-primary">Ubicación en Mapa</h5>
         </div>
-      </div>
-
-      <div class="field col-12 md:col-3">
-        <label for="nacionalidad">Nacionalidad</label>
-        <!-- <p-dropdown  id="nacionalidad" class="flex" [options]="lstPais" formControlName="nacionalidad" optionValue="codPais"  optionLabel="pais" >
-
-
-        </p-dropdown> -->
-        <div class="field">
-          <label> {{ regPerEditar.nacionalidad | pais }}</label>
-        </div>
-
-
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="estCivil">Estado Civil</label>
-        <p-dropdown id="estCivil" [options]="lstEstadoCivil" formControlName="estCivil" optionLabel="nombre"
-          optionValue="codTipos" class="flex"></p-dropdown>
-      </div>
-
-
-      <div class="field col-12">
-        <label for="direccion">Direccion</label>
-        <textarea id="direccion" type="text" rows="4" formControlName="direccion"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"></textarea>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="pais">Pais Residencia</label>
-        <p-dropdown id="pais" formControlName="codPais" placeholder="Seleccione Pais" [options]="lstPais"
-          optionLabel="pais" optionValue="codPais" class="flex" (onChange)="cargarCiudades($event.value)"
-          appendTo="body">
-        </p-dropdown>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="estCivil">Ciudad Residencia</label>
-        <p-dropdown id="pais" formControlName="ciudad" placeholder="Seleccione Ciudad" [options]="lstCiudad"
-          optionLabel="ciudad" optionValue="codCiudad" class="flex" (onChange)="cargarZonas($event.value)"
-          appendTo="body">
-        </p-dropdown>
-      </div>
-
-      <div class="field col-12 md:col-4">
-        <label for="codZona">Zona Residencia</label>
-        <p-dropdown id="codZona" formControlName="codZona" placeholder="Seleccione Zona" [options]="lstZona"
-          optionValue="codZona" optionLabel="zona" class="flex" appendTo="body">
-        </p-dropdown>
-      </div>
-
-      <div class="align-items-center justify-content-center  green-container col-12 md:col-12">
-        <label> CROQUIS </label>
-        <br>
-        <hr>
-
+        
         <div class="grid">
+          <div class="col-12 lg:col-3">
+            <div class="p-input-icon-left w-full mb-3">
+              <i class="pi pi-search"></i>
+              <input #txtQuery 
+                (keyup)="onQueryChange(txtQuery.value)" 
+                pInputText
+                placeholder="Buscar ubicación..."
+                class="w-full">
+            </div>
 
-          <div class="col-12 md:col-6 lg:col-3">
-            <label for="buscador"> Buscar Ubicaciones: </label>
-            <div class="white-space-normal"></div>
-
-            <input id="buscador" #txtQuery (keyup)="onQueryChange(txtQuery.value)" pInputText
-              placeholder="Ingresa alguna ubicacion, calle, lugar o zona">
-            <p-scrollPanel [style]="{width: '100%', height: '400px'}" styleClass="custombar2">
-              <ul class="list-group mt-2 overflow-y: scroll;" *ngIf="lugares.length > 0">
-                <li *ngFor="let lugar of lugares" class="z-5 list-group-item list-group-item-action cursor-pointer"
-                  [class.active]="selectedId === lugar.properties.place_id" (click)="flyTo(lugar)">
-                  <h6>
-                    {{ lugar.properties.display_name }}
-                  </h6>
-                  <p>
+            <p-scrollPanel [style]="{height: '400px'}" styleClass="custombar2">
+              <div class="location-list" *ngIf="lugares.length > 0">
+                <div *ngFor="let lugar of lugares" 
+                     (click)="flyTo(lugar)"
+                     class="location-item cursor-pointer p-3 border-round mb-2 surface-100 hover:surface-200"
+                     [class.bg-primary-100]="selectedId === lugar.properties.place_id">
+                  <h6 class="m-0 mb-2 font-medium">{{ lugar.properties.display_name }}</h6>
+                  <span class="text-600 text-sm">
+                    <i class="pi pi-map-marker mr-2"></i>
                     {{ lugar.properties.address.country }}
-                  </p>
-                  <hr>
-                </li>
-              </ul>
+                  </span>
+                </div>
+              </div>
             </p-scrollPanel>
-
           </div>
 
-          <div class="col-12 md:col-6 lg:col-9">
-            <div #mapE style="height: 500px;"></div>
+          <div class="col-12 lg:col-9">
+            <div #mapE class="border-round shadow-2" style="height: 500px;"></div>
           </div>
-
         </div>
       </div>
-
     </div>
-    <br />
-    <div class="flex justify-content-center">
-      <button pButton type="submit" icon="pi pi-save" label="Guardar" [disabled]="!formDatosPersonales.valid">
-      </button>
+
+    <!-- Botón de Guardar Moderno -->
+    <div class="flex justify-content-center mt-4">
+      <button pButton type="submit" 
+        icon="pi pi-save" 
+        label="Guardar Cambios" 
+        [disabled]="!formDatosPersonales.valid"
+        class="p-button-rounded p-button-primary px-5 py-3"></button>
     </div>
   </form>
 </p-dialog>
