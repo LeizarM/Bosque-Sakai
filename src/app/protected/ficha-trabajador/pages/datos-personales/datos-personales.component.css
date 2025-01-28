@@ -68,7 +68,7 @@ p-scrollpanel p {
   transition: all 0.2s ease;
 }
 
-.location-item:hover {
+/* .location-item:hover {
   background: var(--primary-50) !important;
   color: var(--primary-700) !important;
 
@@ -119,4 +119,4 @@ p-scrollpanel p {
       }
     }
   }
-}
+} */

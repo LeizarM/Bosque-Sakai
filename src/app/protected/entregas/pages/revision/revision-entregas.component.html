@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-12 md:col-6 lg:col-3">
                       <button pButton label="Actualizar" icon="pi pi-refresh" class="p-button-outlined w-full"
-                         (click)="actualizarDashboard()">
+                        (click)="actualizarDashboard()">
                       </button>
                     </div>
                   </div>
@@ -62,7 +62,7 @@
                 </div>
               </div>
 
-              
+
 
               <div class="col-12 lg:col-3">
                 <div class="surface-card shadow-2 p-3 border-round">
@@ -77,28 +77,27 @@
                     </div>
                   </div>
                   <div class="flex align-items-center justify-content-between">
-                    <p-tag [value]="'Completas '" severity="success" [rounded]="true"> {{ getRutasCompletadas() }} </p-tag>
-                    <p-tag [value]="'En Proceso o Incompleto '" severity="warning" [rounded]="true"> {{ getRutasEnProceso() }} </p-tag>
-                   
+                    <p-tag [value]="'Completas '" severity="success" [rounded]="true"> {{ getRutasCompletadas() }}
+                    </p-tag>
+                    <p-tag [value]="'Incompleto o en ruta '" severity="warning" [rounded]="true"> {{
+                      getRutasEnProceso() }} </p-tag>
+
                   </div>
                 </div>
               </div>
 
-              
+
 
               <div class="col-12">
                 <div class="surface-card p-4 shadow-2 border-round">
-                  
-                  
+
+
                   <h5>Resumen de Rutas</h5>
-                  <p-table [value]="lstExtracto" 
-                          [paginator]="true" 
-                          [rows]="35" 
-                          responsiveLayout="scroll"
-                          styleClass="p-datatable-sm p-datatable-gridlines" 
-                          [loading]="loading">
+                  <p-table [value]="lstExtracto" [paginator]="true" [rows]="35" responsiveLayout="scroll"
+                    styleClass="p-datatable-sm p-datatable-gridlines" [loading]="loading">
                     <ng-template pTemplate="header">
                       <tr>
+                        <th>#</th> <!-- Nueva columna de numeración -->
                         <th>Chofer</th>
                         <th>Ruta Diaria</th>
                         <th>Fecha</th>
@@ -107,17 +106,17 @@
                         <th>Estado</th>
                       </tr>
                     </ng-template>
-                    <ng-template pTemplate="body" let-ruta>
+                    <ng-template pTemplate="body" let-ruta let-i="rowIndex">
                       <tr [ngClass]="{'bg-blue-100': ruta.flag === -1}">
+                        <td class="text-center">{{ i + 1 }}</td> <!-- Numeración -->
                         <td>{{ ruta.nombreCompleto }}</td>
                         <td class="text-center">{{ ruta.rutaDiaria }}</td>
                         <td>{{ ruta.fechaEntregaCad }}</td>
                         <td>{{ ruta.fechaInicioRutaCad }}</td>
                         <td>{{ ruta.fechaFinRutaCad }}</td>
                         <td>
-                          <p-tag *ngIf="ruta.flag !== -1" 
-                                [value]="ruta.estatusRuta" 
-                                [severity]="getStatusSeverity(ruta.estatusRuta)">
+                          <p-tag *ngIf="ruta.flag !== -1" [value]="ruta.estatusRuta"
+                            [severity]="getStatusSeverity(ruta.estatusRuta)">
                           </p-tag>
                           <span *ngIf="ruta.flag === -1" class="text-blue-500 font-medium"></span>
                         </td>
@@ -172,7 +171,7 @@
                 <div class="col-12 lg:col-8">
                   <!-- Leyenda de estados -->
                   <div class="flex gap-3 mb-3">
-                    
+
                     <div class="flex align-items-center gap-2">
                       <div class="w-2rem h-1rem bg-blue-100 border-round"></div>
                       <span class="text-sm">Inicio</span>
@@ -187,84 +186,80 @@
                   <p-table [value]="lstEntregasRegistradas" [rows]="10" [paginator]="true" [scrollable]="true"
                     scrollHeight="calc(100vh - 400px)" styleClass="p-datatable-sm p-datatable-gridlines surface-card"
                     [tableStyle]="{'min-width': '50rem'}" [rowHover]="true" responsiveLayout="scroll">
-                    
+
                     <ng-template pTemplate="header">
                       <tr class="surface-100">
-                          <th style="min-width: 120px" pSortableColumn="factura">
-                              Factura <p-sortIcon field="factura"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 200px" pSortableColumn="cardName">
-                              Cliente <p-sortIcon field="cardName"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 130px" pSortableColumn="fechaNota">
-                              Fecha Nota <p-sortIcon field="fechaNota"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 130px" pSortableColumn="fechaEntrega">
-                              Fecha Entrega <p-sortIcon field="fechaEntrega"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 100px" pSortableColumn="diferenciaMinutos">
-                              Dif. Min. <p-sortIcon field="diferenciaMinutos"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 200px" pSortableColumn="direccionEntrega">
-                              Dirección <p-sortIcon field="direccionEntrega"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 150px" pSortableColumn="vendedor">
-                              Vendedor <p-sortIcon field="vendedor"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 150px" pSortableColumn="nombreCompleto">
-                              Chofer <p-sortIcon field="nombreCompleto"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 100px" pSortableColumn="cochePlaca">
-                              Coche <p-sortIcon field="cochePlaca"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 100px" pSortableColumn="peso">
-                              Peso (kg) <p-sortIcon field="peso"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 150px" pSortableColumn="obs">
-                              Observaciones <p-sortIcon field="obs"></p-sortIcon>
-                          </th>
-                          <th style="min-width: 80px">Acciones</th>
+                        <th style="min-width: 120px" pSortableColumn="factura">
+                          Factura <p-sortIcon field="factura"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 200px" pSortableColumn="cardName">
+                          Cliente <p-sortIcon field="cardName"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 130px" pSortableColumn="fechaNota">
+                          Fecha Nota <p-sortIcon field="fechaNota"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 130px" pSortableColumn="fechaEntrega">
+                          Fecha Entrega <p-sortIcon field="fechaEntrega"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 100px" pSortableColumn="diferenciaMinutos">
+                          Dif. Min. <p-sortIcon field="diferenciaMinutos"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 200px" pSortableColumn="direccionEntrega">
+                          Dirección <p-sortIcon field="direccionEntrega"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 150px" pSortableColumn="vendedor">
+                          Vendedor <p-sortIcon field="vendedor"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 150px" pSortableColumn="nombreCompleto">
+                          Chofer <p-sortIcon field="nombreCompleto"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 100px" pSortableColumn="cochePlaca">
+                          Coche <p-sortIcon field="cochePlaca"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 100px" pSortableColumn="peso">
+                          Peso (kg) <p-sortIcon field="peso"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 150px" pSortableColumn="obs">
+                          Observaciones <p-sortIcon field="obs"></p-sortIcon>
+                        </th>
+                        <th style="min-width: 80px">Acciones</th>
                       </tr>
-                  </ng-template>
-              
-                  <ng-template pTemplate="body" let-entrega>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-entrega>
                       <tr [ngClass]="{
                           'bg-orange-100 font-medium': entrega.prioridad === 'Alta',
                           'bg-blue-100 font-medium': entrega.docEntry === -1,
                           'bg-green-100 font-medium': entrega.docEntry === 0,
                           'bg-red-100': entrega.flag === -1
                       }" class="h-3rem">
-                          <td class="text-sm">{{ entrega.factura }}</td>
-                          <td class="text-sm">{{ entrega.cardName }}</td>
-                          <td class="text-sm">{{ entrega.fechaNota }}</td>
-                          <td class="text-sm">{{ entrega.fechaEntrega }}</td>
-                          <td class="text-sm text-center">{{ entrega.diferenciaMinutos }}</td>
-                          <td class="text-sm">{{ entrega.direccionEntrega }}</td>
-                          <td class="text-sm">{{ entrega.vendedor }}</td>
-                          <td class="text-sm">{{ entrega.nombreCompleto }}</td>
-                          <td class="text-sm">{{ entrega.cochePlaca }}</td>
-                          <td class="text-sm text-right">{{ entrega.peso | number }}</td>
-                          <td class="text-sm">{{ entrega.obs }}</td>
-                          <td>
-                              <button pButton 
-                                      type="button" 
-                                      icon="pi pi-eye" 
-                                      (click)="onVerEntrega(entrega)"
-                                      class="p-button-rounded p-button-text p-button-sm"
-                                      [disabled]="entrega.flag === -1">
-                              </button>
-                          </td>
+                        <td class="text-sm">{{ entrega.factura }}</td>
+                        <td class="text-sm">{{ entrega.cardName }}</td>
+                        <td class="text-sm">{{ entrega.fechaNota }}</td>
+                        <td class="text-sm">{{ entrega.fechaEntrega }}</td>
+                        <td class="text-sm text-center">{{ entrega.diferenciaMinutos }}</td>
+                        <td class="text-sm">{{ entrega.direccionEntrega }}</td>
+                        <td class="text-sm">{{ entrega.vendedor }}</td>
+                        <td class="text-sm">{{ entrega.nombreCompleto }}</td>
+                        <td class="text-sm">{{ entrega.cochePlaca }}</td>
+                        <td class="text-sm text-right">{{ entrega.peso | number }}</td>
+                        <td class="text-sm">{{ entrega.obs }}</td>
+                        <td>
+                          <button pButton type="button" icon="pi pi-eye" (click)="onVerEntrega(entrega)"
+                            class="p-button-rounded p-button-text p-button-sm" [disabled]="entrega.flag === -1">
+                          </button>
+                        </td>
                       </tr>
-                  </ng-template>
-              
-                  <ng-template pTemplate="emptymessage">
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
                       <tr>
-                          <td colspan="12" class="text-center p-4">
-                              <i class="pi pi-info-circle mr-2"></i>
-                              No hay datos disponibles
-                          </td>
+                        <td colspan="12" class="text-center p-4">
+                          <i class="pi pi-info-circle mr-2"></i>
+                          No hay datos disponibles
+                        </td>
                       </tr>
-                  </ng-template>
+                    </ng-template>
 
 
                   </p-table>
@@ -291,7 +286,7 @@
                         <p class="mb-2 text-sm">
                           <i class="pi pi-calendar mr-2"></i>
                           <strong>Fecha de entrega:</strong>
-                          {{ selectedEntrega.fechaEntrega  }}
+                          {{ selectedEntrega.fechaEntrega }}
                         </p>
                         <p class="mb-2 text-sm">
                           <i class="pi pi-truck mr-2"></i>

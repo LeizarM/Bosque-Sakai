@@ -181,8 +181,7 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit, OnDestr
   getStatusSeverity(status: string): string {
     switch (status) {
       case 'Completo': return 'success';
-      case 'En Proceso': return 'warning';
-      case 'Pendiente': return 'danger';
+      case 'Incompleto o en ruta': return 'warning';
       default: return 'info';
     }
   }
