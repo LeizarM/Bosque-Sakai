@@ -39,6 +39,7 @@ import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ChartModule } from 'primeng/chart';
 import { TagModule } from 'primeng/tag';
+import { SkeletonModule } from 'primeng/skeleton';
 @NgModule({
 
   exports: [
@@ -81,7 +82,8 @@ import { TagModule } from 'primeng/tag';
     ConfirmDialogModule,
     PaginatorModule,
     ChartModule,
-    TagModule
+    TagModule,
+    SkeletonModule
 
   ]
 })

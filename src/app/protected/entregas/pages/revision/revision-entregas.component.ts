@@ -66,14 +66,19 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngAfterViewInit(): void {
-    this.initializeMap();
-    this.adjustMapSize();
+    setTimeout(() => {
+      this.initializeMap();
+      this.adjustMapSize();
+    }, 0);
   }
-
+  
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.clearMarkers();
+    if (this.map) {
+      this.clearMarkers();
+      this.map.remove();
+    }
   }
 
   private initChartOptions(): void {
@@ -182,19 +187,32 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit, OnDestr
     }
   }
   private initializeMap(): void {
+    if (!this.mapElement?.nativeElement) {
+      setTimeout(() => this.initializeMap(), 100);
+      return;
+    }
+
     try {
+      if (this.map) {
+        this.map.remove();
+      }
+
       this.map = new maplibregl.Map({
         container: this.mapElement.nativeElement,
         style: this.mapaLibreServices.obtenerZonaxCiudad(),
         center: this.defaultCenter,
         zoom: this.defaultZoom,
         maxZoom: 18,
-        minZoom: 8
+        minZoom: 8,
+        preserveDrawingBuffer: true
       });
 
-      this.map.on('load', () => {
+      this.map.once('load', () => {
         this.mapInitialized = true;
         this.addMapControls();
+        if (this.selectedEntrega) {
+          this.updateMarkers(this.selectedEntrega);
+        }
       });
 
       this.map.on('error', (e) => {
@@ -213,8 +231,7 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit, OnDestr
         detail: 'No se pudo inicializar el mapa'
       });
     }
-  }
-
+}
   private addMapControls(): void {
     this.map.addControl(new maplibregl.NavigationControl({}));
     this.map.addControl(new maplibregl.FullscreenControl({}));
