@@ -189,6 +189,9 @@
 
                     <ng-template pTemplate="header">
                       <tr class="surface-100">
+                        <th style="min-width: 120px" pSortableColumn="tipo">
+                          Tipo <p-sortIcon field="tipo"></p-sortIcon>
+                        </th>
                         <th style="min-width: 120px" pSortableColumn="factura">
                           Factura <p-sortIcon field="factura"></p-sortIcon>
                         </th>
@@ -233,6 +236,7 @@
                           'bg-green-100 font-medium': entrega.docEntry === 0,
                           'bg-red-100': entrega.flag === -1
                       }" class="h-3rem">
+                        <td class="text-sm">{{ entrega.tipo }}</td>
                         <td class="text-sm">{{ entrega.factura }}</td>
                         <td class="text-sm">{{ entrega.cardName }}</td>
                         <td class="text-sm">{{ entrega.fechaNota }}</td>
