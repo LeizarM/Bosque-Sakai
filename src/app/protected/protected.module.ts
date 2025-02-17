@@ -14,6 +14,7 @@ import { PreciosModule } from './precios/precios.module';
 import { ProtectedRoutingModule } from './protected-routing.module';
 import { RrhhModule } from './rrhh/rrhh.module';
 import { SharedModule } from './shared/shared.module';
+import { DepositosChequeModule } from './depositos-cheque/DepositosCheque.module';
 
 
 
@@ -36,6 +37,7 @@ import { SharedModule } from './shared/shared.module';
         MaterialMalEstadoModule,
         FacturaSantaCruzModule,
         EntregasModule,
+        DepositosChequeModule
 
 
     ]

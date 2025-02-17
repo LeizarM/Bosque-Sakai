@@ -83,7 +83,8 @@ import { SkeletonModule } from 'primeng/skeleton';
     PaginatorModule,
     ChartModule,
     TagModule,
-    SkeletonModule
+    SkeletonModule,
+    DialogModule 
 
   ]
 })

@@ -182,6 +182,7 @@ export class RevisionEntregasComponent implements OnInit, AfterViewInit, OnDestr
     switch (status) {
       case 'Completo': return 'success';
       case 'Incompleto o en ruta': return 'warning';
+      case 'Completado Por Sistema': return 'danger';
       default: return 'info';
     }
   }

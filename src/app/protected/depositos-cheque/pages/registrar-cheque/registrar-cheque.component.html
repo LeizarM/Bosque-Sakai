@@ -1,0 +1,189 @@
+<!-- components/registrar-cheque/registrar-cheque.component.html -->
+<div class="card relative">
+  <div class="loading-overlay" *ngIf="loading">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
+  <h2 class="text-2xl font-bold mb-4">Registro de Depósitos</h2>
+  
+  <form [formGroup]="chequeForm" (ngSubmit)="onSubmit()" class="p-fluid">
+    <div class="grid formgrid p-2">
+      <!-- Empresa -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="codEmpresa" class="block text-900 font-medium mb-2">Empresa</label>
+        <p-dropdown
+          id="codEmpresa"
+          formControlName="codEmpresa"
+          [options]="empresas"
+          optionLabel="nombre"
+          optionValue="codEmpresa"
+          placeholder="Seleccione una empresa"
+          [style]="{'width':'100%'}"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codEmpresa')}"
+          (onChange)="onEmpresaChange($event)"
+        ></p-dropdown>
+        <small class="p-error block" *ngIf="isFieldInvalid('codEmpresa')">
+          {{getErrorMessage('codEmpresa')}}
+        </small>
+      </div>
+
+      <!-- Cliente -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="codCliente" class="block text-900 font-medium mb-2">Cliente</label>
+        <p-dropdown
+
+          id="codCliente"
+          formControlName="codCliente"
+          [options]="clientes"
+          optionLabel="nombreCompleto"
+          optionValue="codCliente"
+          placeholder="Seleccione un cliente"
+          [filter]="true"
+          filterBy="nombreCompleto" 
+          [showClear]="true"
+          [style]="{'width':'100%'}"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codCliente')}"
+          [disabled]="!chequeForm.get('codEmpresa')?.value"
+        ></p-dropdown>
+        <small class="p-error block" *ngIf="isFieldInvalid('codCliente')">
+          {{getErrorMessage('codCliente')}}
+        </small>
+      </div>
+
+      <!-- Número de Documento -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="docNum" class="block text-900 font-medium mb-2">Número de Documento</label>
+        <input
+          pInputText 
+          id="docNum"
+          formControlName="docNum"
+          [style]="{'width':'100%'}"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('docNum')}"
+          placeholder="Ingrese número de documento"
+        />
+        <small class="p-error block" *ngIf="isFieldInvalid('docNum')">
+          {{getErrorMessage('docNum')}}
+        </small>
+      </div>
+
+      <!-- Num Factura -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="numFact" class="block text-900 font-medium mb-2">Número de Factura</label>
+        <input
+          pInputText 
+          id="numFact"
+          formControlName="numFact"
+          [style]="{'width':'100%'}"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('numFact')}"
+          placeholder="Ingrese número de Factura"
+        />
+        <small class="p-error block" *ngIf="isFieldInvalid('numFact')">
+          {{getErrorMessage('numFact')}}
+        </small>
+      </div>
+
+
+
+      <!-- Banco -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="codBanco" class="block text-900 font-medium mb-2">Banco</label>
+        <p-dropdown
+          id="codBanco"
+          formControlName="codBanco"
+          [options]="bancos"
+          optionLabel="nombre"
+          optionValue="codBanco"
+          placeholder="Seleccione un banco"
+          [style]="{'width':'100%'}"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codBanco')}"
+        ></p-dropdown>
+        <small class="p-error block" *ngIf="isFieldInvalid('codBanco')">
+          {{getErrorMessage('codBanco')}}
+        </small>
+      </div>
+
+      <!-- Importe -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="importe" class="block text-900 font-medium mb-2">Importe</label>
+        <p-inputNumber
+          id="importe"
+          formControlName="importe"
+          mode="decimal"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          [style]="{'width':'100%'}"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('importe')}"
+          placeholder="0.00"
+        ></p-inputNumber>
+        <small class="p-error block" *ngIf="isFieldInvalid('importe')">
+          {{getErrorMessage('importe')}}
+        </small>
+      </div>
+
+      <!-- Moneda -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="moneda" class="block text-900 font-medium mb-2">Moneda</label>
+        <p-dropdown
+          id="moneda"
+          formControlName="moneda"
+          [options]="monedas"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccione moneda"
+          [style]="{'width':'100%'}"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('moneda')}"
+        ></p-dropdown>
+        <small class="p-error block" *ngIf="isFieldInvalid('moneda')">
+          {{getErrorMessage('moneda')}}
+        </small>
+      </div>
+
+      <!-- Imagen -->
+      <div class="field col-12 mb-4">
+        <label for="fotoPath" class="block text-900 font-medium mb-2">Imagen del Deposito</label>
+        <input
+          type="file"
+          class="hidden"
+          id="fotoPath"
+          accept="image/jpeg,image/png,image/jpg"
+          (change)="onFileSelect($event)"
+          #fileInput
+        >
+        <button 
+          pButton 
+          type="button" 
+          [label]="selectedFile ? 'Cambiar Imagen' : 'Seleccionar Imagen'"
+          icon="pi pi-upload" 
+          class="p-button-secondary w-full"
+          (click)="fileInput.click()"
+        ></button>
+        <small class="block mt-1" *ngIf="selectedFile">
+          Archivo seleccionado: {{selectedFile.name}}
+        </small>
+        <small class="block text-gray-500 mt-1">
+          Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 5MB
+        </small>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-content-end gap-2 mt-4">
+      <p-button
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        styleClass="p-button-outlined p-button-danger"
+        (onClick)="onCancel()"
+        [disabled]="loading"
+      ></p-button>
+      <p-button
+        type="submit"
+        label="Guardar"
+        icon="pi pi-save"
+        [loading]="loading"
+      ></p-button>
+    </div>
+  </form>
+</div>
+
+<p-toast position="top-right"></p-toast>

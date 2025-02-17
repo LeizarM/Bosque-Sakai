@@ -14,6 +14,8 @@ import { RegistroResmaComponent } from './material-mal-estado/pages/registro-res
 import { AutorizacionComponent } from './precios/pages/autorizacion/autorizacion.component';
 import { FamiliasComponent } from './precios/pages/familias/familias.component';
 import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
+import { RegistrarChequeComponent } from './depositos-cheque/pages/registrar-cheque/registrar-cheque.component';
+import { ViewChequeComponent } from './depositos-cheque/pages/view-cheque/view-cheque.component';
 
 
  const routes: Routes = [
@@ -84,6 +86,14 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
       {
         path: 'trch_choferEntrega/Revision',
         component: RevisionEntregasComponent
+      },
+      {
+        path: 'tdep_Deposito/Registro',
+        component: RegistrarChequeComponent
+      },
+      {
+        path: 'tdep_Deposito/View',
+        component: ViewChequeComponent
       },
       {
         path: '**',
