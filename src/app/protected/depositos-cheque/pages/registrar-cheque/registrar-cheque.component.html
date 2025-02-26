@@ -1,189 +1,302 @@
 <!-- components/registrar-cheque/registrar-cheque.component.html -->
-<div class="card relative">
-  <div class="loading-overlay" *ngIf="loading">
-    <p-progressSpinner></p-progressSpinner>
-  </div>
+<p-tabView>
+  <p-tabPanel header="Registro de Depósitos">
+    <div
+      class="card relative shadow-5 border-round p-6"
+      style="background: linear-gradient(135deg, #ffffff, #e0f7fa); border-top: 4px solid #00796b;"
+    >
+      <!-- Overlay de carga -->
+      <div
+        class="absolute top-0 left-0 w-full h-full flex align-items-center justify-content-center loading-overlay"
+        *ngIf="loading"
+        style="background: rgba(255,255,255,0.7); z-index: 10;"
+      >
+        <p-progressSpinner></p-progressSpinner>
+      </div>
 
-  <h2 class="text-2xl font-bold mb-4">Registro de Depósitos</h2>
+      <h2 class="text-3xl font-bold mb-4" style="color: #00796b;">
+        Registro de Depósitos
+      </h2>
+      
+      <form [formGroup]="chequeForm" (ngSubmit)="onSubmit()" class="p-fluid">
+        <div class="grid formgrid">
+          <!-- Empresa -->
+          <div class="field col-12 md:col-6 mb-4">
+            <label for="codEmpresa" class="block font-semibold mb-2" style="color: #424242;">
+              Empresa
+            </label>
+            <p-dropdown
+              id="codEmpresa"
+              formControlName="codEmpresa"
+              [options]="empresas"
+              optionLabel="nombre"
+              optionValue="codEmpresa"
+              placeholder="Seleccione una empresa"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codEmpresa')}"
+              (onChange)="onEmpresaChange($event)"
+            ></p-dropdown>
+            <small class="p-error block" *ngIf="isFieldInvalid('codEmpresa')">
+              {{ getErrorMessage('codEmpresa') }}
+            </small>
+          </div>
+
+          <!-- Cliente -->
+          <div class="field col-12 md:col-6 mb-4">
+            <label for="codCliente" class="block font-semibold mb-2" style="color: #424242;">
+              Cliente
+            </label>
+            <p-dropdown
+              id="codCliente"
+              formControlName="codCliente"
+              [options]="clientes"
+              optionLabel="nombreCompleto"
+              optionValue="codCliente"
+              placeholder="Seleccione un cliente"
+              [filter]="true"
+              filterBy="nombreCompleto"
+              [showClear]="true"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codCliente')}"
+              [disabled]="!chequeForm.get('codEmpresa')?.value"
+            ></p-dropdown>
+            <small class="p-error block" *ngIf="isFieldInvalid('codCliente')">
+              {{ getErrorMessage('codCliente') }}
+            </small>
+          </div>
+
+          <!-- Número de Documento -->
+          <div class="field col-12 md:col-6 mb-4">
+            <label for="docNum" class="block font-semibold mb-2" style="color: #424242;">
+              Número de Documento
+            </label>
+            <input
+              pInputText
+              id="docNum"
+              formControlName="docNum"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('docNum')}"
+              placeholder="Ingrese número de documento"
+            />
+            <small class="p-error block" *ngIf="isFieldInvalid('docNum')">
+              {{ getErrorMessage('docNum') }}
+            </small>
+          </div>
+
+          <!-- Número de Factura -->
+          <div class="field col-12 md:col-6 mb-4">
+            <label for="numFact" class="block font-semibold mb-2" style="color: #424242;">
+              Número de Factura
+            </label>
+            <input
+              pInputText
+              id="numFact"
+              formControlName="numFact"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('numFact')}"
+              placeholder="Ingrese número de factura"
+            />
+            <small class="p-error block" *ngIf="isFieldInvalid('numFact')">
+              {{ getErrorMessage('numFact') }}
+            </small>
+          </div>
+
+          <!-- Banco -->
+          <div class="field col-12 md:col-6 mb-4">
+            <label for="codBanco" class="block font-semibold mb-2" style="color: #424242;">
+              Banco
+            </label>
+            <p-dropdown
+              id="codBanco"
+              formControlName="codBanco"
+              [options]="bancos"
+              optionLabel="nombre"
+              optionValue="codBanco"
+              placeholder="Seleccione un banco"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codBanco')}"
+            ></p-dropdown>
+            <small class="p-error block" *ngIf="isFieldInvalid('codBanco')">
+              {{ getErrorMessage('codBanco') }}
+            </small>
+          </div>
+
+          <!-- Importe -->
+          <div class="field col-12 md:col-6 mb-4">
+            <label for="importe" class="block font-semibold mb-2" style="color: #424242;">
+              Importe
+            </label>
+            <p-inputNumber
+              id="importe"
+              formControlName="importe"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('importe')}"
+              placeholder="0.00"
+            ></p-inputNumber>
+            <small class="p-error block" *ngIf="isFieldInvalid('importe')">
+              {{ getErrorMessage('importe') }}
+            </small>
+          </div>
+
+          <!-- Moneda -->
+          <div class="field col-12 md:col-6 mb-4">
+            <label for="moneda" class="block font-semibold mb-2" style="color: #424242;">
+              Moneda
+            </label>
+            <p-dropdown
+              id="moneda"
+              formControlName="moneda"
+              [options]="monedas"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Seleccione moneda"
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('moneda')}"
+            ></p-dropdown>
+            <small class="p-error block" *ngIf="isFieldInvalid('moneda')">
+              {{ getErrorMessage('moneda') }}
+            </small>
+          </div>
+
+          <!-- Imagen -->
+          <div class="field col-12 mb-4">
+            <label for="fotoPath" class="block font-semibold mb-2" style="color: #424242;">
+              Imagen del Depósito
+            </label>
+            <input
+              type="file"
+              id="fotoPath"
+              accept="image/jpeg,image/png,image/jpg"
+              class="hidden"
+              (change)="onFileSelect($event)"
+              #fileInput
+            />
+            <button
+              pButton
+              type="button"
+              [label]="selectedFile ? 'Cambiar Imagen' : 'Seleccionar Imagen'"
+              icon="pi pi-upload"
+              class="p-button-rounded p-button-secondary w-full"
+              (click)="fileInput.click()"
+            ></button>
+            <small class="block mt-1" *ngIf="selectedFile" style="color: #00796b;">
+              Archivo seleccionado: {{ selectedFile.name }}
+            </small>
+            <small class="block text-gray-500 mt-1">
+              Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 5MB
+            </small>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex justify-content-end gap-2 mt-4">
+          <p-button
+            type="button"
+            label="Cancelar"
+            icon="pi pi-times"
+            styleClass="p-button-outlined p-button-danger p-button-rounded"
+            (onClick)="onCancel()"
+            [disabled]="loading"
+          ></p-button>
+          <p-button
+            type="submit"
+            label="Guardar"
+            icon="pi pi-save"
+            styleClass="p-button-rounded p-button-success"
+            [loading]="loading"
+          ></p-button>
+        </div>
+      </form>
+    </div>
+    <p-toast position="top-right"></p-toast>
+  </p-tabPanel>
+
+  <p-tabPanel header="Estado de Depósitos">  
+    <div  
+      class="card relative shadow-5 border-round p-6"  
+      style="background: linear-gradient(135deg, #ffffff, #e8f5e9); border-top: 4px solid #388e3c;"  
+    >  
+      <h2 class="text-3xl font-bold mb-4" style="color: #388e3c;">  
+        Consulta Estado de Depósitos  
+      </h2>  
+    
+      <!-- Formulario de búsqueda -->  
+      <form [formGroup]="depositSearchForm" (ngSubmit)="onActualizar()" class="p-fluid">  
+        <div class="grid formgrid">  
+          <!-- Número de Documento -->  
+          <div class="field col-12 md:col-6 mb-4">  
+            <label for="docNumSearch" class="block font-semibold mb-2" style="color: #424242;">  
+              Número de Documento  
+            </label>  
+            <input  
+              pInputText  
+              id="docNumSearch"  
+              formControlName="docNum"  
+              placeholder="Ingrese número de documento"  
+              class="w-full"  
+            />  
+          </div>  
+          <!-- Número de Factura -->  
+          <div class="field col-12 md:col-6 mb-4">  
+            <label for="numFactSearch" class="block font-semibold mb-2" style="color: #424242;">  
+              Número de Factura  
+            </label>  
+            <input  
+              pInputText  
+              id="numFactSearch"  
+              formControlName="numFact"  
+              placeholder="Ingrese número de factura"  
+              class="w-full"  
+            />  
+          </div>  
+        </div>  
+        <div class="flex justify-content-end gap-2 mt-4">  
+          <p-button type="submit" label="Actualizar" icon="pi pi-refresh"></p-button>  
+        </div>  
+      </form>  
+    
+      <!-- Tabla de resultados -->  
+      <div class="mt-4" *ngIf="depositList && depositList.length">  
+        <p-table [value]="depositList">  
+          <ng-template pTemplate="header">  
+            <tr>  
+              <th>ID Deposito</th>  
+              <th>Código Cliente</th>  
+              <th>Número de Documento</th>  
+              <th>Número de Factura</th>  
+             
+              <th> Empresa</th>  
+              <th> Banco</th>  
+              <th>Importe</th>  
+              <th>Moneda</th>  
   
-  <form [formGroup]="chequeForm" (ngSubmit)="onSubmit()" class="p-fluid">
-    <div class="grid formgrid p-2">
-      <!-- Empresa -->
-      <div class="field col-12 md:col-6 mb-4">
-        <label for="codEmpresa" class="block text-900 font-medium mb-2">Empresa</label>
-        <p-dropdown
-          id="codEmpresa"
-          formControlName="codEmpresa"
-          [options]="empresas"
-          optionLabel="nombre"
-          optionValue="codEmpresa"
-          placeholder="Seleccione una empresa"
-          [style]="{'width':'100%'}"
-          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codEmpresa')}"
-          (onChange)="onEmpresaChange($event)"
-        ></p-dropdown>
-        <small class="p-error block" *ngIf="isFieldInvalid('codEmpresa')">
-          {{getErrorMessage('codEmpresa')}}
-        </small>
-      </div>
-
-      <!-- Cliente -->
-      <div class="field col-12 md:col-6 mb-4">
-        <label for="codCliente" class="block text-900 font-medium mb-2">Cliente</label>
-        <p-dropdown
-
-          id="codCliente"
-          formControlName="codCliente"
-          [options]="clientes"
-          optionLabel="nombreCompleto"
-          optionValue="codCliente"
-          placeholder="Seleccione un cliente"
-          [filter]="true"
-          filterBy="nombreCompleto" 
-          [showClear]="true"
-          [style]="{'width':'100%'}"
-          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codCliente')}"
-          [disabled]="!chequeForm.get('codEmpresa')?.value"
-        ></p-dropdown>
-        <small class="p-error block" *ngIf="isFieldInvalid('codCliente')">
-          {{getErrorMessage('codCliente')}}
-        </small>
-      </div>
-
-      <!-- Número de Documento -->
-      <div class="field col-12 md:col-6 mb-4">
-        <label for="docNum" class="block text-900 font-medium mb-2">Número de Documento</label>
-        <input
-          pInputText 
-          id="docNum"
-          formControlName="docNum"
-          [style]="{'width':'100%'}"
-          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('docNum')}"
-          placeholder="Ingrese número de documento"
-        />
-        <small class="p-error block" *ngIf="isFieldInvalid('docNum')">
-          {{getErrorMessage('docNum')}}
-        </small>
-      </div>
-
-      <!-- Num Factura -->
-      <div class="field col-12 md:col-6 mb-4">
-        <label for="numFact" class="block text-900 font-medium mb-2">Número de Factura</label>
-        <input
-          pInputText 
-          id="numFact"
-          formControlName="numFact"
-          [style]="{'width':'100%'}"
-          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('numFact')}"
-          placeholder="Ingrese número de Factura"
-        />
-        <small class="p-error block" *ngIf="isFieldInvalid('numFact')">
-          {{getErrorMessage('numFact')}}
-        </small>
-      </div>
-
-
-
-      <!-- Banco -->
-      <div class="field col-12 md:col-6 mb-4">
-        <label for="codBanco" class="block text-900 font-medium mb-2">Banco</label>
-        <p-dropdown
-          id="codBanco"
-          formControlName="codBanco"
-          [options]="bancos"
-          optionLabel="nombre"
-          optionValue="codBanco"
-          placeholder="Seleccione un banco"
-          [style]="{'width':'100%'}"
-          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codBanco')}"
-        ></p-dropdown>
-        <small class="p-error block" *ngIf="isFieldInvalid('codBanco')">
-          {{getErrorMessage('codBanco')}}
-        </small>
-      </div>
-
-      <!-- Importe -->
-      <div class="field col-12 md:col-6 mb-4">
-        <label for="importe" class="block text-900 font-medium mb-2">Importe</label>
-        <p-inputNumber
-          id="importe"
-          formControlName="importe"
-          mode="decimal"
-          [minFractionDigits]="2"
-          [maxFractionDigits]="2"
-          [style]="{'width':'100%'}"
-          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('importe')}"
-          placeholder="0.00"
-        ></p-inputNumber>
-        <small class="p-error block" *ngIf="isFieldInvalid('importe')">
-          {{getErrorMessage('importe')}}
-        </small>
-      </div>
-
-      <!-- Moneda -->
-      <div class="field col-12 md:col-6 mb-4">
-        <label for="moneda" class="block text-900 font-medium mb-2">Moneda</label>
-        <p-dropdown
-          id="moneda"
-          formControlName="moneda"
-          [options]="monedas"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Seleccione moneda"
-          [style]="{'width':'100%'}"
-          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('moneda')}"
-        ></p-dropdown>
-        <small class="p-error block" *ngIf="isFieldInvalid('moneda')">
-          {{getErrorMessage('moneda')}}
-        </small>
-      </div>
-
-      <!-- Imagen -->
-      <div class="field col-12 mb-4">
-        <label for="fotoPath" class="block text-900 font-medium mb-2">Imagen del Deposito</label>
-        <input
-          type="file"
-          class="hidden"
-          id="fotoPath"
-          accept="image/jpeg,image/png,image/jpg"
-          (change)="onFileSelect($event)"
-          #fileInput
-        >
-        <button 
-          pButton 
-          type="button" 
-          [label]="selectedFile ? 'Cambiar Imagen' : 'Seleccionar Imagen'"
-          icon="pi pi-upload" 
-          class="p-button-secondary w-full"
-          (click)="fileInput.click()"
-        ></button>
-        <small class="block mt-1" *ngIf="selectedFile">
-          Archivo seleccionado: {{selectedFile.name}}
-        </small>
-        <small class="block text-gray-500 mt-1">
-          Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 5MB
-        </small>
-      </div>
-    </div>
-
-    <!-- Botones -->
-    <div class="flex justify-content-end gap-2 mt-4">
-      <p-button
-        type="button"
-        label="Cancelar"
-        icon="pi pi-times"
-        styleClass="p-button-outlined p-button-danger"
-        (onClick)="onCancel()"
-        [disabled]="loading"
-      ></p-button>
-      <p-button
-        type="submit"
-        label="Guardar"
-        icon="pi pi-save"
-        [loading]="loading"
-      ></p-button>
-    </div>
-  </form>
-</div>
-
-<p-toast position="top-right"></p-toast>
+              <th>Reconciliado</th>  
+            </tr>  
+          </ng-template>  
+          <ng-template pTemplate="body" let-deposito>  
+            <tr>  
+              <td>{{ deposito.idDeposito }}</td>  
+              <td>{{ deposito.codCliente }}</td>  
+              <td>{{ deposito.docNum }}</td>  
+              <td>{{ deposito.numFact }}</td>  
+             
+              <td>{{ deposito.nombreEmpresa }}</td>  
+              <td>{{ deposito.nombreBanco }}</td>  
+              <td>{{ deposito.importe | number:'1.2-2' }}</td>  
+              <td>{{ deposito.moneda }}</td>    
+              <td>{{ deposito.fueReconciliado }}</td>  
+            </tr>  
+          </ng-template>  
+        </p-table>  
+      </div>  
+    
+      <!-- Opcional: un mensaje en caso de no haber registros -->  
+      <div class="mt-4" *ngIf="depositList && depositList.length === 0">  
+        <p>No se encontraron depósitos con los criterios de búsqueda.</p>  
+      </div>  
+    </div>  
+  </p-tabPanel>
+</p-tabView>

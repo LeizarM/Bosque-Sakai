@@ -1,10 +1,10 @@
+import { DepositoCheque } from './../../interfaces/DepositoCheque';
 // services/deposito-cheque.service.ts
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { DepositoCheque } from '../../interfaces/DepositoCheque';
 import { ApiResponse } from '../../interfaces/ApiResponse';
 import { Empresa } from '../../interfaces/Empresa';
 import { SocioNegocio } from '../../interfaces/SocioNegocio';
@@ -108,6 +108,20 @@ export class DepositoChequeService {
                 catchError(this.handleError)
             );
     }
+
+
+    obtenerDepositosReconciliados(deposito: DepositoCheque): Observable<ApiResponse<DepositoCheque[]>> {  
+        console.log('deposito a reconciliar', deposito);  
+        const url = `${this.baseUrl}${this.endpoint}/listar-reconciliados`;  
+          
+        // Enviar el objeto directamente, sin envolverlo  
+        return this.http.post<ApiResponse<DepositoCheque[]>>(url, deposito)  
+            .pipe(  
+                timeout(this.timeoutMs),  
+                catchError(this.handleError)  
+            );  
+    }
+
 
     /**
      * Descarga la imagen del depósito

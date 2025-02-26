@@ -1,3 +1,26 @@
+/* Variables de color - Puedes ajustar según tu esquema de colores */
+:root {
+  --primary-color: #3a86ff;
+  --primary-dark: #2667cc;
+  --primary-light: #7aabff;
+  --secondary-color: #ff006e;
+  --accent-color: #4d908e;
+  --background-color: #f8faff;
+  --card-bg: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --error-color: #e63946;
+  --success-color: #38b000;
+  --warning-color: #ffb703;
+  --border-radius: 12px;
+  --transition-duration: 0.3s;
+  --panel-header-bg: #f8f9fa;
+  --panel-ingreso: var(--primary-light);
+  --panel-salida: #ffb703;
+  --panel-merma: #8a5cf5;
+}
+
+/* Estilos generales */
 .disabled-row {
   pointer-events: none;
   opacity: 0.3;
@@ -8,4 +31,512 @@
   pointer-events: none;
   opacity: 0.3;
   background-color: #e0e0e0;
+}
+
+/* Encabezado principal */
+.main-header {
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  background: linear-gradient(135deg, var(--background-color), #fff);
+  border-left: 4px solid var(--primary-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.title-gradient {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
+
+/* Secciones de formulario */
+.form-section {
+  background: #fff;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.section-content {
+  padding: 1.5rem;
+}
+
+/* Etiquetas de campo */
+.field-label {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Número de lote */
+.lote-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-light);
+  color: #fff;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilización de inputs */
+.modern-input,
+.p-inputtext.modern-input,
+.p-calendar.modern-calendar .p-inputtext,
+.p-inputmask.modern-input .p-inputtext,
+.p-dropdown.modern-dropdown .p-dropdown-label,
+.p-autocomplete.modern-autocomplete .p-autocomplete-input {
+  background-color: var(--background-color) !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  transition: all var(--transition-duration) ease !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02) !important;
+}
+
+.modern-input:focus,
+.p-inputtext.modern-input:focus,
+.p-calendar.modern-calendar .p-inputtext:focus,
+.p-inputmask.modern-input .p-inputtext:focus,
+.p-dropdown.modern-dropdown:focus,
+.p-autocomplete.modern-autocomplete .p-autocomplete-input:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2) !important;
+  outline: none !important;
+}
+
+.modern-textarea {
+  border-radius: 8px !important;
+  background-color: var(--background-color) !important;
+  transition: all var(--transition-duration) ease !important;
+  resize: vertical;
+}
+
+.modern-textarea:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(58, 134, 255, 0.2) !important;
+}
+
+/* Dropdown personalizado */
+.modern-dropdown .p-dropdown-panel {
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modern-dropdown .p-dropdown-items .p-dropdown-item {
+  padding: 0.75rem 1rem !important;
+  transition: background-color var(--transition-duration) ease !important;
+}
+
+.modern-dropdown .p-dropdown-items .p-dropdown-item:hover {
+  background-color: var(--primary-light) !important;
+  color: white !important;
+}
+
+/* Panel modernizado */
+.modern-panel .p-panel-header {
+  background-color: var(--panel-header-bg) !important;
+  border-bottom: none !important;
+  padding: 1rem !important;
+  border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+}
+
+.modern-panel .p-panel-content {
+  padding: 1.5rem !important;
+  background-color: #fff !important;
+  border-radius: 0 0 var(--border-radius) var(--border-radius) !important;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+}
+
+/* Variaciones de colores para diferentes tipos de panel */
+.ingreso-panel .p-panel-header {
+  border-top: 4px solid var(--panel-ingreso) !important;
+}
+
+.salida-panel .p-panel-header {
+  border-top: 4px solid var(--panel-salida) !important;
+}
+
+.merma-panel .p-panel-header {
+  border-top: 4px solid var(--panel-merma) !important;
+}
+
+/* Badges informativos */
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--primary-light);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  margin-right: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabla modernizada */
+.modern-table {
+  border-radius: var(--border-radius) !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+}
+
+.modern-table .p-datatable-header {
+  background-color: #fff !important;
+  border-bottom: none !important;
+  padding: 1rem !important;
+}
+
+.modern-table .p-datatable-thead > tr > th {
+  background-color: var(--panel-header-bg) !important;
+  border-bottom: 2px solid #e0e0e0 !important;
+  padding: 1rem 0.75rem !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.modern-table .p-datatable-tbody > tr {
+  transition: background-color var(--transition-duration) ease !important;
+}
+
+.modern-table .p-datatable-tbody > tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+.modern-table .p-datatable-tbody > tr:hover {
+  background-color: rgba(58, 134, 255, 0.05) !important;
+}
+
+.modern-table .p-datatable-tbody > tr > td {
+  padding: 0.75rem !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+/* Cabecera de tabla con acciones */
+.table-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+/* Filas de totales */
+.total-row {
+  background-color: var(--panel-header-bg) !important;
+  font-weight: 500;
+}
+
+.summary-row {
+  background-color: var(--primary-light) !important;
+  color: white !important;
+}
+
+.highlight-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Valor calculado */
+.calculated-value {
+  color: var(--primary-dark);
+  font-weight: 500;
+}
+
+/* Textos de ayuda */
+.helper-text {
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+/* Toolbar moderna */
+.modern-toolbar {
+  background: linear-gradient(to right, #f8f9fa, #fff) !important;
+  border-radius: var(--border-radius) !important;
+  padding: 1rem !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+  margin-top: 1.5rem !important;
+}
+
+/* Contenedor de diferencias */
+.difference-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.difference-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #f8f9fa;
+  border-radius: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.difference-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+  color: var(--text-primary);
+}
+
+.difference-value {
+  font-weight: 700;
+  color: var(--success-color);
+}
+
+.difference-value.negative {
+  color: var(--error-color);
+}
+
+/* Botón de siguiente */
+.next-button {
+  transition: all var(--transition-duration) ease !important;
+}
+
+.next-button:not(:disabled):hover {
+  transform: translateX(5px) !important;
+}
+
+/* Dialog de vista previa */
+.modern-dialog .p-dialog-header {
+  background-color: var(--panel-header-bg) !important;
+  border-bottom: none !important;
+  padding: 1.5rem !important;
+}
+
+.modern-dialog .p-dialog-content {
+  padding: 0 1.5rem 1.5rem 1.5rem !important;
+}
+
+/* Contenedor de vista previa */
+.preview-container {
+  padding: 1.5rem;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.lote-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-right: 1rem;
+  color: var(--text-secondary);
+}
+
+.lote-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* Campos de vista previa */
+.preview-field {
+  margin-bottom: 1rem;
+}
+
+.preview-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.preview-value {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+/* Divider personalizado */
+.custom-divider .p-divider-content {
+  background-color: #fff !important;
+}
+
+.divider-tag {
+  background-color: var(--primary-light);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Tarjetas de vista previa */
+.preview-card .p-card-header {
+  padding: 1rem !important;
+  background-color: var(--panel-header-bg) !important;
+  font-weight: 600 !important;
+}
+
+.preview-card .p-card-body {
+  padding: 1.5rem !important;
+}
+
+.preview-card .p-card-content {
+  padding: 0 !important;
+}
+
+/* Contenedor de artículo en vista previa */
+.preview-article-container {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preview-article-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.preview-article-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+/* Variantes de colores para las tarjetas */
+.ingreso-card .p-card-header {
+  border-left: 4px solid var(--panel-ingreso) !important;
+}
+
+.salida-card .p-card-header {
+  border-left: 4px solid var(--panel-salida) !important;
+}
+
+.merma-card .p-card-header {
+  border-left: 4px solid var(--panel-merma) !important;
+}
+
+/* Tablas en vista previa */
+.preview-table {
+  margin-top: 1rem !important;
+}
+
+/* Resumen de diferencias */
+.difference-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+}
+
+.difference-summary .difference-item {
+  padding: 0.75rem 1.5rem;
+}
+
+.difference-summary .difference-label {
+  font-size: 1.1rem;
+}
+
+.difference-summary .difference-value {
+  font-size: 1.1rem;
+}
+
+/* Botón de guardar */
+.save-button {
+  padding: 0.75rem 2rem !important;
+  transition: all var(--transition-duration) ease !important;
+}
+
+.save-button:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Dialog de confirmación */
+.modern-confirm .p-dialog-header {
+  background-color: var(--panel-header-bg) !important;
+  border-bottom: none !important;
+}
+
+.modern-confirm .p-confirm-dialog-icon {
+  font-size: 2rem !important;
+  color: var(--warning-color) !important;
+}
+
+/* Descripción en celdas de merma */
+.description-cell {
+  white-space: normal;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mensajes de error */
+.error-message {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  margin-top: 0.25rem;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
+  40%, 60% { transform: translate3d(2px, 0, 0); }
+}
+
+/* Ajustes responsivos */
+@media (max-width: 992px) {
+  .title-gradient {
+    font-size: 1.5rem;
+  }
+  
+  .difference-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .preview-article-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    padding: 1rem;
+  }
+  
+  .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .info-badge {
+    width: 100%;
+    justify-content: center;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .lote-number {
+    padding: 0.75rem;
+  }
+  
+  .difference-item {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

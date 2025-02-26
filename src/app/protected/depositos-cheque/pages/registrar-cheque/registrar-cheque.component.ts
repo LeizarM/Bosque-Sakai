@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { DepositoChequeService } from '../../services/deposito-cheque.service';
-
 import { finalize } from 'rxjs/operators';
 import { Empresa } from 'src/app/protected/interfaces/Empresa';
 import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
@@ -20,6 +19,8 @@ import { LoginService } from 'src/app/auth/services/login.service';
 export class RegistrarChequeComponent implements OnInit {
   
   chequeForm!: FormGroup;
+  depositSearchForm!: FormGroup;
+  depositList: DepositoCheque[] = [];
   selectedFile: File | null = null;
   loading: boolean = false;
 
@@ -41,21 +42,34 @@ export class RegistrarChequeComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.initSearchForm();
     this.cargarEmpresas();
     this.cargarBancos();
   }
 
+  /**
+   * Inicializa el formulario para registrar depósitos.
+   */
   private initForm(): void {
     this.chequeForm = this.fb.group({
       codEmpresa: ['', [Validators.required]],
       codCliente: ['', [Validators.required]],
       docNum: ['', [Validators.required, Validators.minLength(3)]],
-      numFact: ['',],
-      //anioFact: ['', [Validators.required, Validators.min(2000), Validators.max(new Date().getFullYear())]],
+      numFact: [''],
       codBanco: ['', [Validators.required]],
       importe: ['', [Validators.required, Validators.min(0.01)]],
       moneda: ['BS', [Validators.required]],
       fotoPath: ['']
+    });
+  }
+
+  /**
+   * Inicializa el formulario de búsqueda para consultar el estado de los depósitos.
+   */
+  private initSearchForm(): void {
+    this.depositSearchForm = this.fb.group({
+      docNum: [''],
+      numFact: ['']
     });
   }
 
@@ -80,40 +94,37 @@ export class RegistrarChequeComponent implements OnInit {
   }
 
   cargarBancos(): void {
-
     this.loading = true;
     this.depositoChequeService.obtenerBancos()
-     .pipe(finalize(() => this.loading = false))
-     .subscribe({
-       next: (response) => {
-         if (response.data) {
-           this.bancos = response.data;
-         }
-       },
-       error: (error) => {
-         this.messageService.add({
-           severity: 'error',
-           summary: 'Error',
-           detail: 'Error al cargar bancos: ' + error.message
-         });
-       }
-     });
-
-
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.bancos = response.data;
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar bancos: ' + error.message
+          });
+        }
+      });
   }
 
-
   onEmpresaChange(event: any): void {
-    
-    if(event.value === 7) event.value = 1; // nos aseguramos que el valor sea 1 para en el caso de papirus
-    
+    // Nos aseguramos que, en el caso de papirus, el valor se ajuste a 1
+    if (event.value === 7) { 
+      event.value = 1;
+    }
     const codEmpresa = event.value;
 
     if (codEmpresa) {
       this.loading = true;
       this.chequeForm.get('codCliente')?.setValue('');
       this.clientes = []; // Limpiamos los clientes antes de la llamada
-      
+
       this.depositoChequeService.obtenerSociosNegocio(codEmpresa)
         .pipe(finalize(() => this.loading = false))
         .subscribe({
@@ -121,13 +132,13 @@ export class RegistrarChequeComponent implements OnInit {
             if (response.data && response.data.length > 0) {
               this.clientes = response.data;
             } else {
-              this.clientes = []; // Aseguramos que clientes esté vacío si no hay datos
-              this.chequeForm.get('codCliente')?.setValue(''); // Limpiamos el valor del dropdown
+              this.clientes = [];
+              this.chequeForm.get('codCliente')?.setValue('');
             }
           },
           error: (error) => {
-            this.clientes = []; // También limpiamos en caso de error
-            this.chequeForm.get('codCliente')?.setValue(''); // Limpiamos el valor del dropdown
+            this.clientes = [];
+            this.chequeForm.get('codCliente')?.setValue('');
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
@@ -143,81 +154,126 @@ export class RegistrarChequeComponent implements OnInit {
 
   onFileSelect(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
-        const file = event.target.files[0];
-        const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        
-        if (validTypes.includes(file.type)) {
-            if (file.size <= maxSize) {
-                this.selectedFile = file;
-            } else {
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'El archivo no debe superar los 5MB'
-                });
-            }
+      const file = event.target.files[0];
+      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (validTypes.includes(file.type)) {
+        if (file.size <= maxSize) {
+          this.selectedFile = file;
         } else {
-            this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Solo se permiten archivos JPG, JPEG o PNG'
-            });
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'El archivo no debe superar los 5MB'
+          });
         }
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Solo se permiten archivos JPG, JPEG o PNG'
+        });
+      }
     }
-}
+  }
 
   onSubmit(): void {
     if (this.chequeForm.valid && this.selectedFile) {
-        this.loading = true;
-        const formValue = this.chequeForm.value;
-        
-        const depositoCheque: DepositoCheque = {
-            idDeposito: 0,
-            codEmpresa: formValue.codEmpresa,
-            codCliente: formValue.codCliente,
-            docNum: formValue.docNum,
-            numFact: formValue.numFact,
-            //anioFact: formValue.anioFact,
-            codBanco: formValue.codBanco,
-            importe: formValue.importe,
-            moneda: formValue.moneda,
-            fotoPath: '',  // Se manejará en el backend
-            audUsuario: this.getUser()
-        };
+      this.loading = true;
+      const formValue = this.chequeForm.value;
 
-        this.depositoChequeService.registrarDepositoCheque(depositoCheque, this.selectedFile)
-            .pipe(finalize(() => this.loading = false))
-            .subscribe({
-                next: (response) => {
-                    this.messageService.add({
-                        severity: 'success',
-                        summary: 'Éxito',
-                        detail: response.message || 'Depósito registrado correctamente'
-                    });
-                    this.resetForm();
-                },
-                error: (error) => {
-                    this.messageService.add({
-                        severity: 'error',
-                        summary: 'Error',
-                        detail: error.message
-                    });
-                }
-            });
-    } else {
-        if (!this.selectedFile) {
+      const depositoCheque: DepositoCheque = {
+        idDeposito: 0,
+        codEmpresa: formValue.codEmpresa,
+        codCliente: formValue.codCliente,
+        docNum: formValue.docNum,
+        numFact: formValue.numFact,
+        codBanco: formValue.codBanco,
+        importe: formValue.importe,
+        moneda: formValue.moneda,
+        fotoPath: '',  // Se gestionará en el backend
+        audUsuario: this.getUser()
+      };
+
+      this.depositoChequeService.registrarDepositoCheque(depositoCheque, this.selectedFile)
+        .pipe(finalize(() => this.loading = false))
+        .subscribe({
+          next: (response) => {
             this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Debe seleccionar una imagen del cheque'
+              severity: 'success',
+              summary: 'Éxito',
+              detail: response.message || 'Depósito registrado correctamente'
             });
-        }
-        this.markFormGroupTouched(this.chequeForm);
+            this.resetForm();
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error.message
+            });
+          }
+        });
+    } else {
+      if (!this.selectedFile) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Debe seleccionar una imagen del cheque'
+        });
+      }
+      this.markFormGroupTouched(this.chequeForm);
     }
-}
+  }
 
-
+  /**
+   * Actualiza la consulta de depósitos usando como criterios el número de documento o
+   * el número de factura. Si un campo está vacío se envía como null para que el query
+   * lo trate como "no filtrar" por ese campo.
+   */
+  onActualizar(): void {
+    let {docNum, numFact} = this.depositSearchForm.value;
+    
+    
+    console.log("Valores procesados:", { docNum, numFact });
+    
+    const depositoCriteria: DepositoCheque = {
+      docNum:  parseInt(docNum),
+      numFact: parseInt(numFact)
+    } as DepositoCheque;
+  
+    this.loading = true;
+    this.depositoChequeService.obtenerDepositosReconciliados(depositoCriteria)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.depositList = response.data;
+            if (this.depositList.length === 0) {
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'Sin Datos',
+                detail: 'No se encontraron depósitos con los criterios de búsqueda.'
+              });
+            }
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al obtener depósitos.'
+            });
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error en la consulta: ' + error.message
+          });
+        }
+      });
+  }
 
   private resetForm(): void {
     this.chequeForm.reset({
@@ -267,7 +323,7 @@ export class RegistrarChequeComponent implements OnInit {
   }
 
   /**
-   * obtendra el codigo de usuario actual
+   * Devuelve el código de usuario actual.
    */
   getUser(): number {
     return this.loginService.codUsuario;

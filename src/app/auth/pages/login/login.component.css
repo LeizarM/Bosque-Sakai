@@ -1,18 +1,351 @@
-:host ::ng-deep .p-message-custom {
-  background-color: #E1CFE7;
-  border: solid #8A427A;
-  border-width: 0 0 0 6px;
-  color: #2c1e30;
+/* Variables de color */
+:root {
+  --primary-color: #3a86ff;
+  --primary-dark: #2667cc;
+  --primary-light: #7aabff;
+  --secondary-color: #ff006e;
+  --background-color: #f8faff;
+  --card-bg: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --error-color: #e63946;
+  --success-color: #38b000;
 }
 
-:host ::ng-deep .p-message-close-icon {
-  color: #2c1e30;
+/* Estilos generales */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
-:host ::ng-deep .pi-eye,
-:host ::ng-deep .pi-eye-slash {
-    transform:scale(1.6);
-    margin-right: 1rem;
-    color: var(--primary-color) !important;
+/* Contenedor principal */
+.login-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-color);
+  position: relative;
+  overflow: hidden;
 }
 
+/* Fondo con formas líquidas */
+.login-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: -25%;
+  left: -25%;
+  background: 
+    radial-gradient(circle at 20% 35%, var(--primary-light), transparent 20%),
+    radial-gradient(circle at 75% 44%, var(--primary-light), transparent 25%),
+    radial-gradient(circle at 46% 85%, var(--secondary-color), transparent 30%);
+  opacity: 0.15;
+  animation: shiftBackground 15s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+.login-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%233a86ff' d='M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.8C87.4,-32.6,90,-16.3,88.5,-1.5C87,13.4,81.4,26.8,73.8,39C66.3,51.2,56.9,62.2,44.9,67.8C32.9,73.5,18.4,73.7,4.7,72.1C-9,70.4,-18,66.9,-29.2,63.5C-40.3,60.2,-53.5,57,-58.9,48.7C-64.4,40.4,-62,27,-65,14.2C-68,-98.6,-76.3,-22.8,-74.6,-36.4C-72.9,-50,-61.2,-63,-47.2,-70.1C-33.3,-77.1,-16.6,-78.3,-0.7,-77.1C15.3,-75.9,30.5,-72.3,44.7,-70.4Z' transform='translate(100 100) scale(0.8)' /%3E%3C/svg%3E") no-repeat center center;
+  background-size: cover;
+  opacity: 0.05;
+  filter: blur(40px);
+  z-index: 0;
+  animation: rotateSlow 30s linear infinite;
+}
+
+@keyframes shiftBackground {
+  0% {
+    transform: translateX(-5%) translateY(-2%) rotate(0deg);
+  }
+  100% {
+    transform: translateX(5%) translateY(2%) rotate(3deg);
+  }
+}
+
+@keyframes rotateSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Tarjeta de login */
+.login-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+/* Logo y cabecera */
+.logo-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  transition: transform 0.3s ease;
+}
+
+.logo-container img {
+  filter: drop-shadow(0 5px 15px rgba(58, 134, 255, 0.3));
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logo-container:hover img {
+  transform: translateY(-5px);
+}
+
+.welcome-text {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Campos del formulario */
+.form-field {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.form-field label {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  display: inline-block;
+  transition: color 0.3s ease;
+}
+
+input.p-inputtext, 
+.p-password input {
+  background: var(--background-color) !important;
+  border: 2px solid transparent !important;
+  border-radius: 10px !important;
+  padding: 12px 12px 12px 40px !important;
+  font-size: 1rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+}
+
+input.p-inputtext:focus, 
+.p-password input:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2) !important;
+  outline: none !important;
+}
+
+.p-input-icon-left i {
+  left: 14px !important;
+  color: var(--text-secondary) !important;
+  transition: color 0.3s ease !important;
+}
+
+input.p-inputtext:focus + i,
+.p-password input:focus + i {
+  color: var(--primary-color) !important;
+}
+
+/* Mensaje de error */
+.error-message {
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  overflow: hidden;
+  animation: slideInDown 0.5s forwards;
+}
+
+@keyframes slideInDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botón de login con efecto líquido */
+.login-button {
+  background: var(--primary-color) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  padding: 12px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(58, 134, 255, 0.4) !important;
+  z-index: 1 !important;
+}
+
+.login-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: all 0.8s ease;
+  z-index: -1;
+}
+
+.login-button:hover {
+  background: var(--primary-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(58, 134, 255, 0.6) !important;
+}
+
+.login-button:hover::before {
+  transform: translateX(100%);
+}
+
+.login-button:disabled {
+  background: #b3ccff !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.7 !important;
+}
+
+/* Animación al aparecer */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card {
+  animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Ondas líquidas en movimiento */
+.wave-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.wave-svg {
+  position: relative;
+  display: block;
+  width: calc(140% + 1.3px);
+  height: 120px;
+  transform: rotateY(180deg);
+}
+
+.wave-svg path {
+  fill: rgba(58, 134, 255, 0.08);
+}
+
+.wave-svg path:nth-child(1) {
+  animation: wave 20s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+}
+
+.wave-svg path:nth-child(2) {
+  animation: wave 15s cubic-bezier(0.55, 0.5, 0.45, 0.5) -3s infinite;
+  opacity: 0.6;
+}
+
+.wave-svg path:nth-child(3) {
+  animation: wave 10s cubic-bezier(0.55, 0.5, 0.45, 0.5) -5s infinite;
+  opacity: 0.4;
+}
+
+@keyframes wave {
+  0% {
+    transform: translateX(0) translateZ(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(-25%) translateZ(0) scaleY(0.8);
+  }
+  100% {
+    transform: translateX(0) translateZ(0) scaleY(1);
+  }
+}
+
+/* Adaptaciones para PrimeNG */
+::ng-deep .custom-password .p-password input {  
+  padding-right: 3.5rem !important;  
+}  
+  
+::ng-deep .custom-password .p-password span.p-password-toggle {  
+  right: 1.5rem !important;  
+  position: absolute;  
+  top: 50%;  
+  transform: translateY(-50%);  
+}
+
+/* Estilos para el spinner */
+::ng-deep .p-progress-spinner {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .login-card {
+    border-radius: 12px;
+    margin: 1rem;
+  }
+  
+  .welcome-text {
+    font-size: 1.75rem;
+  }
+  
+  input.p-inputtext, .p-password input {
+    padding: 10px 10px 10px 36px !important;
+  }
+}

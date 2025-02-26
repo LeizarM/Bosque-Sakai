@@ -14,7 +14,7 @@ export interface DepositoCheque {
 
     nombreBanco?: string;
     nombreEmpresa?: string;
-
+    fueReconciliado?: string;
     
 }
 // Converts JSON strings to/from your types
