@@ -1,80 +1,45 @@
-<div class="login-wrapper" #cursorArea>
-  <!-- Elementos del cursor personalizado -->
-  <div class="cursor-dot-outline"></div>
-  <div class="cursor-dot"></div>
-  
-  <!-- Burbujas animadas de fondo -->
-  <div class="bubbles-container">
-    <div class="bubble bubble-{{i}}" *ngFor="let i of bubbles"></div>
-  </div>
-  
-  <!-- Efecto de ondas -->
-  <div class="waves-container">
-    <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none">
-      <defs>
-        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-      </defs>
-      <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(58,134,255,0.1)" />
-        <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(58,134,255,0.07)" />
-        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(58,134,255,0.05)" />
-        <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(58,134,255,0.03)" />
-      </g>
-    </svg>
-  </div>
-
-  <div class="flex align-items-center justify-content-center w-full min-h-screen" [@fadeInOut]>
-    <div class="login-card-container" [class.loading]="isLoading">
-      <div class="login-card p-5 shadow-8 border-round-xl">
-        <!-- Mensaje de error con animación -->
-        <p-message *ngIf="hayError" severity="error" 
-          text="Usuario o contraseña inválidos, por favor verifique los datos ingresados"
-          styleClass="mb-4 w-full error-message">
+<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+  <div class="flex flex-column align-items-center justify-content-center w-full">
+    <div class="w-full sm:w-26rem md:w-30rem">
+      <div class="surface-card p-4 sm:p-6 shadow-8 border-round-xl">
+        <p-message severity="error" text="Usuario o contraseña inválidos, por favor verifique los datos ingresados"
+          styleClass="mb-4 w-full" *ngIf="hayError">
         </p-message>
-        
-        <div class="text-center mb-5">
-          <div class="logo-container">
-            <div class="logo-ring"></div>
-            <img src="assets/images/bosque.svg" alt="Logo" class="logo-image" width="90">
-          </div>
-          <h2 class="welcome-text mt-3 mb-2">¡Bienvenido!</h2>
-          <span class="subtitle">Ingresa tus credenciales para continuar</span>
+        <div class="text-center mb-6">
+          <img src="assets/images/bosque.svg" alt="Logo" class="mb-4" width="100">
+          <div class="text-900 text-3xl font-bold mb-2">¡Bienvenido(a)!</div>
+          <span class="text-600 font-medium">Inicia sesión para continuar</span>
         </div>
-        
         <form autocomplete="off" [formGroup]="frmLogin" (ngSubmit)="verficarLogin()">
-          <div class="form-field">
-            <label for="usuario" class="block font-medium mb-2">Usuario</label>
-            <span class="p-input-icon-left w-full input-container">
-              <i class="pi pi-user"></i>
-              <input id="usuario" type="text" formControlName="usuario" 
-                placeholder="Ingresa tu nombre de usuario" pInputText class="w-full">
-            </span>
-            <small class="p-error block mt-1" *ngIf="esValido('usuario')">El usuario es requerido</small>
-          </div>
-          
-          <div class="form-field mt-4">  
-            <label for="password2" class="block font-medium mb-2">Contraseña</label>  
+          <div class="mb-4">
+            <label for="usuario" class="block text-900 font-medium mb-2">Usuario</label>
             <span class="p-input-icon-left w-full">
-              <i class="pi pi-lock"></i>
-              <p-password id="password2" formControlName="password2" 
-                placeholder="Ingresa tu contraseña" [toggleMask]="true"
-                [feedback]="false" styleClass="w-full custom-password"
-                [inputStyle]="{'width':'100%', 'padding-right': '3rem', 'padding-left': '2.5rem'}">
-              </p-password>
+              <i class="pi pi-user"></i>
+              <input id="usuario" type="text" formControlName="usuario" placeholder="Ingresa tu usuario" pInputText
+                class="w-full" required>
             </span>
-            <small class="p-error block mt-1" *ngIf="esValido('password2')">La contraseña es requerida</small>  
+            <small class="p-error block mt-1" *ngIf="esValido('usuario')">Usuario es requerido</small>
           </div>
-          
-          <div class="mt-5">
-            <button pButton pRipple type="submit" 
-              [label]="isLoading ? 'Autenticando...' : 'Iniciar Sesión'"
-              class="login-button w-full p-3" [disabled]="isLoading || frmLogin.invalid">
-              <p-progressSpinner *ngIf="isLoading" 
-                [style]="{'width': '24px', 'height': '24px'}" 
-                strokeWidth="4" animationDuration=".5s">
-              </p-progressSpinner>
-            </button>
+          <div class="mb-4">
+            <label for="password2" class="block text-900 font-medium mb-2">Contraseña</label>
+
+            <p-password id="password2" formControlName="password2" placeholder="Ingresa tu contraseña" [feedback]="false"
+              styleClass="w-full"   required [style]="{'width':'100%'}" [inputStyle]="{'width':'100%', 'padding-right': '2.5rem'}">
+              <ng-template pTemplate="header">
+                <h6>
+                  <i class="pi pi-user"></i>
+                  Ingresa tu contraseña
+                </h6>
+              </ng-template>
+            </p-password>
+            <small class="p-error block mt-1" *ngIf="esValido('password2')">Contraseña es requerida</small>
           </div>
+
+          <button pButton pRipple type="submit" [label]="isLoading ? 'Autenticando...' : 'Iniciar Sesión'"
+            class="w-full p-3" [disabled]="isLoading || frmLogin.invalid">
+            <p-progressSpinner *ngIf="isLoading" [style]="{'width': '20px', 'height': '20px'}"
+              strokeWidth="4" fill="var(--surface-ground)" animationDuration=".5s"></p-progressSpinner>
+          </button>
         </form>
       </div>
     </div>
