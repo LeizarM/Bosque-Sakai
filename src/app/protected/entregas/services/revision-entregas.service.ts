@@ -10,7 +10,7 @@ import { EntregaChofer } from '../../interfaces/EntregaChofer';
 export class RevisionEntregasService {
 
 
-  private baseUrl : string = environment.baseUrl;
+private baseUrl : string = environment.baseUrl;
 
 
 

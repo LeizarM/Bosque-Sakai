@@ -16,6 +16,7 @@ import { FamiliasComponent } from './precios/pages/familias/familias.component';
 import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
 import { RegistrarChequeComponent } from './depositos-cheque/pages/registrar-cheque/registrar-cheque.component';
 import { ViewChequeComponent } from './depositos-cheque/pages/view-cheque/view-cheque.component';
+import { UsuarioComponent } from './usuarios/pages/usuario.component';
 
 
  const routes: Routes = [
@@ -94,6 +95,10 @@ import { ViewChequeComponent } from './depositos-cheque/pages/view-cheque/view-c
       {
         path: 'tdep_Deposito/View',
         component: ViewChequeComponent
+      },
+      { 
+        path: 'tbUsuario/usuario',
+        component: UsuarioComponent
       },
       {
         path: '**',

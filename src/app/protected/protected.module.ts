@@ -15,6 +15,7 @@ import { ProtectedRoutingModule } from './protected-routing.module';
 import { RrhhModule } from './rrhh/rrhh.module';
 import { SharedModule } from './shared/shared.module';
 import { DepositosChequeModule } from './depositos-cheque/DepositosCheque.module';
+import { UsuarioModule } from './usuarios/usuario.module';
 
 
 
@@ -37,7 +38,8 @@ import { DepositosChequeModule } from './depositos-cheque/DepositosCheque.module
         MaterialMalEstadoModule,
         FacturaSantaCruzModule,
         EntregasModule,
-        DepositosChequeModule
+        DepositosChequeModule,
+        UsuarioModule,
 
 
     ]

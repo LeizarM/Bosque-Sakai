@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { LoginService } from '../../services/login.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   hayError: boolean = false;
   isLoading: boolean = false;
 
@@ -27,6 +27,11 @@ export class LoginComponent {
     if (this.loginService.isAuthenticated()) {
       this.router.navigate(['./bosque/dashboard']);
     }
+  }
+
+  ngOnInit(): void {
+    // Ensuring proper 3D perspective rendering
+    document.body.style.overflow = 'hidden';
   }
 
   verficarLogin(): void {

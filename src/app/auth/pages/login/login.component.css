@@ -11,7 +11,418 @@
 
 :host ::ng-deep .pi-eye,
 :host ::ng-deep .pi-eye-slash {
-    transform:scale(1.6);
-    margin-right: 1rem;
-    color: var(--primary-color) !important;
+  transform: scale(1.6);
+  margin-right: 1rem;
+  color: var(--primary-color) !important;
 }
+
+/* New modern styles */
+.login-container {
+  position: relative;
+  background: linear-gradient(135deg, #6c4d94, #6eb9a8);
+  overflow: hidden;
+  perspective: 800px;
+}
+
+/* Liquid wave background effect */
+.wave {
+  position: absolute;
+  width: 100%;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+.wave1 {
+  bottom: 0;
+  opacity: 0.5;
+  height: 80px;
+  animation: wave 15s linear infinite;
+}
+
+.wave2 {
+  bottom: 10px;
+  opacity: 0.7;
+  height: 60px;
+  animation: wave 10s linear infinite;
+}
+
+.wave3 {
+  bottom: 20px;
+  opacity: 0.3;
+  height: 40px;
+  animation: wave 13s linear infinite;
+}
+
+@keyframes wave {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(50%); }
+}
+
+/* Card styling */
+.login-card-container {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Form elements styling */
+.form-field {
+  transition: transform 0.3s ease;
+}
+
+.form-field:focus-within {
+  transform: translateY(-2px);
+}
+
+:host ::ng-deep .input-field,
+:host ::ng-deep .p-password input {
+  border-radius: 8px;
+  padding: 1rem 1rem 1rem 2.5rem;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+:host ::ng-deep .input-field:focus,
+:host ::ng-deep .p-password input:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-color);
+}
+
+/* Button styling */
+.login-button-container {
+  margin-top: 1.5rem;
+}
+
+:host ::ng-deep .login-button {
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #8A427A, #6c4d94);
+  border: none;
+  box-shadow: 0 4px 12px rgba(108, 77, 148, 0.3);
+  padding: 1.1rem !important;
+}
+
+:host ::ng-deep .login-button:enabled:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(108, 77, 148, 0.4);
+  background: linear-gradient(135deg, #9A528A, #7c5da4);
+}
+
+:host ::ng-deep .login-button:enabled:active {
+  transform: translateY(1px);
+}
+
+/* Logo animation */
+.logo-container {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-animation {
+  animation: pulseGlow 3s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { filter: drop-shadow(0 0 0px rgba(108, 77, 148, 0.3)); }
+  100% { filter: drop-shadow(0 0 15px rgba(108, 77, 148, 0.7)); }
+}
+
+.welcome-text {
+  background: linear-gradient(135deg, #8A427A, #6eb9a8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Error message styling */
+:host ::ng-deep .error-message .p-message {
+  border-radius: 8px;
+  animation: shake 0.5s linear;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* 3D Cube Styling */
+.cube-container {
+  position: absolute;
+  z-index: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.cube {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  backface-visibility: visible;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(2px);
+}
+
+/* Repositioned cubes widely dispersed across the entire screen */
+
+/* Cube 1 - top left area */
+.cube-1 {
+  width: 60px;
+  height: 60px;
+  animation: rotate1 20s infinite linear;
+}
+
+.cube-container:nth-child(1) {
+  top: 10%;
+  left: 15%;
+}
+
+/* Cube 2 - top right area */
+.cube-2 {
+  width: 40px;
+  height: 40px;
+  animation: rotate2 15s infinite linear;
+}
+
+.cube-container:nth-child(2) {
+  top: 15%;
+  right: 12%;
+}
+
+/* Cube 3 - bottom left area */
+.cube-3 {
+  width: 80px;
+  height: 80px;
+  animation: rotate3 25s infinite linear;
+}
+
+.cube-container:nth-child(3) {
+  bottom: 12%;
+  left: 8%;
+}
+
+/* Cube 4 - bottom right area */
+.cube-4 {
+  width: 50px;
+  height: 50px;
+  animation: rotate4 18s infinite linear;
+}
+
+.cube-container:nth-child(4) {
+  bottom: 18%;
+  right: 10%;
+}
+
+/* Cube 5 - middle left area */
+.cube-5 {
+  width: 70px;
+  height: 70px;
+  animation: rotate5 22s infinite linear;
+}
+
+.cube-container:nth-child(5) {
+  top: 40%;
+  left: 5%;
+}
+
+/* Cube 6 - middle right area */
+.cube-6 {
+  width: 45px;
+  height: 45px;
+  animation: rotate6 19s infinite linear;
+}
+
+.cube-container:nth-child(6) {
+  top: 45%;
+  right: 6%;
+}
+
+/* Additional cubes for wider dispersion */
+/* Cube 7 - extreme top position */
+.cube-7 {
+  width: 55px;
+  height: 55px;
+  animation: rotate7 24s infinite linear;
+}
+
+.cube-container:nth-child(7) {
+  top: 5%;
+  left: 45%; /* Centered horizontally but at the top */
+}
+
+/* Cube 8 - extreme bottom position */
+.cube-8 {
+  width: 65px;
+  height: 65px;
+  animation: rotate8 26s infinite linear;
+}
+
+.cube-container:nth-child(8) {
+  bottom: 5%;
+  left: 50%; /* Centered horizontally but at the bottom */
+}
+
+/* Cube 9 - extreme left middle */
+.cube-9 {
+  width: 35px;
+  height: 35px;
+  animation: rotate9 17s infinite linear;
+}
+
+.cube-container:nth-child(9) {
+  top: 70%;
+  left: 20%; /* Left side in the bottom quarter */
+}
+
+/* Position cube faces */
+.cube .front {
+  transform: translateZ(30px);
+}
+
+.cube .back {
+  transform: translateZ(-30px) rotateY(180deg);
+}
+
+.cube .right {
+  transform: rotateY(90deg) translateZ(30px);
+}
+
+.cube .left {
+  transform: rotateY(-90deg) translateZ(30px);
+}
+
+.cube .top {
+  transform: rotateX(90deg) translateZ(30px);
+}
+
+.cube .bottom {
+  transform: rotateX(-90deg) translateZ(30px);
+}
+
+/* Adjust cube faces sizes */
+.cube-1 .face {
+  width: 60px;
+  height: 60px;
+}
+
+.cube-2 .face {
+  width: 40px;
+  height: 40px;
+}
+
+.cube-3 .face {
+  width: 80px;
+  height: 80px;
+}
+
+.cube-4 .face {
+  width: 50px;
+  height: 50px;
+}
+
+.cube-5 .face {
+  width: 70px;
+  height: 70px;
+}
+
+.cube-6 .face {
+  width: 45px;
+  height: 45px;
+}
+
+.cube-7 .face {
+  width: 55px;
+  height: 55px;
+}
+
+.cube-8 .face {
+  width: 65px;
+  height: 65px;
+}
+
+.cube-9 .face {
+  width: 35px;
+  height: 35px;
+}
+
+/* Cube rotation animations */
+@keyframes rotate1 {
+  0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+  100% { transform: rotateX(360deg) rotateY(180deg) rotateZ(360deg); }
+}
+
+@keyframes rotate2 {
+  0% { transform: rotateX(45deg) rotateY(0) rotateZ(45deg); }
+  100% { transform: rotateX(405deg) rotateY(360deg) rotateZ(405deg); }
+}
+
+@keyframes rotate3 {
+  0% { transform: rotateX(0) rotateY(45deg) rotateZ(0); }
+  100% { transform: rotateX(360deg) rotateY(405deg) rotateZ(360deg); }
+}
+
+@keyframes rotate4 {
+  0% { transform: rotateX(45deg) rotateY(45deg) rotateZ(0); }
+  100% { transform: rotateX(405deg) rotateY(405deg) rotateZ(360deg); }
+}
+
+@keyframes rotate5 {
+  0% { transform: rotateX(30deg) rotateY(0) rotateZ(30deg); }
+  100% { transform: rotateX(390deg) rotateY(360deg) rotateZ(390deg); }
+}
+
+@keyframes rotate6 {
+  0% { transform: rotateX(15deg) rotateY(20deg) rotateZ(5deg); }
+  100% { transform: rotateX(375deg) rotateY(380deg) rotateZ(365deg); }
+}
+
+@keyframes rotate7 {
+  0% { transform: rotateX(20deg) rotateY(35deg) rotateZ(15deg); }
+  100% { transform: rotateX(380deg) rotateY(395deg) rotateZ(375deg); }
+}
+
+@keyframes rotate8 {
+  0% { transform: rotateX(60deg) rotateY(10deg) rotateZ(25deg); }
+  100% { transform: rotateX(420deg) rotateY(370deg) rotateZ(385deg); }
+}
+
+@keyframes rotate9 {
+  0% { transform: rotateX(10deg) rotateY(60deg) rotateZ(20deg); }
+  100% { transform: rotateX(370deg) rotateY(420deg) rotateZ(380deg); }
+}
+
+/* Custom cube colors */
+.cube-1 .face { background: rgba(138, 66, 122, 0.15); }
+.cube-2 .face { background: rgba(110, 185, 168, 0.15); }
+.cube-3 .face { background: rgba(108, 77, 148, 0.15); }
+.cube-4 .face { background: rgba(142, 108, 177, 0.15); }
+.cube-5 .face { background: rgba(110, 185, 168, 0.15); }
+.cube-6 .face { background: rgba(150, 95, 140, 0.15); }
+.cube-7 .face { background: rgba(130, 80, 190, 0.15); }
+.cube-8 .face { background: rgba(90, 170, 150, 0.15); }
+.cube-9 .face { background: rgba(170, 110, 150, 0.15); }
