@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment.development';
 
@@ -81,7 +81,50 @@ export class LoginService {
 
   }
 
+  /**
+   * Procedimiento para reiniciar la contraseña desde la página de cambio de contraseña por defecto
+   * @param login
+   * @returns
+   */
+  reiniciarContrasena(login: Login): Observable<any> {
+    // Crear un objeto simple con solo los datos necesarios
+    
+     
+    const datos = {
+      codUsuario: login.codUsuario,
+      npassword: login.password2
+    };
+  
+    console.log('Enviando datos:', datos);
+  
+    const url = `${this.baseUrl}/auth/changePasswordDefault`;
+    
+    return this.http.post<any>(url, datos, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    }).pipe(
+      tap(resp => {
+        if (resp) {
+          console.log('Respuesta:', resp);
+        }
+      }),
+      map(resp => resp),
+      catchError(err => {
+        console.error('Error en reiniciarContrasena:', err);
+        return throwError(() => err);
+      })
+    );
+  }
 
+  /**
+   * Verifica si la contraseña es la predeterminada
+   * @param password 
+   * @returns boolean
+   */
+  isDefaultPassword(password: string): boolean {
+    return password === "123456789";
+  }
 
   /**
    * Guardara el token

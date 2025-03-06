@@ -53,7 +53,14 @@ export class LoginComponent implements OnInit {
           if (resp != null && resp != undefined && resp.codUsuario! > 0) {
             this.hayError = false;
             if (resp.token != null && resp.token != undefined) {
-              this.router.navigate(["./bosque/dashboard"]);
+              // Check if using default password
+              if (this.loginService.isDefaultPassword(password2)) {
+                // Redirect to change password page
+                this.router.navigate(['./auth/change-password']);
+              } else {
+                // Normal flow - redirect to dashboard
+                this.router.navigate(["./bosque/dashboard"]);
+              }
             }
           } else {
             this.hayError = true;
