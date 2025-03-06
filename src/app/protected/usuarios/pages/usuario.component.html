@@ -1,35 +1,45 @@
 <div class="card custom-card">
-    <!-- Header with title and action buttons -->
-    <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between mb-4">
-        <div class="flex align-items-center">
-            <i class="pi pi-users mr-2 text-xl text-primary"></i>
-            <h3 class="m-0 text-primary font-semibold">Gestión de Usuarios</h3>
-        </div>
-        
-        <div class="flex flex-column md:flex-row md:align-items-center gap-3 mt-3 md:mt-0">
-            <!-- Search bar -->
-            <span class="p-input-icon-left w-full md:w-auto">
-                <i class="pi pi-search"></i>
-                <input #searchInput
-                    pInputText 
-                    type="text" 
-                    (input)="onSearch($event)" 
-                    placeholder="Buscar por usuario o nombre" 
-                    class="p-inputtext-sm w-full"/>
-            </span>
+    <!-- Enhanced header with better visual hierarchy -->
+    <div class="border-bottom-1 border-300 pb-3 mb-4">
+        <div class="flex flex-column md:flex-row md:align-items-center md:justify-content-between">
+            <div class="flex align-items-center">
+                <div class="bg-primary border-circle inline-flex align-items-center justify-content-center mr-3" style="width:42px; height:42px">
+                    <i class="pi pi-users text-white text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-900 font-semibold m-0">Gestión de Usuarios</h2>
+                    <span class="text-500 font-medium">Visualiza y administra las cuentas del sistema</span>
+                </div>
+            </div>
             
-            <!-- Create new user button -->
-            <button pButton pRipple 
-                type="button" 
-                icon="pi pi-user-plus" 
-                label="Nuevo Usuario" 
-                class="p-button-raised p-button-primary animation-button w-full md:w-auto"
-                (click)="createNewUser()">
-            </button>
+            <div class="flex flex-column md:flex-row md:align-items-center gap-3 mt-3 md:mt-0">
+                <!-- Improved search bar -->
+                <span class="p-input-icon-left p-input-icon-right w-full md:w-auto">
+                    <i class="pi pi-search"></i>
+                    <input #searchInput
+                        pInputText 
+                        type="text" 
+                        (input)="onSearch($event)" 
+                        placeholder="Buscar por usuario o nombre" 
+                        class="p-inputtext-sm w-full"/>
+                    <i class="pi pi-times cursor-pointer text-500 hover:text-primary transition-colors transition-duration-150" 
+                       (click)="clearSearch(searchInput)" 
+                       *ngIf="searchInput.value"></i>
+                </span>
+                
+                <!-- Improved create user button -->
+                <button pButton pRipple 
+                    type="button" 
+                    icon="pi pi-user-plus" 
+                    label="Nuevo Usuario" 
+                    class="p-button-raised p-button-primary animation-button w-full md:w-auto"
+                    (click)="createNewUser()">
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Table -->
+    <!-- Table with improved styling -->
     <p-table 
         #dt
         [value]="filteredUsuarios" 
@@ -38,44 +48,80 @@
         [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[10,25,50]"
         [paginator]="true"
-        styleClass="p-datatable-sm p-datatable-gridlines custom-datatable"
+        styleClass="p-datatable-sm p-datatable-gridlines custom-datatable mb-0"
         [tableStyle]="{'min-width': '70rem'}"
+        [rowHover]="true"
         currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios">
 
-        <!-- Table Header -->
+        <!-- Table Header with improved visual design -->
         <ng-template pTemplate="header">
             <tr class="table-header">
                 <th style="width: 5rem" class="text-center">#</th>
                 <th pSortableColumn="login" style="min-width:8rem">
-                    Usuario <p-sortIcon field="login"></p-sortIcon>
+                    <div class="flex align-items-center">
+                        <i class="pi pi-user text-500 mr-2"></i>
+                        <span>Usuario</span>
+                        <p-sortIcon field="login"></p-sortIcon>
+                    </div>
                 </th>
                 <th pSortableColumn="nombreCompleto" style="min-width:14rem">
-                    Nombre Completo <p-sortIcon field="nombreCompleto"></p-sortIcon>
+                    <div class="flex align-items-center">
+                        <i class="pi pi-id-card text-500 mr-2"></i>
+                        <span>Nombre Completo</span>
+                        <p-sortIcon field="nombreCompleto"></p-sortIcon>
+                    </div>
                 </th>
                 <th pSortableColumn="tipoUsuario" style="min-width:8rem">
-                    Tipo <p-sortIcon field="tipoUsuario"></p-sortIcon>
+                    <div class="flex align-items-center">
+                        <i class="pi pi-shield text-500 mr-2"></i>
+                        <span>Tipo</span>
+                        <p-sortIcon field="tipoUsuario"></p-sortIcon>
+                    </div>
                 </th>
                 <th pSortableColumn="estado" style="min-width:8rem">
-                    Estado <p-sortIcon field="estado"></p-sortIcon>
+                    <div class="flex align-items-center">
+                        <i class="pi pi-lock text-500 mr-2"></i>
+                        <span>Estado</span>
+                        <p-sortIcon field="estado"></p-sortIcon>
+                    </div>
                 </th>
                 <th pSortableColumn="esAutorizador" style="min-width:8rem">
-                    Autorizador <p-sortIcon field="esAutorizador"></p-sortIcon>
+                    <div class="flex align-items-center justify-content-center">
+                        <i class="pi pi-check-circle text-500 mr-2"></i>
+                        <span>Autorizador</span>
+                        <p-sortIcon field="esAutorizador"></p-sortIcon>
+                    </div>
                 </th>
-                <th style="min-width:10rem" class="text-center">Acciones</th>
+                <th style="min-width:10rem" class="text-center">
+                    <div class="flex align-items-center justify-content-center">
+                        <i class="pi pi-cog text-500 mr-2"></i>
+                        <span>Acciones</span>
+                    </div>
+                </th>
             </tr>
         </ng-template>
 
-        <!-- Table Body -->
+        <!-- Enhanced Table Body -->
         <ng-template pTemplate="body" let-usuario let-i="rowIndex">
             <tr class="custom-row">
-                <td class="text-center font-medium">{{ i + 1 }}</td>
+                <td class="text-center font-medium text-600">
+                    <span class="user-index">{{ i + 1 }}</span>
+                </td>
                 <td>
                     <span class="p-column-title font-semibold">Usuario</span>
-                    <span class="username-cell font-bold">{{ usuario.login }}</span>
+                    <div class="flex align-items-center">
+                        <!-- User avatar -->
+                        <div class="user-avatar mr-2 flex align-items-center justify-content-center border-circle">
+                            {{ usuario.login?.charAt(0).toUpperCase() || '?' }}
+                        </div>
+                        <span class="username-cell font-bold">{{ usuario.login }}</span>
+                    </div>
                 </td>
                 <td>
                     <span class="p-column-title font-semibold">Nombre Completo</span>
-                    {{ usuario.nombreCompleto }}
+                    <div class="truncate-text" [pTooltip]="usuario.nombreCompleto" tooltipPosition="top">
+                        {{ usuario.nombreCompleto }}
+                    </div>
                 </td>
                 <td>
                     <span class="p-column-title font-semibold">Tipo</span>
@@ -85,16 +131,24 @@
                 </td>
                 <td>
                     <span class="p-column-title font-semibold">Estado</span>
-                    <p-tag [severity]="usuario.estado === 'D' ? 'success' : 'danger'" 
-                           [value]="usuario.estado === 'D' ? 'Desbloqueado' : 'Bloqueado'">
-                    </p-tag>
+                    <div class="flex align-items-center">
+                        <i class="pi mr-2 text-sm" 
+                           [ngClass]="{'pi-lock-open text-green-500': usuario.estado === 'D', 'pi-lock text-red-500': usuario.estado !== 'D'}"></i>
+                        <p-tag [severity]="usuario.estado === 'D' ? 'success' : 'danger'" 
+                               [value]="usuario.estado === 'D' ? 'Desbloqueado' : 'Bloqueado'">
+                        </p-tag>
+                    </div>
                 </td>
                 <td class="text-center">
                     <span class="p-column-title font-semibold">Autorizador</span>
-                    <i class="pi" 
-                       [ngClass]="usuario.esAutorizador === 'SI' ? 'pi-check-circle' : 'pi-times-circle'"
-                       [ngStyle]="{'color': usuario.esAutorizador === 'SI' ? 'var(--green-500)' : 'var(--red-400)', 'font-size': '1.2rem'}">
-                    </i>
+                    <div class="flex justify-content-center align-items-center">
+                        <span class="auth-badge" [ngClass]="{'auth-active': usuario.esAutorizador === 'SI', 'auth-inactive': usuario.esAutorizador !== 'SI'}">
+                            <i class="pi" 
+                            [ngClass]="usuario.esAutorizador === 'SI' ? 'pi-check-circle' : 'pi-times-circle'"
+                            [ngStyle]="{'font-size': '1.1rem'}"></i>
+                            <span class="ml-2 text-sm">{{ usuario.esAutorizador === 'SI' ? 'Sí' : 'No' }}</span>
+                        </span>
+                    </div>
                 </td>
                 <td>
                     <span class="p-column-title font-semibold">Acciones</span>
@@ -119,63 +173,114 @@
             </tr>
         </ng-template>
 
-        <!-- No Results Template -->
+        <!-- Enhanced Empty State -->
         <ng-template pTemplate="emptymessage">
             <tr>
-                <td colspan="7" class="text-center p-5">
-                    <div *ngIf="loading" class="flex flex-column align-items-center">
-                        <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem; color: var(--primary-color)"></i>
-                        <div class="mt-3 text-lg">Cargando usuarios...</div>
+                <td colspan="7" class="text-center py-4">
+                    <div *ngIf="loading" class="flex flex-column align-items-center py-5">
+                        <div class="loading-spinner mb-3">
+                            <!-- Custom animated spinner -->
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                        </div>
+                        <span class="font-medium text-900">Cargando usuarios...</span>
+                        <span class="text-500 mt-2">Por favor espere</span>
                     </div>
-                    <div *ngIf="!loading" class="flex flex-column align-items-center">
-                        <i class="pi pi-search" style="font-size: 2.5rem; color: var(--text-color-secondary)"></i>
-                        <div class="mt-3 text-lg">No se encontraron usuarios que coincidan con la búsqueda.</div>
-                        <button *ngIf="searchInput.value" 
-                                pButton pRipple label="Limpiar búsqueda" 
-                                icon="pi pi-times" 
-                                class="p-button-text mt-3"
-                                (click)="clearSearch(searchInput)">
-                        </button>
+                    <div *ngIf="!loading" class="flex flex-column align-items-center py-5">
+                        <div class="mb-3">
+                            <i class="pi pi-search-plus text-primary" style="font-size: 3rem"></i>
+                        </div>
+                        <span class="font-medium text-900 text-xl mb-2">No se encontraron usuarios</span>
+                        <span class="text-600 mb-5">No hay usuarios que coincidan con los criterios de búsqueda.</span>
+                        <div class="flex flex-wrap gap-2">
+                            <button *ngIf="searchInput.value" 
+                                    pButton pRipple label="Limpiar búsqueda" 
+                                    icon="pi pi-times" 
+                                    class="p-button-outlined p-button-rounded"
+                                    (click)="clearSearch(searchInput)">
+                            </button>
+                            <button pButton pRipple label="Actualizar datos" 
+                                    icon="pi pi-refresh" 
+                                    class="p-button-rounded"
+                                    (click)="refreshList()">
+                            </button>
+                        </div>
                     </div>
                 </td>
             </tr>
         </ng-template>
 
-        <!-- Table Summary Footer -->
+        <!-- Enhanced Summary Footer -->
         <ng-template pTemplate="summary">
-            <div class="flex align-items-center justify-content-between custom-summary">
-                <span class="summary-text">Total de usuarios: {{ filteredUsuarios.length }}</span>
-                <p-button icon="pi pi-refresh" label="Actualizar" 
-                          styleClass="p-button-outlined p-button-sm"
-                          (click)="refreshList()">
-                </p-button>
+            <div class="flex flex-column sm:flex-row justify-content-between align-items-center p-3 border-top-1 surface-border">
+                <div class="mb-3 sm:mb-0">
+                    <div class="font-medium">Total: <span class="text-primary font-bold">{{ filteredUsuarios.length }}</span> usuarios</div>
+                </div>
+                <div class="flex gap-2">
+                    <button pButton pRipple icon="pi pi-refresh" 
+                            label="Actualizar" 
+                            class="p-button-outlined p-button-sm"
+                            (click)="refreshList()">
+                    </button>
+                </div>
             </div>
         </ng-template>
     </p-table>
 </div>
 
-<!-- Reset Password Dialog -->
+<!-- Enhanced Reset Password Dialog -->
 <p-dialog header="Restablecer Contraseña" [(visible)]="resetDialogVisible" 
           [style]="{width: '450px'}" [modal]="true" styleClass="p-fluid custom-dialog" 
           [draggable]="false" [resizable]="false">
-    <div class="flex flex-column gap-4 p-3">
-        <div class="flex flex-column">
-            <h4 class="m-0 mb-1">Usuario: {{ selectedUser?.login }}</h4>
-            <p class="m-0 text-secondary">{{ selectedUser?.nombreCompleto }}</p>
+    <div class="flex flex-column gap-4 pt-2 pb-4 px-2">
+        <!-- User info section -->
+        <div class="flex flex-column bg-gray-50 p-3 border-round">
+            <div class="flex align-items-center">
+                <div class="user-avatar-lg mr-3 flex align-items-center justify-content-center border-circle bg-primary">
+                    <span class="text-white font-bold">{{ selectedUser?.login?.charAt(0)?.toUpperCase() || '?' }}</span>
+                </div>
+                <div>
+                    <h3 class="m-0 text-900 font-medium">{{ selectedUser?.login }}</h3>
+                    <p class="m-0 text-600">{{ selectedUser?.nombreCompleto }}</p>
+                    <div class="mt-2">
+                        <p-tag [severity]="selectedUser?.estado === 'D' ? 'success' : 'danger'" 
+                              [value]="selectedUser?.estado === 'D' ? 'Desbloqueado' : 'Bloqueado'"
+                              [rounded]="true"
+                              class="mr-2">
+                        </p-tag>
+                        <span class="tipo-badge" [ngClass]="'tipo-' + selectedUser?.tipoUsuario">
+                            {{ getTipoUsuarioLabel(selectedUser?.tipoUsuario) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="flex flex-column gap-2">
-            <small class="font-semibold text-color">¿Está seguro de restablecer la contraseña para este usuario?</small>
-            <p class="text-sm text-color-secondary m-0">Al confirmar, se enviará una contraseña temporal del 1 al 9. Esta acción tambien afectara a la contraseña de la Aplicacion Movil</p>
+
+        <!-- Warning section -->
+        <div class="bg-yellow-50 border-left-3 border-yellow-500 p-3 border-round">
+            <div class="flex align-items-center mb-2">
+                <i class="pi pi-exclamation-triangle text-yellow-600 mr-2 text-xl"></i>
+                <span class="font-medium text-yellow-900">Advertencia de seguridad</span>
+            </div>
+            <p class="m-0 line-height-3 text-yellow-800">Al confirmar, se restablecerá la contraseña del usuario a valores predeterminados. Esta acción también afectará al acceso desde la aplicación móvil.</p>
+            <p class="mt-2 mb-0 text-yellow-700 text-sm font-medium">El usuario deberá cambiar su contraseña en el siguiente inicio de sesión.</p>
         </div>
     </div>
+    
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="cancelResetPassword()"></button>
-        <button pButton pRipple label="Confirmar" icon="pi pi-check" class="p-button-outlined" (click)="confirmResetPassword()"></button>
+        <div class="flex justify-content-end gap-2">
+            <button pButton pRipple label="Cancelar" icon="pi pi-times" 
+                    class="p-button-text" (click)="cancelResetPassword()"></button>
+            <button pButton pRipple label="Confirmar" icon="pi pi-check" 
+                    class="p-button-danger" [loading]="loading"
+                    (click)="confirmResetPassword()"></button>
+        </div>
     </ng-template>
 </p-dialog>
 
-<!-- Toast for messages -->
-<p-toast position="center" key="resetPassword" [baseZIndex]="5000"></p-toast>
+<!-- Improved Toast notifications -->
+<p-toast position="top-center" key="resetPassword" [baseZIndex]="5000"></p-toast>
 <p-toast></p-toast>
 
 
