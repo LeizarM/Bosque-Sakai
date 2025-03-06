@@ -37,10 +37,92 @@
     color: var(--blue-800);
 }
 
+/* Enhanced card styling */
+.custom-card {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    padding: 1.5rem;
+    background-color: var(--surface-card);
+    border: 1px solid var(--surface-border);
+}
+
+/* Table styling improvements */
+.custom-datatable {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-header {
+    background: var(--surface-ground);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.table-header {
+    background-color: var(--surface-ground);
+}
+
+/* Bold username styling */
+.username-cell {
+    color: var(--primary-color);
+    font-weight: 700 !important;
+    letter-spacing: 0.2px;
+}
+
 /* Make table rows more prominent on hover */
-:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
-    background-color: var(--surface-hover);
+.custom-row:hover {
+    background-color: var(--surface-hover) !important;
     transition: background-color 0.2s;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr.custom-row:hover {
+    background-color: var(--surface-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+
+/* Action button styling */
+.action-button {
+    transition: transform 0.2s;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+}
+
+/* Summary footer styling */
+.custom-summary {
+    padding: 0.5rem 0;
+}
+
+.summary-text {
+    font-weight: 600;
+    color: var(--text-color-secondary);
+}
+
+/* New user button animation */
+.animation-button {
+    transition: all 0.2s ease;
+}
+
+.animation-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Custom dialog styling */
+:host ::ng-deep .custom-dialog .p-dialog-header {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-header .p-dialog-title {
+    color: white;
+}
+
+:host ::ng-deep .custom-dialog .p-dialog-header-icon {
+    color: white;
 }
 
 /* Responsive search input */
@@ -69,4 +151,9 @@ h3.text-primary {
 /* Improve table row styles for better readability */
 :host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
     padding: 0.75rem 1rem;
+}
+
+/* Add a subtle border to the bottom of each row */
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:not(:last-child) {
+    border-bottom: 1px solid var(--surface-border);
 }

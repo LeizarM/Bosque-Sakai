@@ -14,6 +14,7 @@ import { PrimeNgModule } from 'src/app/prime-ng/prime-ng.module';
   imports: [
     ReactiveFormsModule,
     PrimeNgModule,
+    FormsModule,
   ],
   providers: []
 })

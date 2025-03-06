@@ -70,6 +70,7 @@ export class UsuarioComponent implements OnInit {
 
   resetPassword(user: Login): void {
     this.selectedUser = user;
+   
     this.resetDialogVisible = true;
   }
 
@@ -80,19 +81,45 @@ export class UsuarioComponent implements OnInit {
 
   confirmResetPassword(): void {
     if (!this.selectedUser) return;
+    
+    this.loading = true; // Show loading indicator
+    
+    this.usuarioService.reiniciarContrasena(this.selectedUser).subscribe({
+      next: (response) => {
+        this.resetDialogVisible = false;
+        this.messageService.add({
+          key: 'resetPassword',
+          severity: 'success',
+          summary: 'Contraseña restablecida',
+          detail: `Se ha restablecido la contraseña del usuario ${this.selectedUser!.login}`
+        });
+        this.selectedUser = null;
+      },
+      error: (error) => {
+        console.error('Error resetting password:', error);
+        this.messageService.add({
+          key: 'resetPassword',
+          severity: 'error',
+          summary: 'Error',
+          detail: `No se pudo restablecer la contraseña. ${error.message || 'Intente nuevamente.'}`
+        });
+      },
+      complete: () => {
+        this.loading = false; // Hide loading indicator
+      }
+    });
+  }
 
-    // Aquí iría la llamada al servicio para restablecer la contraseña
-    // Simulando con un timeout
-    setTimeout(() => {
-      this.resetDialogVisible = false;
-      this.messageService.add({
-        key: 'resetPassword',
-        severity: 'success',
-        summary: 'Contraseña restablecida',
-        detail: `Se ha enviado una nueva contraseña al correo del usuario ${this.selectedUser!.login}`
-      });
-      this.selectedUser = null;
-    }, 1000);
+  // New method for creating a new user
+  createNewUser(): void {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Nuevo Usuario',
+      detail: 'Función para crear nuevo usuario activada'
+    });
+    
+    // Here you would navigate to a form or open a dialog to create a new user
+    // Example: this.router.navigate(['usuarios/nuevo']);
   }
 
   getTipoUsuarioLabel(tipoUsuario: string | undefined): string {
