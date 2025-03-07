@@ -48,3 +48,10 @@
 		border-radius: 5px;
 	}
 }
+
+// Forzar scrollbar en el diálogo
+:host ::ng-deep .p-dialog-content {
+  overflow-y: scroll !important;
+  max-height: 70vh !important;
+  display: block !important;
+}

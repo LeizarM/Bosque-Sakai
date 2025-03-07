@@ -94,7 +94,11 @@ export class ChangePasswordComponent implements OnInit {
 
   backToLogin(): void {
     this.loginService.logout();
-    this.router.navigate(['/auth/login']);
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['/auth/login']).then(() => {
+      window.location.reload();
+    });
   }
 
   esValido(campo: string): boolean | null {

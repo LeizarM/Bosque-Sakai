@@ -378,7 +378,9 @@
 
 <!-- DIÁLOGO DE VISTA PREVIA -->
 <p-dialog header="Preliminar" [(visible)]="visible" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '75vw' }"
-  [draggable]="false" [resizable]="false" [modal]="true">
+  [draggable]="false" [resizable]="false" [modal]="true" 
+  [contentStyle]="{'height': '70vh', 'overflow-y': 'scroll'}"
+  (onShow)="ajustarScroll()">
 
   <div class="formgrid grid">
     <!-- Cabecera con número de lote -->

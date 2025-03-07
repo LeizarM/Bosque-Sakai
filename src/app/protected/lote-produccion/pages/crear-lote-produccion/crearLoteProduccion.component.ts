@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmEventType, ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
@@ -25,7 +25,7 @@ import { LoteProduccionService } from '../../services/loteProduccion.service.ts.
   providers: [MessageService, ConfirmationService],
 
 })
-export class CrearLoteProduccionComponent implements OnInit {
+export class CrearLoteProduccionComponent implements OnInit, AfterViewInit {
 
 
   cantHjsSalida: number = 0;
@@ -98,7 +98,7 @@ export class CrearLoteProduccionComponent implements OnInit {
   lstMerma: Merma[] = [];
   lstMaquina: MaquinaProduccion[] = [];
 
-
+  private primeraVisitaKey = 'loteProduccionPrimeraVisita';
 
   constructor(
     private fb: FormBuilder,
@@ -129,6 +129,36 @@ export class CrearLoteProduccionComponent implements OnInit {
 
 
   }
+
+  ngAfterViewInit(): void {
+    // Verificar si es la primera visita a esta página
+    setTimeout(() => {
+      this.verificarPrimeraVisita();
+    }, 500);
+  }
+
+  /**
+   * Verifica si es la primera visita y recarga la página si es necesario
+   */
+  private verificarPrimeraVisita(): void {
+    const esPrimeraVisita = !localStorage.getItem(this.primeraVisitaKey);
+    
+    if (esPrimeraVisita) {
+      // Guardar indicador de que ya no es primera visita
+      localStorage.setItem(this.primeraVisitaKey, 'false');
+      
+      // Recargar la página para asegurar que todos los componentes se rendericen correctamente
+      window.location.reload();
+    }
+  }
+  
+  /**
+   * Resetea el indicador de primera visita (útil para pruebas)
+   */
+  resetearPrimeraVisita(): void {
+    localStorage.removeItem(this.primeraVisitaKey);
+  }
+
   /**
    * Llena las variables y listas a inicializar
    */
@@ -731,6 +761,33 @@ export class CrearLoteProduccionComponent implements OnInit {
   get validarListas(): boolean {
 
     return this.validIngresos && this.validSalida && this.validMerma;
+  }
+
+  /**
+   * Fuerza un recálculo del scroll del diálogo después de mostrarse
+   */
+  ajustarScroll(): void {
+    // Primero forzamos el scroll inmediatamente
+    const dialogContent = document.querySelector('.p-dialog-content') as HTMLElement;
+    if (dialogContent) {
+      dialogContent.style.overflowY = 'scroll';
+      dialogContent.style.height = '70vh';
+    }
+
+    // Luego programamos otro ajuste con retraso por seguridad
+    setTimeout(() => {
+      if (dialogContent) {
+        // Forzar un reflow explícito
+        void dialogContent.offsetHeight;
+        dialogContent.style.overflowY = 'scroll';
+        
+        // Asegurar que la barra de desplazamiento sea visible
+        if (dialogContent.scrollHeight <= dialogContent.clientHeight) {
+          // Si no hay suficiente contenido, forzamos una altura alta para que aparezca el scroll
+          dialogContent.style.minHeight = '70.1vh';
+        }
+      }
+    }, 300); // Aumentamos el retraso para dar más tiempo al renderizado
   }
 
 }
