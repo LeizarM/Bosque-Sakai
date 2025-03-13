@@ -44,7 +44,7 @@ export class RegistrarChequeComponent implements OnInit {
     this.initForm();
     this.initSearchForm();
     this.cargarEmpresas();
-    this.cargarBancos();
+    this.cargarBancos( 0 );
   }
 
   /**
@@ -93,9 +93,9 @@ export class RegistrarChequeComponent implements OnInit {
       });
   }
 
-  cargarBancos(): void {
+  cargarBancos( codEmpresa : number  ): void {
     this.loading = true;
-    this.depositoChequeService.obtenerBancos()
+    this.depositoChequeService.obtenerBancos( codEmpresa )
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (response) => {
@@ -115,12 +115,15 @@ export class RegistrarChequeComponent implements OnInit {
 
   onEmpresaChange(event: any): void {
     // Nos aseguramos que, en el caso de papirus, el valor se ajuste a 1
+    this.bancos = [];
+    this.cargarBancos(event.value);
     if (event.value === 7) { 
       event.value = 1;
     }
     const codEmpresa = event.value;
-
+    
     if (codEmpresa) {
+      
       this.loading = true;
       this.chequeForm.get('codCliente')?.setValue('');
       this.clientes = []; // Limpiamos los clientes antes de la llamada
@@ -187,9 +190,6 @@ export class RegistrarChequeComponent implements OnInit {
         idDeposito: 0,
         codEmpresa: formValue.codEmpresa,
         codCliente: formValue.codCliente,
-        docNum: formValue.docNum,
-        numFact: formValue.numFact,
-        codBanco: formValue.codBanco,
         importe: formValue.importe,
         moneda: formValue.moneda,
         fotoPath: '',  // Se gestionará en el backend

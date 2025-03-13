@@ -9,6 +9,7 @@ import { ApiResponse } from '../../interfaces/ApiResponse';
 import { Empresa } from '../../interfaces/Empresa';
 import { SocioNegocio } from '../../interfaces/SocioNegocio';
 import { ChBanco } from '../../interfaces/ChBanco';
+import { BancoXCuenta } from '../../interfaces/BancoXCuenta';
 
 
 @Injectable({
@@ -71,10 +72,10 @@ export class DepositoChequeService {
      * Obtendra la lista de boncos
      * @returns 
      */
-    obtenerBancos(): Observable<ApiResponse<ChBanco[]>> {
+    obtenerBancos(  codEmpresa : number  ): Observable<ApiResponse<ChBanco[]>> {
       const url = `${this.baseUrl}${this.endpoint}/lst-banco`;
-      
-      return this.http.post<ApiResponse<ChBanco[]>>(url, {})
+      const data = { codEmpresa } as BancoXCuenta;
+      return this.http.post<ApiResponse<ChBanco[]>>(url, data)
           .pipe(
               timeout(this.timeoutMs),
               catchError(this.handleError)
@@ -142,6 +143,20 @@ export class DepositoChequeService {
         }).pipe(
             catchError(this.handleError)
         );
+    }
+
+    /**
+     * Obtiene la lista de documentos disponibles para un cliente
+     * @param codEmpresa Código de empresa
+     * @param codCliente Código de cliente
+     */
+    obtenerDocumentosPorCliente(codEmpresa: number, codCliente: string): Observable<ApiResponse<any[]>> {
+        const url = `${this.baseUrl}${this.endpoint}/lst-documentos-cliente`;
+        return this.http.post<ApiResponse<any[]>>(url, { codEmpresa, codCliente })
+            .pipe(
+                timeout(this.timeoutMs),
+                catchError(this.handleError)
+            );
     }
 
     /**

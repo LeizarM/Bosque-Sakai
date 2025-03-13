@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { LoginService } from '../../services/login.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   hayError: boolean = false;
   isLoading: boolean = false;
 
@@ -32,6 +32,13 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Ensuring proper 3D perspective rendering
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('login-page');
+  }
+  
+  ngOnDestroy(): void {
+    // Cleanup when component is destroyed
+    document.body.style.overflow = '';
+    document.body.classList.remove('login-page');
   }
 
   verficarLogin(): void {
@@ -41,6 +48,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.isLoading = true;
+    this.hayError = false; // Reset error state
 
     const { usuario, password2 } = this.frmLogin.value;
 
@@ -67,9 +75,7 @@ export class LoginComponent implements OnInit {
           }
         },
         error: (err) => {
-          if (err.status === 400) {
-            console.log("error de credenciales");
-          }
+          console.error('Error de autenticación:', err);
           this.hayError = true;
         }
       });
