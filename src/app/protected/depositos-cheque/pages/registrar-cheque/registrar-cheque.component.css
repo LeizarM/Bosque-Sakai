@@ -49,3 +49,18 @@
   .gap-2 {
     gap: 0.5rem;
   }
+
+/* Estilo para filas seleccionadas */
+.selected-row {
+  background-color: #e3f2fd !important;
+}
+
+/* Hacer que las celdas de la tabla sean clickeables */
+p-table td:not(:first-child) {
+  cursor: pointer;
+}
+
+/* Text alignment class */
+.text-right {
+  text-align: right !important;
+}

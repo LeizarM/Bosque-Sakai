@@ -9,6 +9,8 @@ import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
 import { DepositoCheque } from 'src/app/protected/interfaces/DepositoCheque';
 import { ChBanco } from 'src/app/protected/interfaces/ChBanco';
 import { LoginService } from 'src/app/auth/services/login.service';
+import { NotaRemision } from 'src/app/protected/interfaces/NotaRemision';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-registrar-cheque',
@@ -27,6 +29,8 @@ export class RegistrarChequeComponent implements OnInit {
   empresas: Empresa[] = [];
   clientes: SocioNegocio[] = [];
   bancos: ChBanco[] = [];
+  documentos: NotaRemision[] = [];
+  totalMontoDocumentos: number = 0;
 
   monedas = [
     { label: 'Bolivianos', value: 'BS' },
@@ -44,7 +48,7 @@ export class RegistrarChequeComponent implements OnInit {
     this.initForm();
     this.initSearchForm();
     this.cargarEmpresas();
-    this.cargarBancos( 0 );
+    this.cargarBancos(0);
   }
 
   /**
@@ -54,10 +58,9 @@ export class RegistrarChequeComponent implements OnInit {
     this.chequeForm = this.fb.group({
       codEmpresa: ['', [Validators.required]],
       codCliente: ['', [Validators.required]],
-      docNum: ['', [Validators.required, Validators.minLength(3)]],
-      numFact: [''],
       codBanco: ['', [Validators.required]],
-      importe: ['', [Validators.required, Validators.min(0.01)]],
+      aCuenta: [0, [Validators.required, Validators.min(0.01)]],
+      importe: [{value: 0, disabled: false}, [Validators.required, Validators.min(0.01)]],
       moneda: ['BS', [Validators.required]],
       fotoPath: ['']
     });
@@ -93,9 +96,9 @@ export class RegistrarChequeComponent implements OnInit {
       });
   }
 
-  cargarBancos( codEmpresa : number  ): void {
+  cargarBancos(codEmpresa: number): void {
     this.loading = true;
-    this.depositoChequeService.obtenerBancos( codEmpresa )
+    this.depositoChequeService.obtenerBancos(codEmpresa)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (response) => {
@@ -116,6 +119,11 @@ export class RegistrarChequeComponent implements OnInit {
   onEmpresaChange(event: any): void {
     // Nos aseguramos que, en el caso de papirus, el valor se ajuste a 1
     this.bancos = [];
+    this.documentos = [];
+    this.totalMontoDocumentos = 0;
+    this.chequeForm.get('importe')?.setValue(0);
+    this.chequeForm.get('aCuenta')?.setValue(0);
+    
     this.cargarBancos(event.value);
     if (event.value === 7) { 
       event.value = 1;
@@ -123,7 +131,6 @@ export class RegistrarChequeComponent implements OnInit {
     const codEmpresa = event.value;
     
     if (codEmpresa) {
-      
       this.loading = true;
       this.chequeForm.get('codCliente')?.setValue('');
       this.clientes = []; // Limpiamos los clientes antes de la llamada
@@ -155,6 +162,81 @@ export class RegistrarChequeComponent implements OnInit {
     }
   }
 
+  onClienteChange(event: any): void {
+    const codCliente = event.value;
+    const codEmpresa = this.chequeForm.get('codEmpresa')?.value;
+    
+    if (codCliente && codEmpresa) {
+      this.loading = true;
+      this.documentos = [];
+      this.totalMontoDocumentos = 0;
+      this.chequeForm.get('importe')?.setValue(0);
+      this.chequeForm.get('aCuenta')?.setValue(0);
+
+      this.depositoChequeService.obtenerDocumentosPorCliente(codEmpresa, codCliente)
+        .pipe(finalize(() => this.loading = false))
+        .subscribe({
+          next: (response) => {
+            if (response.data && response.data.length > 0) {
+              this.documentos = response.data.map(doc => ({
+                ...doc,
+                selected: false // Inicializamos la selección en false
+              }));
+            } else {
+              this.documentos = [];
+              this.messageService.add({
+                severity: 'info',
+                summary: 'Información',
+                detail: 'No hay documentos disponibles para este cliente'
+              });
+            }
+          },
+          error: (error) => {
+            this.documentos = [];
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al cargar documentos: ' + error.message
+            });
+          }
+        });
+    }
+  }
+
+  /**
+   * Maneja la selección/deselección de documentos
+   */
+  onDocumentSelect(documento: NotaRemision, selected: boolean): void {
+    documento.selected = selected;
+    this.calcularTotales();
+  }
+
+  /**
+   * Obtiene los documentos seleccionados
+   */
+  getSelectedDocumentos(): NotaRemision[] {
+    return this.documentos.filter(doc => doc.selected);
+  }
+
+  /**
+   * Calcula los totales basados en los documentos seleccionados y el monto a cuenta
+   */
+  calcularTotales(): void {
+    // Calcular el total de los documentos seleccionados
+    this.totalMontoDocumentos = this.getSelectedDocumentos().reduce((sum, doc) => {
+      return sum + (doc.totalMonto || 0);
+    }, 0);
+
+    // Obtener el valor de a cuenta del formulario
+    const aCuenta = this.chequeForm.get('aCuenta')?.value || 0;
+    
+    // Calcular el importe total (documentos + a cuenta)
+    const importeTotal = this.totalMontoDocumentos + aCuenta;
+    
+    // Actualizar el importe total en el formulario
+    this.chequeForm.get('importe')?.setValue(importeTotal);
+  }
+
   onFileSelect(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -183,27 +265,50 @@ export class RegistrarChequeComponent implements OnInit {
 
   onSubmit(): void {
     if (this.chequeForm.valid && this.selectedFile) {
+      const selectedDocs = this.getSelectedDocumentos();
+      
+      if (selectedDocs.length === 0) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Debe seleccionar al menos un documento'
+        });
+        return;
+      }
+
       this.loading = true;
       const formValue = this.chequeForm.value;
-
+      
       const depositoCheque: DepositoCheque = {
         idDeposito: 0,
         codEmpresa: formValue.codEmpresa,
         codCliente: formValue.codCliente,
+        idBxC: formValue.codBanco,
         importe: formValue.importe,
+        aCuenta: formValue.aCuenta,
         moneda: formValue.moneda,
         fotoPath: '',  // Se gestionará en el backend
         audUsuario: this.getUser()
       };
-
-      this.depositoChequeService.registrarDepositoCheque(depositoCheque, this.selectedFile)
+      
+      // Convertir cada documento seleccionado a un objeto para enviar al backend
+      const observables = selectedDocs.map(doc => {
+        const depCheque = {
+          ...depositoCheque,
+          docNum: doc.docNum
+        };
+        return this.depositoChequeService.registrarDepositoCheque(depCheque, this.selectedFile!);
+      });
+      
+      // Procesar todas las solicitudes
+      forkJoin(observables)
         .pipe(finalize(() => this.loading = false))
         .subscribe({
-          next: (response) => {
+          next: (responses) => {
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: response.message || 'Depósito registrado correctamente'
+              detail: 'Depósitos registrados correctamente'
             });
             this.resetForm();
           },
@@ -211,7 +316,7 @@ export class RegistrarChequeComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: error.message
+              detail: error.message || 'Error al registrar depósitos'
             });
           }
         });
@@ -223,6 +328,7 @@ export class RegistrarChequeComponent implements OnInit {
           detail: 'Debe seleccionar una imagen del cheque'
         });
       }
+      
       this.markFormGroupTouched(this.chequeForm);
     }
   }
@@ -277,10 +383,14 @@ export class RegistrarChequeComponent implements OnInit {
 
   private resetForm(): void {
     this.chequeForm.reset({
-      moneda: 'BS'
+      moneda: 'BS',
+      aCuenta: 0,
+      importe: 0
     });
     this.selectedFile = null;
     this.clientes = [];
+    this.documentos = [];
+    this.totalMontoDocumentos = 0;
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {
@@ -327,5 +437,36 @@ export class RegistrarChequeComponent implements OnInit {
    */
   getUser(): number {
     return this.loginService.codUsuario;
+  }
+
+  // Add property to track "select all" state
+  get allDocumentsSelected(): boolean {
+    return this.documentos.length > 0 && this.documentos.every(doc => doc.selected);
+  }
+
+  /**
+   * Maneja la selección/deselección de documentos
+   */
+  onDocumentSelectChange(documento: NotaRemision): void {
+    // El modelo ya se actualizó a través del binding ngModel
+    // Solo necesitamos recalcular los totales
+    this.calcularTotales();
+  }
+
+  /**
+   * Selecciona o deselecciona un documento al hacer clic en la fila
+   */
+  toggleDocumentSelection(documento: NotaRemision): void {
+    documento.selected = !documento.selected;
+    this.calcularTotales();
+  }
+
+  /**
+   * Selecciona o deselecciona todos los documentos
+   */
+  toggleAllDocuments(event: any): void {
+    const selectAll = event.checked;
+    this.documentos.forEach(doc => doc.selected = selectAll);
+    this.calcularTotales();
   }
 }

@@ -1,4 +1,4 @@
-
+import { _DeepPartialArray } from "chart.js/dist/types/utils";
 
 export interface NotaRemision {
     idNR?:           number;
@@ -9,6 +9,16 @@ export interface NotaRemision {
     totalMonto?:     number;
     saldoPendiente?: number;
     audUsuario?:     number;
+
+    // Atributos adicionales
+    codCliente?:     string;
+    nombreCliente?:  string;
+    db?:             string;
+    codEmpresaBosque?: number;
+    
+    // Campo adicional para manejar el monto a cuenta en la UI
+    aCuenta?: number;
+    selected?: boolean;
 }
 
 // Converts JSON strings to/from your types

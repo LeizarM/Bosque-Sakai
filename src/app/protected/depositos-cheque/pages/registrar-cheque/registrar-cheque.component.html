@@ -59,46 +59,97 @@
               class="w-full"
               [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codCliente')}"
               [disabled]="!chequeForm.get('codEmpresa')?.value"
+              (onChange)="onClienteChange($event)"
             ></p-dropdown>
             <small class="p-error block" *ngIf="isFieldInvalid('codCliente')">
               {{ getErrorMessage('codCliente') }}
             </small>
           </div>
 
-          <!-- Número de Documento -->
+          <!-- A Cuenta global -->
           <div class="field col-12 md:col-6 mb-4">
-            <label for="docNum" class="block font-semibold mb-2" style="color: #424242;">
-              Número de Documento
+            <label for="aCuenta" class="block font-semibold mb-2" style="color: #424242;">
+              A Cuenta
             </label>
-            <input
-              pInputText
-              id="docNum"
-              formControlName="docNum"
+            <p-inputNumber
+              id="aCuenta"
+              formControlName="aCuenta"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2"
               class="w-full"
-              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('docNum')}"
-              placeholder="Ingrese número de documento"
-            />
-            <small class="p-error block" *ngIf="isFieldInvalid('docNum')">
-              {{ getErrorMessage('docNum') }}
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('aCuenta')}"
+              placeholder="0.00"
+              (onInput)="calcularTotales()"
+            ></p-inputNumber>
+            <small class="p-error block" *ngIf="isFieldInvalid('aCuenta')">
+              {{ getErrorMessage('aCuenta') }}
             </small>
           </div>
 
-          <!-- Número de Factura -->
-          <div class="field col-12 md:col-6 mb-4">
-            <label for="numFact" class="block font-semibold mb-2" style="color: #424242;">
-              Número de Factura
+          <!-- Tabla de documentos disponibles -->
+          <div class="field col-12 mb-4" *ngIf="documentos && documentos.length > 0">
+            <label class="block font-semibold mb-2" style="color: #424242;">
+              Documentos Disponibles
             </label>
-            <input
-              pInputText
-              id="numFact"
-              formControlName="numFact"
-              class="w-full"
-              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('numFact')}"
-              placeholder="Ingrese número de factura"
-            />
-            <small class="p-error block" *ngIf="isFieldInvalid('numFact')">
-              {{ getErrorMessage('numFact') }}
-            </small>
+            <p-table [value]="documentos" dataKey="docNum" styleClass="p-datatable-sm p-datatable-striped">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 3rem">
+                    <!-- Opción de seleccionar todos -->
+                    <div class="flex align-items-center justify-content-center">
+                      <p-checkbox
+                        [binary]="true"
+                        [ngModel]="allDocumentsSelected"
+                        [ngModelOptions]="{standalone: true}"
+                        (onChange)="toggleAllDocuments($event)">
+                      </p-checkbox>
+                    </div>
+                  </th>
+                  <th>Número de Documento</th>
+                  <th>Fecha</th>
+                  <th>Cliente</th>
+                  <th class="text-right">Total (Bs)</th>
+                  <th class="text-right">Saldo Pendiente (Bs)</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-documento>
+                <tr [ngClass]="{'selected-row': documento.selected}">
+                  <td>
+                    <div class="flex align-items-center justify-content-center">
+                      <p-checkbox 
+                        [binary]="true"
+                        [(ngModel)]="documento.selected"
+                        [ngModelOptions]="{standalone: true}"
+                        (onClick)="$event.stopPropagation()"
+                        (onChange)="onDocumentSelectChange(documento)">
+                      </p-checkbox>
+                    </div>
+                  </td>
+                  <td (click)="toggleDocumentSelection(documento)">{{documento.docNum}}</td>
+                  <td (click)="toggleDocumentSelection(documento)">{{documento.fecha | date:'dd/MM/yyyy'}}</td>
+                  <td (click)="toggleDocumentSelection(documento)">{{documento.nombreCliente}}</td>
+                  <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.totalMonto | number}}</td>
+                  <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.saldoPendiente | number}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="6" class="text-center">No hay documentos disponibles</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="summary" *ngIf="documentos.length > 0">
+                <div class="flex justify-content-between">
+                  <div>
+                    <strong>Total de documentos:</strong> {{documentos.length}}
+                  </div>
+                  <div>
+                    <strong>Documentos seleccionados:</strong> {{getSelectedDocumentos().length}} | 
+                    <strong>Total de documentos:</strong> {{totalMontoDocumentos | number  }} 
+                  </div>
+                </div>
+              </ng-template>
+            </p-table>
           </div>
 
           <!-- Banco -->
@@ -124,7 +175,7 @@
           <!-- Importe -->
           <div class="field col-12 md:col-6 mb-4">
             <label for="importe" class="block font-semibold mb-2" style="color: #424242;">
-              Importe
+              Importe Total
             </label>
             <p-inputNumber
               id="importe"
@@ -135,6 +186,7 @@
               class="w-full"
               [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('importe')}"
               placeholder="0.00"
+              [readonly]="true"
             ></p-inputNumber>
             <small class="p-error block" *ngIf="isFieldInvalid('importe')">
               {{ getErrorMessage('importe') }}

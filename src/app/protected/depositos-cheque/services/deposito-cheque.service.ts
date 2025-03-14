@@ -10,6 +10,7 @@ import { Empresa } from '../../interfaces/Empresa';
 import { SocioNegocio } from '../../interfaces/SocioNegocio';
 import { ChBanco } from '../../interfaces/ChBanco';
 import { BancoXCuenta } from '../../interfaces/BancoXCuenta';
+import { NotaRemision } from '../../interfaces/NotaRemision';
 
 
 @Injectable({
@@ -150,9 +151,13 @@ export class DepositoChequeService {
      * @param codEmpresa Código de empresa
      * @param codCliente Código de cliente
      */
-    obtenerDocumentosPorCliente(codEmpresa: number, codCliente: string): Observable<ApiResponse<any[]>> {
-        const url = `${this.baseUrl}${this.endpoint}/lst-documentos-cliente`;
-        return this.http.post<ApiResponse<any[]>>(url, { codEmpresa, codCliente })
+    obtenerDocumentosPorCliente(codEmpresa: number, codCliente: string): Observable<ApiResponse<NotaRemision[]>> {
+        const url = `${this.baseUrl}${this.endpoint}/lst-notaRemision`;
+        const data = { 
+            'codEmpresaBosque':codEmpresa
+            ,codCliente 
+        } as NotaRemision;
+        return this.http.post<ApiResponse<NotaRemision[]>>(url, data )
             .pipe(
                 timeout(this.timeoutMs),
                 catchError(this.handleError)
