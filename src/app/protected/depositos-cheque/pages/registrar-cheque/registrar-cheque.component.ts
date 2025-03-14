@@ -48,7 +48,7 @@ export class RegistrarChequeComponent implements OnInit {
     this.initForm();
     this.initSearchForm();
     this.cargarEmpresas();
-    this.cargarBancos(0);
+    //this.cargarBancos(0);
   }
 
   /**
@@ -301,15 +301,13 @@ export class RegistrarChequeComponent implements OnInit {
       const observables = selectedDocs.map(doc => {
         const depCheque = {
           ...depositoCheque,
-          docNum: doc.docNum,
-          // Incluir información del documento seleccionado
-          nombreCliente: doc.nombreCliente,
-          saldoPendiente: doc.saldoPendiente,
-          totalMonto: doc.totalMonto
+          
         };
         
         // Log each deposit being created
         console.log(`Registrando depósito para documento ${doc.docNum}:`, depCheque);
+        
+        
         
         return this.depositoChequeService.registrarDepositoCheque(depCheque, this.selectedFile!);
       });
@@ -346,6 +344,9 @@ export class RegistrarChequeComponent implements OnInit {
       this.markFormGroupTouched(this.chequeForm);
     }
   }
+
+
+
 
   /**
    * Actualiza la consulta de depósitos usando como criterios el número de documento o
