@@ -58,7 +58,7 @@ export class RegistrarChequeComponent implements OnInit {
     this.chequeForm = this.fb.group({
       codEmpresa: ['', [Validators.required]],
       codCliente: ['', [Validators.required]],
-      codBanco: ['', [Validators.required]],
+      idBxC: ['', [Validators.required]],
       aCuenta: [0, [Validators.required, Validators.min(0.01)]],
       importe: [{value: 0, disabled: false}, [Validators.required, Validators.min(0.01)]],
       moneda: ['BS', [Validators.required]],
@@ -286,7 +286,7 @@ export class RegistrarChequeComponent implements OnInit {
         idDeposito: 0,
         codEmpresa: formValue.codEmpresa,
         codCliente: formValue.codCliente,
-        idBxC: formValue.codBanco,
+        idBxC: formValue.idBxC,
         importe: formValue.importe,
         aCuenta: formValue.aCuenta,
         moneda: formValue.moneda,

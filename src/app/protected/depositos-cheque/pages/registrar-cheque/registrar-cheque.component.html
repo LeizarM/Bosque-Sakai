@@ -160,17 +160,17 @@
               Banco
             </label>
             <p-dropdown
-              id="codBanco"
-              formControlName="codBanco"
+              id="idBxC"
+              formControlName="idBxC"
               [options]="bancos"
               optionLabel="nombreBanco"
-              optionValue="codBanco"
+              optionValue="idBxC"
               placeholder="Seleccione un banco"
               class="w-full"
-              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codBanco')}"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('idBxC')}"
             ></p-dropdown>
-            <small class="p-error block" *ngIf="isFieldInvalid('codBanco')">
-              {{ getErrorMessage('codBanco') }}
+            <small class="p-error block" *ngIf="isFieldInvalid('idBxC')">
+              {{ getErrorMessage('idBxC') }}
             </small>
           </div>
 
