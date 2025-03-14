@@ -276,6 +276,9 @@ export class RegistrarChequeComponent implements OnInit {
         return;
       }
 
+      // Log selected documents to console
+      console.log('Documentos seleccionados:', selectedDocs);
+
       this.loading = true;
       const formValue = this.chequeForm.value;
       
@@ -291,12 +294,23 @@ export class RegistrarChequeComponent implements OnInit {
         audUsuario: this.getUser()
       };
       
+      console.log('Información del formulario:', formValue);
+      console.log('Depósito base a registrar:', depositoCheque);
+      
       // Convertir cada documento seleccionado a un objeto para enviar al backend
       const observables = selectedDocs.map(doc => {
         const depCheque = {
           ...depositoCheque,
-          docNum: doc.docNum
+          docNum: doc.docNum,
+          // Incluir información del documento seleccionado
+          nombreCliente: doc.nombreCliente,
+          saldoPendiente: doc.saldoPendiente,
+          totalMonto: doc.totalMonto
         };
+        
+        // Log each deposit being created
+        console.log(`Registrando depósito para documento ${doc.docNum}:`, depCheque);
+        
         return this.depositoChequeService.registrarDepositoCheque(depCheque, this.selectedFile!);
       });
       

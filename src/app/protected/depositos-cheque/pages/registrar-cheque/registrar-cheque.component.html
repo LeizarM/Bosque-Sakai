@@ -107,6 +107,7 @@
                     </div>
                   </th>
                   <th>Número de Documento</th>
+                  <th>Num. Factura</th>
                   <th>Fecha</th>
                   <th>Cliente</th>
                   <th class="text-right">Total (Bs)</th>
@@ -127,6 +128,7 @@
                     </div>
                   </td>
                   <td (click)="toggleDocumentSelection(documento)">{{documento.docNum}}</td>
+                  <td (click)="toggleDocumentSelection(documento)">{{documento.numFact}}</td>
                   <td (click)="toggleDocumentSelection(documento)">{{documento.fecha | date:'dd/MM/yyyy'}}</td>
                   <td (click)="toggleDocumentSelection(documento)">{{documento.nombreCliente}}</td>
                   <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.totalMonto | number}}</td>
