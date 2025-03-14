@@ -59,7 +59,7 @@ export class RegistrarChequeComponent implements OnInit {
       codEmpresa: ['', [Validators.required]],
       codCliente: ['', [Validators.required]],
       idBxC: ['', [Validators.required]],
-      aCuenta: [0, [Validators.required, Validators.min(0.01)]],
+      aCuenta: [0, [Validators.required, Validators.min(0.0)]],
       importe: [{value: 0, disabled: false}, [Validators.required, Validators.min(0.01)]],
       moneda: ['BS', [Validators.required]],
       fotoPath: ['']
@@ -297,30 +297,15 @@ export class RegistrarChequeComponent implements OnInit {
       console.log('Información del formulario:', formValue);
       console.log('Depósito base a registrar:', depositoCheque);
       
-      // Convertir cada documento seleccionado a un objeto para enviar al backend
-      const observables = selectedDocs.map(doc => {
-        const depCheque = {
-          ...depositoCheque,
-          
-        };
-        
-        // Log each deposit being created
-        console.log(`Registrando depósito para documento ${doc.docNum}:`, depCheque);
-        
-        
-        
-        return this.depositoChequeService.registrarDepositoCheque(depCheque, this.selectedFile!);
-      });
-      
-      // Procesar todas las solicitudes
-      forkJoin(observables)
+      // Hacer una sola llamada para registrar el depósito
+      this.depositoChequeService.registrarDepositoCheque(depositoCheque, this.selectedFile!)
         .pipe(finalize(() => this.loading = false))
         .subscribe({
-          next: (responses) => {
+          next: (response) => {
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: 'Depósitos registrados correctamente'
+              detail: 'Depósito registrado correctamente'
             });
             this.resetForm();
           },
@@ -328,7 +313,7 @@ export class RegistrarChequeComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: error.message || 'Error al registrar depósitos'
+              detail: error.message || 'Error al registrar depósito'
             });
           }
         });
@@ -344,9 +329,6 @@ export class RegistrarChequeComponent implements OnInit {
       this.markFormGroupTouched(this.chequeForm);
     }
   }
-
-
-
 
   /**
    * Actualiza la consulta de depósitos usando como criterios el número de documento o
