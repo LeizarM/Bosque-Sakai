@@ -1,5 +1,6 @@
 import { Sucursal } from './Sucursal';
 export interface Empresa {
+  codEmpresaBosque: number;
   codEmpresa?:    number;
   nombre?: string;
   codPadre?:      number;

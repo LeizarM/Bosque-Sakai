@@ -19,7 +19,7 @@ import { forkJoin } from 'rxjs';
   providers: [MessageService]
 })
 export class RegistrarChequeComponent implements OnInit {
-  
+
   chequeForm!: FormGroup;
   depositSearchForm!: FormGroup;
   depositList: DepositoCheque[] = [];
@@ -42,7 +42,7 @@ export class RegistrarChequeComponent implements OnInit {
     private messageService: MessageService,
     private depositoChequeService: DepositoChequeService,
     private loginService: LoginService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -60,7 +60,7 @@ export class RegistrarChequeComponent implements OnInit {
       codCliente: ['', [Validators.required]],
       idBxC: ['', [Validators.required]],
       aCuenta: [0, [Validators.required, Validators.min(0.0)]],
-      importe: [{value: 0, disabled: false}, [Validators.required, Validators.min(0.01)]],
+      importe: [{ value: 0, disabled: false }, [Validators.required, Validators.min(0.01)]],
       moneda: ['BS', [Validators.required]],
       fotoPath: ['']
     });
@@ -123,13 +123,13 @@ export class RegistrarChequeComponent implements OnInit {
     this.totalMontoDocumentos = 0;
     this.chequeForm.get('importe')?.setValue(0);
     this.chequeForm.get('aCuenta')?.setValue(0);
-    
+
     this.cargarBancos(event.value);
-    if (event.value === 7) { 
+    if (event.value === 7) {
       event.value = 1;
     }
     const codEmpresa = event.value;
-    
+
     if (codEmpresa) {
       this.loading = true;
       this.chequeForm.get('codCliente')?.setValue('');
@@ -165,7 +165,7 @@ export class RegistrarChequeComponent implements OnInit {
   onClienteChange(event: any): void {
     const codCliente = event.value;
     const codEmpresa = this.chequeForm.get('codEmpresa')?.value;
-    
+
     if (codCliente && codEmpresa) {
       this.loading = true;
       this.documentos = [];
@@ -229,10 +229,10 @@ export class RegistrarChequeComponent implements OnInit {
 
     // Obtener el valor de a cuenta del formulario
     const aCuenta = this.chequeForm.get('aCuenta')?.value || 0;
-    
+
     // Calcular el importe total (documentos + a cuenta)
     const importeTotal = this.totalMontoDocumentos + aCuenta;
-    
+
     // Actualizar el importe total en el formulario
     this.chequeForm.get('importe')?.setValue(importeTotal);
   }
@@ -266,7 +266,7 @@ export class RegistrarChequeComponent implements OnInit {
   onSubmit(): void {
     if (this.chequeForm.valid && this.selectedFile) {
       const selectedDocs = this.getSelectedDocumentos();
-      
+
       if (selectedDocs.length === 0) {
         this.messageService.add({
           severity: 'error',
@@ -276,12 +276,9 @@ export class RegistrarChequeComponent implements OnInit {
         return;
       }
 
-      // Log selected documents to console
-      console.log('Documentos seleccionados:', selectedDocs);
-
       this.loading = true;
       const formValue = this.chequeForm.value;
-      
+
       const depositoCheque: DepositoCheque = {
         idDeposito: 0,
         codEmpresa: formValue.codEmpresa,
@@ -293,19 +290,52 @@ export class RegistrarChequeComponent implements OnInit {
         fotoPath: '',  // Se gestionará en el backend
         audUsuario: this.getUser()
       };
-      
+
       console.log('Información del formulario:', formValue);
       console.log('Depósito base a registrar:', depositoCheque);
-      
+
       // Hacer una sola llamada para registrar el depósito
       this.depositoChequeService.registrarDepositoCheque(depositoCheque, this.selectedFile!)
         .pipe(finalize(() => this.loading = false))
         .subscribe({
           next: (response) => {
+            // Crear un array de observables para las notas de remisión
+            const notasRemisionObservables = selectedDocs.map((doc) => {
+              const notaRemision = {
+                idNR: doc.idNR,
+                idDeposito: doc.idDeposito,
+                docNum: doc.docNum,
+                fecha: doc.fecha,
+                numFact: doc.numFact,
+                totalMonto: doc.totalMonto,
+                saldoPendiente: doc.saldoPendiente,
+                audUsuario: this.getUser()
+              };
+              // Devuelve el observable sin suscribirse
+              return this.depositoChequeService.registroNotaRemision(notaRemision);
+            });
+            
+            // Usar forkJoin para ejecutar todas las solicitudes en paralelo
+            if (notasRemisionObservables.length > 0) {
+              forkJoin(notasRemisionObservables).subscribe({
+                next: (results) => {
+                  console.log('Todas las notas de remisión registradas correctamente', results);
+                },
+                error: (error) => {
+                  console.error('Error al registrar notas de remisión', error);
+                  this.messageService.add({
+                    severity: 'warn',
+                    summary: 'Advertencia',
+                    detail: 'El depósito se registró pero hubo problemas al registrar algunos documentos'
+                  });
+                }
+              });
+            }
+
             this.messageService.add({
               severity: 'success',
               summary: 'Éxito',
-              detail: 'Depósito registrado correctamente'
+              detail: response.message
             });
             this.resetForm();
           },
@@ -325,7 +355,7 @@ export class RegistrarChequeComponent implements OnInit {
           detail: 'Debe seleccionar una imagen del cheque'
         });
       }
-      
+
       this.markFormGroupTouched(this.chequeForm);
     }
   }
@@ -336,16 +366,16 @@ export class RegistrarChequeComponent implements OnInit {
    * lo trate como "no filtrar" por ese campo.
    */
   onActualizar(): void {
-    let {docNum, numFact} = this.depositSearchForm.value;
-    
-    
+    let { docNum, numFact } = this.depositSearchForm.value;
+
+
     console.log("Valores procesados:", { docNum, numFact });
-    
+
     const depositoCriteria: DepositoCheque = {
-      docNum:  parseInt(docNum),
+      docNum: parseInt(docNum),
       numFact: parseInt(numFact)
     } as DepositoCheque;
-  
+
     this.loading = true;
     this.depositoChequeService.obtenerDepositosReconciliados(depositoCriteria)
       .pipe(finalize(() => this.loading = false))

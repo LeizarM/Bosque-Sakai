@@ -1,4 +1,5 @@
-import { DepositoCheque } from './../../interfaces/DepositoCheque';
+import { DepositoCheque } from 'src/app/protected/interfaces/DepositoCheque';
+import { NotaRemision } from 'src/app/protected/interfaces/NotaRemision';
 // services/deposito-cheque.service.ts
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -10,7 +11,7 @@ import { Empresa } from '../../interfaces/Empresa';
 import { SocioNegocio } from '../../interfaces/SocioNegocio';
 import { ChBanco } from '../../interfaces/ChBanco';
 import { BancoXCuenta } from '../../interfaces/BancoXCuenta';
-import { NotaRemision } from '../../interfaces/NotaRemision';
+
 
 
 @Injectable({
@@ -36,6 +37,23 @@ export class DepositoChequeService {
         formData.append('depositoCheque', JSON.stringify(depositoCheque));
         
         return this.http.post<ApiResponse<void>>(url, formData)
+            .pipe(
+                retry(2),
+                timeout(this.timeoutMs),
+                catchError(this.handleError)
+            );
+    }
+
+
+    /**
+     * Para registrar una nueva nota de remisión
+     * @param notaRemision 
+     * @returns 
+     */
+    registroNotaRemision( notaRemision : NotaRemision): Observable<ApiResponse<void>> {
+        const url = `${this.baseUrl}${this.endpoint}/registrar-nota-remision`;
+        
+        return this.http.post<ApiResponse<void>>(url, notaRemision)
             .pipe(
                 retry(2),
                 timeout(this.timeoutMs),
@@ -73,10 +91,10 @@ export class DepositoChequeService {
      * Obtendra la lista de boncos
      * @returns 
      */
-    obtenerBancos(  codEmpresa : number  ): Observable<ApiResponse<ChBanco[]>> {
+    obtenerBancos(  codEmpresa : number  ): Observable<ApiResponse<BancoXCuenta[]>> {
       const url = `${this.baseUrl}${this.endpoint}/lst-banco`;
       const data = { codEmpresa } as BancoXCuenta;
-      return this.http.post<ApiResponse<ChBanco[]>>(url, data)
+      return this.http.post<ApiResponse<BancoXCuenta[]>>(url, data)
           .pipe(
               timeout(this.timeoutMs),
               catchError(this.handleError)
@@ -102,9 +120,18 @@ export class DepositoChequeService {
     /**
      * Obtiene la lista de depósitos
      */
-    obtenerDepositos(): Observable<ApiResponse<DepositoCheque[]>> {
+    obtenerDepositos( idBxC: number, fechaInicio: Date, fechaFin: Date, codCliente: string ): Observable<ApiResponse<DepositoCheque[]>> {
+        
+        const deposito : DepositoCheque = {
+            idBxC,
+            fechaInicio,
+            fechaFin,
+            codCliente
+        }
+
+        
         const url = `${this.baseUrl}${this.endpoint}/listar`;
-        return this.http.post<ApiResponse<DepositoCheque[]>>(url, {})
+        return this.http.post<ApiResponse<DepositoCheque[]>>(url, deposito)
             .pipe(
                 timeout(this.timeoutMs),
                 catchError(this.handleError)

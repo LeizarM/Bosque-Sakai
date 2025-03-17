@@ -3,6 +3,10 @@ import { DepositoCheque } from 'src/app/protected/interfaces/DepositoCheque';
 import { DepositoChequeService } from '../../services/deposito-cheque.service';
 import { MessageService } from 'primeng/api';
 import { finalize } from 'rxjs';
+import { ChBanco } from 'src/app/protected/interfaces/ChBanco';
+import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
+import { Empresa } from 'src/app/protected/interfaces/Empresa';
+import { BancoXCuenta } from 'src/app/protected/interfaces/BancoXCuenta';
 
 @Component({
   selector: 'app-view-cheque',
@@ -12,9 +16,20 @@ import { finalize } from 'rxjs';
 })
 export class ViewChequeComponent implements OnInit {
 
-
   depositos: DepositoCheque[] = [];
   loading: boolean = false;
+
+  // New properties for search criteria
+  empresas: Empresa[] = [];
+  bancos: BancoXCuenta[] = [];
+  sociosNegocio: SocioNegocio[] = [];
+  
+  selectedEmpresa: number = 1; // Default value
+  selectedBanco: number | null = null;
+  selectedCliente: string | null = null;
+  fechaInicio: Date = new Date();
+  fechaFin: Date = new Date();
+  codEmpresa: number = 1; // Default company code
 
   constructor(
     private depositoChequeService: DepositoChequeService,
@@ -22,13 +37,106 @@ export class ViewChequeComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.cargarDepositos();
+    this.cargarEmpresas();
+    
+    // Set default dates (today for both)
+    this.fechaInicio = new Date();
+    this.fechaFin = new Date();
   }
 
+  cargarEmpresas(): void {
+    this.loading = true;
+    this.depositoChequeService.obtenerEmpresas()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.empresas = response.data;
+            if (this.empresas.length > 0) {
+              this.selectedEmpresa = this.empresas[0].codEmpresaBosque || 1;
+              this.codEmpresa = this.selectedEmpresa;
+              this.cargarBancos();
+              this.cargarSociosNegocio();
+            }
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar empresas: ' + error.message
+          });
+        }
+      });
+  }
+
+  onEmpresaChange(): void {
+    this.codEmpresa = this.selectedEmpresa;
+    console.log("la empresa es "+this.codEmpresa);
+    this.cargarBancos();
+    this.cargarSociosNegocio();
+    this.selectedBanco = null;
+    this.selectedCliente = null;
+  }
+
+  cargarBancos(): void {
+    this.loading = true;
+    this.depositoChequeService.obtenerBancos(this.selectedEmpresa)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.bancos = response.data;
+            if (this.bancos.length > 0) {
+              this.selectedBanco = this.bancos[0].idBxC ?? 0; // Select first bank as default
+            }
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar bancos: ' + error.message
+          });
+        }
+      });
+  }
+
+  cargarSociosNegocio(): void {
+    this.loading = true;
+    this.depositoChequeService.obtenerSociosNegocio(this.selectedEmpresa)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.sociosNegocio = response.data;
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar socios de negocio: ' + error.message
+          });
+        }
+      });
+  }
 
   cargarDepositos(): void {
     this.loading = true;
-    this.depositoChequeService.obtenerDepositos()
+    // Use selected criteria for search
+    const idBxC = this.selectedBanco || 0;
+    const clienteCod = this.selectedCliente || '';
+    
+    console.log(idBxC);
+
+
+    this.depositoChequeService.obtenerDepositos(
+      idBxC, 
+      this.fechaInicio, 
+      this.fechaFin, 
+      clienteCod
+    )
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (response) => {
@@ -44,6 +152,11 @@ export class ViewChequeComponent implements OnInit {
           });
         }
       });
+  }
+
+  // Method to handle search when user clicks search button
+  buscar(): void {
+    this.cargarDepositos();
   }
 
   descargarImagen(deposito: DepositoCheque): void {

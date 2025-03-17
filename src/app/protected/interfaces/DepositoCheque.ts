@@ -10,9 +10,21 @@ export interface DepositoCheque {
     fotoPath?:        string;
     aCuenta?:         number;
     audUsuario?:      number;
+    
+
+    codBanco?:        number;
+    fechaInicio?:     Date;
+    fechaFin?:        Date;
+    
+
+
     nombreBanco?:     string;
     nombreEmpresa?:   string;
-    fueReconciliado?: string;
+    esPendiente?: string;
+    numeroDeDocumentos?: string;
+    fechasDeDepositos?: string;
+    numeroDeFacturas?: string;
+    totalMontos?: string;
 }
 
 // Converts JSON strings to/from your types
