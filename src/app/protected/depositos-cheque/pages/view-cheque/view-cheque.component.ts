@@ -38,6 +38,7 @@ export class ViewChequeComponent implements OnInit {
 
   // Modal properties and methods
   showEditModal: boolean = false;
+  updating: boolean = false;
 
   constructor(
     private depositoChequeService: DepositoChequeService,
@@ -246,24 +247,6 @@ export class ViewChequeComponent implements OnInit {
   }
 
   /**
-   * Starts editing the transaction number for a deposit
-   */
-  startEditing(deposito: any): void {
-    console.log('Editando número de transacción para depósito ID:', deposito.idDeposito);
-    this.editingDeposito = deposito;
-    this.editingTransaccionNum = deposito.nroTransaccion || '';
-  }
-
-  /**
-   * Cancels the current editing operation
-   */
-  cancelEditing(): void {
-    console.log('Edición cancelada');
-    this.editingDeposito = null;
-    this.editingTransaccionNum = '';
-  }
-
-  /**
    * Opens the modal for editing transaction number
    */
   openEditModal(deposito: any): void {
@@ -288,28 +271,44 @@ export class ViewChequeComponent implements OnInit {
    */
   saveTransaccionNum(): void {
     if (!this.editingDeposito) return;
-       // Here you would typically call a service to update the data in your backend
-    this.editingDeposito.nroTransaccion = this.editingTransaccionNum;
     
-     const deposito: DepositoCheque = {
-       idDeposito: this.editingDeposito.idDeposito,
-       nroTransaccion: this.editingTransaccionNum,
-       audUsuario: this.getUser()
-     };
-     this.depositoChequeService.updateTransaccionNum(deposito)
-       .subscribe({
-         next: () => {
-           this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Número de transacción actualizado'});
-           this.closeModal();
-         },
+    console.log(`Actualizando depósito ID: ${this.editingDeposito.idDeposito}`);
+    console.log(`Número de transacción anterior: ${this.editingDeposito.nroTransaccion}`);
+    console.log(`Número de transacción nuevo: ${this.editingTransaccionNum}`);
+    
+    // Create deposit object for API call
+    const deposito: DepositoCheque = {
+      idDeposito: this.editingDeposito.idDeposito,
+      nroTransaccion: this.editingTransaccionNum,
+      audUsuario: this.loginService.codUsuario
+    };
+    
+    this.updating = true;
+    this.depositoChequeService.updateTransaccionNum(deposito)
+      .pipe(finalize(() => this.updating = false))
+      .subscribe({
+        next: (response) => {
+          // Only update local object if the API call succeeded
+          this.editingDeposito.nroTransaccion = this.editingTransaccionNum;
+          this.messageService.add({
+            severity: 'success', 
+            summary: 'Éxito', 
+            detail: 'Número de transacción actualizado correctamente'
+          });
+          this.showEditModal = false;
+          this.editingDeposito = null;
+          this.editingTransaccionNum = '';
+        },
         error: (error) => {
-           this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el número de transacción'});
+          console.error('Error updating transaction number:', error);
+          this.messageService.add({
+            severity: 'error', 
+            summary: 'Error', 
+            detail: 'No se pudo actualizar el número de transacción. Por favor, inténtelo de nuevo.'
+          });
+          // Don't close the modal on error so user can try again
         }
       });
- 
-    this.showEditModal = false;
-    this.editingDeposito = null;
-    this.editingTransaccionNum = '';
   }
 
   getUser(): number {

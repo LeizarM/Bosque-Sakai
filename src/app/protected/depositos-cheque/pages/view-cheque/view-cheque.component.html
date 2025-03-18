@@ -183,7 +183,7 @@
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="8">
+                        <td colspan="10">
                             <div class="flex flex-column align-items-center p-4">
                                 <i class="pi pi-search text-400 text-3xl mb-3"></i>
                                 <span class="text-700">No se encontraron depósitos</span>
@@ -193,7 +193,7 @@
                 </ng-template>
                 <ng-template pTemplate="loadingbody">
                     <tr>
-                        <td colspan="8">
+                        <td colspan="10">
                             <div class="flex justify-content-center align-items-center p-3">
                                 <i class="pi pi-spin pi-spinner mr-2"></i>
                                 <span>Cargando datos...</span>
@@ -206,27 +206,40 @@
     </div>
 </div>
 
-<!-- Modal Dialog for Editing Transaction Number -->
+<!-- Modal Dialog for Editing Transaction Number - improved with more context -->
 <p-dialog header="Editar Número de Transacción" 
           [(visible)]="showEditModal" 
           [modal]="true" 
           [style]="{width: '450px'}" 
           [draggable]="false" 
-          [resizable]="false">
+          [resizable]="false"
+          [closeOnEscape]="false"
+          [closable]="false">
     <div class="p-fluid">
         <div class="field">
             <label for="editIdDeposito" class="font-medium text-900">ID Depósito</label>
             <input type="text" pInputText id="editIdDeposito" [value]="editingDeposito?.idDeposito" readonly class="p-inputtext-sm" />
         </div>
-        
+        <div class="field">
+            <label for="editCliente" class="font-medium text-900">Cliente</label>
+            <input type="text" pInputText id="editCliente" [value]="editingDeposito?.codCliente" readonly class="p-inputtext-sm" />
+        </div>
+        <div class="field">
+            <label for="editBanco" class="font-medium text-900">Banco</label>
+            <input type="text" pInputText id="editBanco" [value]="editingDeposito?.nombreBanco" readonly class="p-inputtext-sm" />
+        </div>
+        <div class="field">
+            <label for="editImporte" class="font-medium text-900">Importe</label>
+            <input type="text" pInputText id="editImporte" [value]="editingDeposito?.importe | number:'1.2-2'" readonly class="p-inputtext-sm" />
+        </div>
         <div class="field">
             <label for="editTransaccionNum" class="font-medium text-900">Número de Transacción</label>
             <input type="text" pInputText id="editTransaccionNum" [(ngModel)]="editingTransaccionNum" class="p-inputtext-sm" />
         </div>
     </div>
     <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="closeModal()"></button>
-        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" (click)="saveTransaccionNum()"></button>
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" [disabled]="updating" (click)="closeModal()"></button>
+        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" [disabled]="updating" [loading]="updating" (click)="saveTransaccionNum()"></button>
     </ng-template>
 </p-dialog>
 
