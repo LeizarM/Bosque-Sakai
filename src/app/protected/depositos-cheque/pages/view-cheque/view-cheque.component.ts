@@ -86,10 +86,18 @@ export class ViewChequeComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.data) {
-            this.bancos = response.data;
-            if (this.bancos.length > 0) {
-              this.selectedBanco = this.bancos[0].idBxC ?? 0; // Select first bank as default
-            }
+            // Add "Todos" option at the beginning of the array
+            const todosOption: BancoXCuenta = {
+              idBxC: 0,
+              nombreBanco: 'Todos',
+              codBanco: 0,
+              codEmpresa: this.selectedEmpresa
+            };
+            
+            this.bancos = [todosOption, ...response.data];
+            
+            // Select "Todos" as default
+            this.selectedBanco = 0;
           }
         },
         error: (error) => {
@@ -109,7 +117,15 @@ export class ViewChequeComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.data) {
-            this.sociosNegocio = response.data;
+            // Add "Todos" option at the beginning of the array
+            const todosOption: SocioNegocio = {
+              codCliente: '',
+              nombreCompleto: 'Todos',
+            };
+            
+            this.sociosNegocio = [todosOption, ...response.data];
+            // Select "Todos" as default
+            this.selectedCliente = '';
           }
         },
         error: (error) => {

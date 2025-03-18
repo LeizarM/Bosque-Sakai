@@ -9,6 +9,8 @@ export interface DepositoCheque {
     estado?:          number;
     fotoPath?:        string;
     aCuenta?:         number;
+    fechaI?:          Date;
+    nroTransaccion?:  number;
     audUsuario?:      number;
     
 
