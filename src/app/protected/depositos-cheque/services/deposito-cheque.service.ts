@@ -61,6 +61,18 @@ export class DepositoChequeService {
             );
     }
 
+
+    updateTransaccionNum( deposito : DepositoCheque): Observable<ApiResponse<void>> {
+        const url = `${this.baseUrl}${this.endpoint}/registrar-nroTransaccion`;
+        
+        return this.http.post<ApiResponse<void>>(url, deposito)
+            .pipe(
+                retry(2),
+                timeout(this.timeoutMs),
+                catchError(this.handleError)
+            );
+    }
+
     /**
      * Obtiene la imagen de un depósito
      */

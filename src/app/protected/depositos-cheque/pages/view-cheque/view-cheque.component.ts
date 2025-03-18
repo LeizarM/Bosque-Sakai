@@ -7,6 +7,7 @@ import { ChBanco } from 'src/app/protected/interfaces/ChBanco';
 import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
 import { Empresa } from 'src/app/protected/interfaces/Empresa';
 import { BancoXCuenta } from 'src/app/protected/interfaces/BancoXCuenta';
+import { LoginService } from 'src/app/auth/services/login.service';
 
 @Component({
   selector: 'app-view-cheque',
@@ -31,9 +32,17 @@ export class ViewChequeComponent implements OnInit {
   fechaFin: Date = new Date();
   codEmpresa: number = 1; // Default company code
 
+  // Add these properties to your component class
+  editingDeposito: any = null;
+  editingTransaccionNum: string = '';
+
+  // Modal properties and methods
+  showEditModal: boolean = false;
+
   constructor(
     private depositoChequeService: DepositoChequeService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private loginService: LoginService,
   ) { }
 
   ngOnInit() {
@@ -235,4 +244,75 @@ export class ViewChequeComponent implements OnInit {
     if (!fileName) return '.jpg';
     return fileName.substring(fileName.lastIndexOf('.'));
   }
+
+  /**
+   * Starts editing the transaction number for a deposit
+   */
+  startEditing(deposito: any): void {
+    console.log('Editando número de transacción para depósito ID:', deposito.idDeposito);
+    this.editingDeposito = deposito;
+    this.editingTransaccionNum = deposito.nroTransaccion || '';
+  }
+
+  /**
+   * Cancels the current editing operation
+   */
+  cancelEditing(): void {
+    console.log('Edición cancelada');
+    this.editingDeposito = null;
+    this.editingTransaccionNum = '';
+  }
+
+  /**
+   * Opens the modal for editing transaction number
+   */
+  openEditModal(deposito: any): void {
+    console.log('Editando número de transacción para depósito ID:', deposito.idDeposito);
+    this.editingDeposito = deposito;
+    this.editingTransaccionNum = deposito.nroTransaccion || '';
+    this.showEditModal = true;
+  }
+
+  /**
+   * Closes the edit modal
+   */
+  closeModal(): void {
+    console.log('Edición cancelada');
+    this.showEditModal = false;
+    this.editingDeposito = null;
+    this.editingTransaccionNum = '';
+  }
+
+  /**
+   * Saves the updated transaction number
+   */
+  saveTransaccionNum(): void {
+    if (!this.editingDeposito) return;
+       // Here you would typically call a service to update the data in your backend
+    this.editingDeposito.nroTransaccion = this.editingTransaccionNum;
+    
+     const deposito: DepositoCheque = {
+       idDeposito: this.editingDeposito.idDeposito,
+       nroTransaccion: this.editingTransaccionNum,
+       audUsuario: this.getUser()
+     };
+     this.depositoChequeService.updateTransaccionNum(deposito)
+       .subscribe({
+         next: () => {
+           this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Número de transacción actualizado'});
+           this.closeModal();
+         },
+        error: (error) => {
+           this.messageService.add({severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el número de transacción'});
+        }
+      });
+ 
+    this.showEditModal = false;
+    this.editingDeposito = null;
+    this.editingTransaccionNum = '';
+  }
+
+  getUser(): number {
+    return this.loginService.codUsuario
+  }	
 }
