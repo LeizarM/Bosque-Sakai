@@ -1,0 +1,170 @@
+<div
+  class="card relative shadow-5 border-round p-6"
+  style="background: linear-gradient(135deg, #ffffff, #e0f7fa); border-top: 4px solid #00796b;"
+>
+  <!-- Overlay de carga -->
+  <div
+    class="absolute top-0 left-0 w-full h-full flex align-items-center justify-content-center loading-overlay"
+    *ngIf="loading"
+    style="background: rgba(255,255,255,0.7); z-index: 10;"
+  >
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
+  <h2 class="text-3xl font-bold mb-4" style="color: #00796b;">
+    Registro de Depósitos por Identificar
+  </h2>
+  
+  <form [formGroup]="depositoForm" (ngSubmit)="onSubmit()" class="p-fluid">
+    <div class="grid formgrid">
+      <!-- Empresa -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="codEmpresa" class="block font-semibold mb-2" style="color: #424242;">
+          Empresa
+        </label>
+        <p-dropdown
+          id="codEmpresa"
+          formControlName="codEmpresa"
+          [options]="empresas"
+          optionLabel="nombre"
+          optionValue="codEmpresa"
+          placeholder="Seleccione una empresa"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('codEmpresa')}"
+          (onChange)="onEmpresaChange($event)"
+        ></p-dropdown>
+        <small class="p-error block" *ngIf="isFieldInvalid('codEmpresa')">
+          {{ getErrorMessage('codEmpresa') }}
+        </small>
+      </div>
+
+      <!-- Banco -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="codBanco" class="block font-semibold mb-2" style="color: #424242;">
+          Banco
+        </label>
+        <p-dropdown
+          id="idBxC"
+          formControlName="idBxC"
+          [options]="bancos"
+          optionLabel="nombreBanco"
+          optionValue="idBxC"
+          placeholder="Seleccione un banco"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('idBxC')}"
+        ></p-dropdown>
+        <small class="p-error block" *ngIf="isFieldInvalid('idBxC')">
+          {{ getErrorMessage('idBxC') }}
+        </small>
+      </div>
+
+      <!-- Importe -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="importe" class="block font-semibold mb-2" style="color: #424242;">
+          Importe
+        </label>
+        <p-inputNumber
+          id="importe"
+          formControlName="importe"
+          mode="decimal"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('importe')}"
+          placeholder="0.00"
+        ></p-inputNumber>
+        <small class="p-error block" *ngIf="isFieldInvalid('importe')">
+          {{ getErrorMessage('importe') }}
+        </small>
+      </div>
+
+      <!-- Moneda -->
+      <div class="field col-12 md:col-6 mb-4">
+        <label for="moneda" class="block font-semibold mb-2" style="color: #424242;">
+          Moneda
+        </label>
+        <p-dropdown
+          id="moneda"
+          formControlName="moneda"
+          [options]="monedas"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Seleccione moneda"
+          class="w-full"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('moneda')}"
+        ></p-dropdown>
+        <small class="p-error block" *ngIf="isFieldInvalid('moneda')">
+          {{ getErrorMessage('moneda') }}
+        </small>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="field col-12 mb-4">
+        <label for="obs" class="block font-semibold mb-2" style="color: #424242;">
+          Observaciones
+        </label>
+        <textarea
+          pInputTextarea
+          id="obs"
+          formControlName="obs"
+          rows="3"
+          class="w-full"
+          placeholder="Ingrese observaciones sobre el depósito"
+          [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('obs')}"
+        ></textarea>
+        <small class="p-error block" *ngIf="isFieldInvalid('obs')">
+          {{ getErrorMessage('obs') }}
+        </small>
+      </div>
+
+      <!-- Imagen -->
+      <div class="field col-12 mb-4">
+        <label for="fotoPath" class="block font-semibold mb-2" style="color: #424242;">
+          Imagen del Depósito
+        </label>
+        <input
+          type="file"
+          id="fotoPath"
+          accept="image/jpeg,image/png,image/jpg"
+          class="hidden"
+          (change)="onFileSelect($event)"
+          #fileInput
+        />
+        <button
+          pButton
+          type="button"
+          [label]="selectedFile ? 'Cambiar Imagen' : 'Seleccionar Imagen'"
+          icon="pi pi-upload"
+          class="p-button-rounded p-button-secondary w-full"
+          (click)="fileInput.click()"
+        ></button>
+        <small class="block mt-1" *ngIf="selectedFile" style="color: #00796b;">
+          Archivo seleccionado: {{ selectedFile.name }}
+        </small>
+        <small class="block text-gray-500 mt-1">
+          Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 5MB
+        </small>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex justify-content-end gap-2 mt-4">
+      <p-button
+        type="button"
+        label="Cancelar"
+        icon="pi pi-times"
+        styleClass="p-button-outlined p-button-danger p-button-rounded"
+        (onClick)="onCancel()"
+        [disabled]="loading"
+      ></p-button>
+      <p-button
+        type="submit"
+        label="Guardar"
+        icon="pi pi-save"
+        styleClass="p-button-rounded p-button-success"
+        [loading]="loading"
+      ></p-button>
+    </div>
+  </form>
+</div>
+<p-toast position="top-right"></p-toast>

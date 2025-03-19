@@ -17,8 +17,8 @@ import { EmpleadosComponent } from './rrhh/empleados/empleados.component';
 import { RegistrarChequeComponent } from './depositos-cheque/pages/registrar-cheque/registrar-cheque.component';
 import { ViewChequeComponent } from './depositos-cheque/pages/view-cheque/view-cheque.component';
 import { UsuarioComponent } from './usuarios/pages/usuario.component';
-import { RegistrarDepositoIdentificarComponent } from './depositos-por-identificar/pages/registrar-deposito-identificar/registrar-deposito-identificar.component';
-import { ViewDepositoPorIdentificarComponent } from './depositos-por-identificar/pages/view-deposito-por-identificar/view-deposito-por-identificar.component';
+import { RegistrarDepositoIdentificarComponent } from './depositos-cheque/pages/registrar-deposito-identificar/registrar-deposito-identificar.component';
+import { ViewDepositoPorIdentificarComponent } from './depositos-cheque/pages/view-deposito-por-identificar/view-deposito-por-identificar.component';
 
 
  const routes: Routes = [
