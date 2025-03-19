@@ -11,6 +11,7 @@ export interface DepositoCheque {
     aCuenta?:         number;
     fechaI?:          Date;
     nroTransaccion?:  string;
+    obs?:             string;
     audUsuario?:      number;
     
 
