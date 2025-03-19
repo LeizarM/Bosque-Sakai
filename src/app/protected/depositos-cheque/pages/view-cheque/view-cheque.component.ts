@@ -9,6 +9,10 @@ import { Empresa } from 'src/app/protected/interfaces/Empresa';
 import { BancoXCuenta } from 'src/app/protected/interfaces/BancoXCuenta';
 import { LoginService } from 'src/app/auth/services/login.service';
 
+// Try an alternative approach for importing jspdf and autotable
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 @Component({
   selector: 'app-view-cheque',
   templateUrl: './view-cheque.component.html',
@@ -256,6 +260,35 @@ export class ViewChequeComponent implements OnInit {
     this.showEditModal = true;
   }
 
+
+  rechazarDeposito(deposito: DepositoCheque): void {
+    deposito.fechaI = undefined;
+    console.log(deposito);
+    this.loading = true;
+    this.depositoChequeService.rechazarDeposito(deposito)
+       .pipe(finalize(() => this.loading = false))
+       .subscribe({
+         next: () => {
+          this.messageService.add({
+             severity:'success',
+             summary: 'Rechazado',
+             detail: 'El depósito ha sido rechazado'
+           });
+           this.cargarDepositos();
+          
+           },
+         error: (error) => {
+          this.messageService.add({
+             severity: 'error',
+             summary: 'Error',
+             detail: 'Error al rechazar el depósito:'+ error.message
+           });
+          }       
+    });
+  }
+
+
+
   /**
    * Closes the edit modal
    */
@@ -314,4 +347,124 @@ export class ViewChequeComponent implements OnInit {
   getUser(): number {
     return this.loginService.codUsuario
   }	
+
+  /**
+   * Exports the deposits data to a professional PDF document
+   */
+  exportarPDF(): void {
+    if (this.depositos.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'No hay datos para exportar'
+      });
+      return;
+    }
+
+    try {
+      // Create PDF document in portrait (letter size)
+      const doc = new jsPDF('portrait');
+      
+      // Add title
+      const empresa = this.empresas.find(e => e.codEmpresa === this.selectedEmpresa);
+      doc.setFontSize(14);
+      doc.text(`Reporte de Depósitos`, 14, 15);
+      
+      // Add date range
+      const formatDate = (date: Date) => {
+        return date ? `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}` : '';
+      };
+      
+      doc.setFontSize(10);
+      doc.text(`Periodo: ${formatDate(this.fechaInicio)} - ${formatDate(this.fechaFin)}`, 14, 22);
+      
+      // Generate current date for the report
+      const today = new Date();
+      doc.text(`Fecha de generación: ${formatDate(today)}`, 14, 28);
+      
+      // Create table header and rows
+      const headers = [
+        'ID', 'Cliente', 'Banco', 'Empresa', 'Importe', 'Moneda', 
+        'Fecha', 'Transacción', 'Estado'
+      ];
+      
+      const rows = this.depositos.map(d => [
+        d.idDeposito || '',
+        d.codCliente || '',
+        d.nombreBanco || '',
+        d.nombreEmpresa || '',
+        d.importe ? d.importe.toFixed(2) : '0.00',
+        d.moneda || '',
+        d.fechaI ? formatDate(new Date(d.fechaI)) : '',
+        d.nroTransaccion || '',
+        d.esPendiente !== undefined ? d.esPendiente : ''
+      ]);
+      
+      // Use the autoTable function with settings optimized for letter size
+      autoTable(doc, {
+        head: [headers],
+        body: rows,
+        startY: 32,
+        theme: 'grid',
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+        },
+        headStyles: {
+          fillColor: [60, 60, 60],
+          textColor: 255,
+          fontStyle: 'bold',
+          fontSize: 8
+        },
+        columnStyles: {
+          0: { halign: 'center', cellWidth: 'auto' },  // ID
+          1: { cellWidth: 'auto' },  // Cliente
+          2: { cellWidth: 'auto' },  // Banco
+          3: { cellWidth: 'auto' },  // Empresa
+          4: { halign: 'right', cellWidth: 'auto' },   // Importe
+          5: { cellWidth: 'auto' },  // Moneda
+          6: { cellWidth: 'auto' },  // Fecha
+          7: { cellWidth: 'auto' },  // Transacción
+          8: { cellWidth: 'auto' },  // Estado
+        },
+        didParseCell: (data) => {
+          // Add colors to status cells
+          if (data.section === 'body' && data.column.index === 8) {
+            if (data.cell.raw === 'Pendiente') {
+              data.cell.styles.textColor = [230, 126, 34]; // Orange
+            } else if (data.cell.raw === 'Verificado') {
+              data.cell.styles.textColor = [46, 125, 50]; // Green
+            } else if (data.cell.raw === 'Rechazado') {
+              data.cell.styles.textColor = [192, 57, 43]; // Red
+            }
+          }
+        },
+        didDrawPage: (data) => {
+          // Add page numbers
+          const pageCount = doc.getNumberOfPages();
+          for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8);
+            doc.text(`Página ${i} de ${pageCount}`, doc.internal.pageSize.width - 25, doc.internal.pageSize.height - 10);
+          }
+        }
+      });
+      
+      // Save the PDF
+      doc.save(`Depositos_${formatDate(this.fechaInicio)}-${formatDate(this.fechaFin)}.pdf`);
+      
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'PDF generado correctamente'
+      });
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al generar PDF'
+      });
+    }
+  }
 }

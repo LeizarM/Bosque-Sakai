@@ -1,6 +1,5 @@
 <!-- components/registrar-cheque/registrar-cheque.component.html -->
-<p-tabView>
-  <p-tabPanel header="Registro de Depósitos">
+
     <div
       class="card relative shadow-5 border-round p-6"
       style="background: linear-gradient(135deg, #ffffff, #e0f7fa); border-top: 4px solid #00796b;"
@@ -266,91 +265,4 @@
       </form>
     </div>
     <p-toast position="top-right"></p-toast>
-  </p-tabPanel>
-
-  <p-tabPanel header="Estado de Depósitos">  
-    <div  
-      class="card relative shadow-5 border-round p-6"  
-      style="background: linear-gradient(135deg, #ffffff, #e8f5e9); border-top: 4px solid #388e3c;"  
-    >  
-      <h2 class="text-3xl font-bold mb-4" style="color: #388e3c;">  
-        Consulta Estado de Depósitos  
-      </h2>  
-    
-      <!-- Formulario de búsqueda -->  
-      <form [formGroup]="depositSearchForm" (ngSubmit)="onActualizar()" class="p-fluid">  
-        <div class="grid formgrid">  
-          <!-- Número de Documento -->  
-          <div class="field col-12 md:col-6 mb-4">  
-            <label for="docNumSearch" class="block font-semibold mb-2" style="color: #424242;">  
-              Número de Documento  
-            </label>  
-            <input  
-              pInputText  
-              id="docNumSearch"  
-              formControlName="docNum"  
-              placeholder="Ingrese número de documento"  
-              class="w-full"  
-            />  
-          </div>  
-          <!-- Número de Factura -->  
-          <div class="field col-12 md:col-6 mb-4">  
-            <label for="numFactSearch" class="block font-semibold mb-2" style="color: #424242;">  
-              Número de Factura  
-            </label>  
-            <input  
-              pInputText  
-              id="numFactSearch"  
-              formControlName="numFact"  
-              placeholder="Ingrese número de factura"  
-              class="w-full"  
-            />  
-          </div>  
-        </div>  
-        <div class="flex justify-content-end gap-2 mt-4">  
-          <p-button type="submit" label="Actualizar" icon="pi pi-refresh"></p-button>  
-        </div>  
-      </form>  
-    
-      <!-- Tabla de resultados -->  
-      <div class="mt-4" *ngIf="depositList && depositList.length">  
-        <p-table [value]="depositList">  
-          <ng-template pTemplate="header">  
-            <tr>  
-              <th>ID Deposito</th>  
-              <th>Código Cliente</th>  
-              <th>Número de Documento</th>  
-              <th>Número de Factura</th>  
-             
-              <th> Empresa</th>  
-              <th> Banco</th>  
-              <th>Importe</th>  
-              <th>Moneda</th>  
-  
-              <th>Reconciliado</th>  
-            </tr>  
-          </ng-template>  
-          <ng-template pTemplate="body" let-deposito>  
-            <tr>  
-              <td>{{ deposito.idDeposito }}</td>  
-              <td>{{ deposito.codCliente }}</td>  
-              <td>{{ deposito.docNum }}</td>  
-              <td>{{ deposito.numFact }}</td>  
-             
-              <td>{{ deposito.nombreEmpresa }}</td>  
-              <td>{{ deposito.nombreBanco }}</td>  
-              <td>{{ deposito.importe | number:'1.2-2' }}</td>  
-              <td>{{ deposito.moneda }}</td>    
-              <td>{{ deposito.fueReconciliado }}</td>  
-            </tr>  
-          </ng-template>  
-        </p-table>  
-      </div>  
-    
-      <!-- Opcional: un mensaje en caso de no haber registros -->  
-      <div class="mt-4" *ngIf="depositList && depositList.length === 0">  
-        <p>No se encontraron depósitos con los criterios de búsqueda.</p>  
-      </div>  
-    </div>  
-  </p-tabPanel>
-</p-tabView>
+ 

@@ -266,12 +266,14 @@ export class RegistrarChequeComponent implements OnInit {
   onSubmit(): void {
     if (this.chequeForm.valid && this.selectedFile) {
       const selectedDocs = this.getSelectedDocumentos();
+      const aCuentaValue = this.chequeForm.get('aCuenta')?.value || 0;
 
-      if (selectedDocs.length === 0) {
+      // Permitir registro sin documentos seleccionados solo si "A Cuenta" tiene un valor
+      if (selectedDocs.length === 0 && aCuentaValue <= 0) {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Debe seleccionar al menos un documento'
+          detail: 'Debe seleccionar al menos un documento o ingresar un valor en "A Cuenta"'
         });
         return;
       }

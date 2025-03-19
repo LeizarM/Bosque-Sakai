@@ -7,7 +7,7 @@
             <div class="flex align-items-center">
                 <i class="pi pi-money-bill text-600 text-2xl mr-3"></i>
                 <div>
-                    <h2 class="text-900 font-semibold text-xl m-0">Consulta de Depósitos de Cheque</h2>
+                    <h2 class="text-900 font-semibold text-xl m-0">Consulta de Depósitos</h2>
                     <span class="text-600 text-sm mt-1 block">Busque y visualice los depósitos registrados</span>
                 </div>
             </div>
@@ -105,9 +105,17 @@
             <!-- Results Header -->
             <div class="flex align-items-center justify-content-between mb-3">
                 <div class="text-900 font-medium text-lg">Resultados</div>
-                <span *ngIf="depositos.length > 0" class="text-600 text-sm">
-                    {{depositos.length}} registros encontrados
-                </span>
+                <div class="flex align-items-center gap-2">
+                    <p-button *ngIf="depositos.length > 0"
+                             icon="pi pi-file-pdf" 
+                             label="Exportar PDF" 
+                             styleClass="p-button-outlined p-button-sm" 
+                             (onClick)="exportarPDF()"
+                             pTooltip="Exportar resultados a PDF"></p-button>
+                    <span *ngIf="depositos.length > 0" class="text-600 text-sm">
+                        {{depositos.length}} registros encontrados
+                    </span>
+                </div>
             </div>
             
             <!-- Results Table - more professional styling -->
@@ -153,12 +161,15 @@
                             <span *ngIf="deposito.esPendiente === 'Pendiente'" class="text-orange-500">
                                 <i class="pi pi-clock mr-1"></i>Pendiente
                             </span>
-                            <span *ngIf="deposito.esPendiente !== 'Pendiente'" class="text-green-500">
+                            <span *ngIf="deposito.esPendiente === 'Verificado'" class="text-green-500">
                                 <i class="pi pi-check-circle mr-1"></i>Verificado
+                            </span>
+                            <span *ngIf="deposito.esPendiente === 'Rechazado'" class="text-red-500">
+                                <i class="pi pi-times-circle mr-1"></i>Rechazado
                             </span>
                         </td>
                         <td>
-                            <div class="flex gap-2 justify-content-center">
+                            <div class="flex gap-2 justify-content-center" *ngIf="deposito.esPendiente !== 'Rechazado'">
                                 <button pButton pRipple 
                                         type="button"
                                         icon="pi pi-image" 
@@ -177,6 +188,15 @@
                                         class="p-button-text p-button-sm" 
                                         (click)="openEditModal(deposito)" 
                                         pTooltip="Editar Transacción"></button>
+                                <button pButton pRipple 
+                                        type="button"
+                                        icon="pi pi-times" 
+                                        class="p-button-text p-button-sm" 
+                                        (click)="rechazarDeposito(deposito)" 
+                                        pTooltip="Rechazar Deposito"></button>
+                            </div>
+                            <div class="text-center text-500 text-sm" *ngIf="deposito.esPendiente === 'Rechazado'">
+                                <i class="pi pi-lock mr-1"></i>Sin acciones disponibles
                             </div>
                         </td>
                     </tr>
