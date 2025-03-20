@@ -162,18 +162,31 @@ export class DepositoChequeService {
     }
 
 
-    obtenerDepositosReconciliados(deposito: DepositoCheque): Observable<ApiResponse<DepositoCheque[]>> {  
-        console.log('deposito a reconciliar', deposito);  
-        const url = `${this.baseUrl}${this.endpoint}/listar-reconciliados`;  
-          
-        // Enviar el objeto directamente, sin envolverlo  
-        return this.http.post<ApiResponse<DepositoCheque[]>>(url, deposito)  
-            .pipe(  
-                timeout(this.timeoutMs),  
-                catchError(this.handleError)  
-            );  
-    }
+    /**
+     * Obtiene la lista de depósitos por identificar
+     * @param idBxC 
+     * @param fechaInicio 
+     * @param fechaFin 
+     * @param codCliente 
+     * @returns 
+     */
+    obtenerDepositosXIdentificar( idBxC: number, fechaInicio: Date, fechaFin: Date, codCliente: string ): Observable<ApiResponse<DepositoCheque[]>> {
+        
+        const deposito : DepositoCheque = {
+            idBxC,
+            fechaInicio,
+            fechaFin,
+            codCliente
+        }
 
+        
+        const url = `${this.baseUrl}${this.endpoint}/listar-dep-identificar`;
+        return this.http.post<ApiResponse<DepositoCheque[]>>(url, deposito)
+            .pipe(
+                timeout(this.timeoutMs),
+                catchError(this.handleError)
+            );
+    }
 
     /**
      * Descarga la imagen del depósito

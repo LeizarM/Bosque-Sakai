@@ -362,54 +362,8 @@ export class RegistrarChequeComponent implements OnInit {
     }
   }
 
-  /**
-   * Actualiza la consulta de depósitos usando como criterios el número de documento o
-   * el número de factura. Si un campo está vacío se envía como null para que el query
-   * lo trate como "no filtrar" por ese campo.
-   */
-  onActualizar(): void {
-    let { docNum, numFact } = this.depositSearchForm.value;
 
-
-    console.log("Valores procesados:", { docNum, numFact });
-
-    const depositoCriteria: DepositoCheque = {
-      docNum: parseInt(docNum),
-      numFact: parseInt(numFact)
-    } as DepositoCheque;
-
-    this.loading = true;
-    this.depositoChequeService.obtenerDepositosReconciliados(depositoCriteria)
-      .pipe(finalize(() => this.loading = false))
-      .subscribe({
-        next: (response) => {
-          if (response.data) {
-            this.depositList = response.data;
-            if (this.depositList.length === 0) {
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'Sin Datos',
-                detail: 'No se encontraron depósitos con los criterios de búsqueda.'
-              });
-            }
-          } else {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al obtener depósitos.'
-            });
-          }
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error en la consulta: ' + error.message
-          });
-        }
-      });
-  }
-
+  
   private resetForm(): void {
     this.chequeForm.reset({
       moneda: 'BS',
