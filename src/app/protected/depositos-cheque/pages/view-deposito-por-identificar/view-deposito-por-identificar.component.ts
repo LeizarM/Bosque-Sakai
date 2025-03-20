@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DepositoCheque } from 'src/app/protected/interfaces/DepositoCheque';
 import { DepositoChequeService } from '../../services/deposito-cheque.service';
 import { MessageService } from 'primeng/api';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { LoginService } from 'src/app/auth/services/login.service';
 
 // Import for PDF export
@@ -10,8 +10,10 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 // Imports adicionales necesarios
-import { Empresa } from 'src/app/protected/interfaces/Empresa';
+
 import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
+import { NotaRemision } from 'src/app/protected/interfaces/NotaRemision';
+import { Empresa } from 'src/app/protected/interfaces/Empresa';
 
 @Component({
   selector: 'app-view-deposito-por-identificar',
@@ -33,10 +35,16 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
   depositoSeleccionado: any = null;
   empresas: Empresa[] = [];
   clientes: SocioNegocio[] = [];
-  empresaSeleccionada: number | null = null;
-  clienteSeleccionado: string | null = null;
+  empresaSeleccionada: number = 0;
+  clienteSeleccionado: string =  '';
   cargandoClientes: boolean = false;
   guardandoCliente: boolean = false;
+  
+  // Variables para la selección de documentos y a cuenta
+  documentos: NotaRemision[] = [];
+  totalMontoDocumentos: number = 0;
+  aCuenta: number = 0;
+  importesValidos: boolean = false;
 
   constructor(
     private depositoChequeService: DepositoChequeService,
@@ -256,11 +264,20 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     this.depositoSeleccionado = deposito;
     this.empresaSeleccionada = deposito.codEmpresa;
     this.clienteSeleccionado = deposito.codCliente;
+    this.aCuenta = 0;
+    this.totalMontoDocumentos = 0;
+    this.importesValidos = false;
+    this.documentos = [];
     this.mostrarDialogoCliente = true;
     
     // Si ya tenemos la empresa, cargamos los clientes
     if (this.empresaSeleccionada) {
       this.cargarClientesPorEmpresa({ value: this.empresaSeleccionada });
+      
+      // Si ya tenemos el cliente, cargamos los documentos
+      if (this.clienteSeleccionado) {
+        this.onClienteChange({ value: this.clienteSeleccionado });
+      }
     }
   }
 
@@ -271,7 +288,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     if (codEmpresa) {
       this.cargandoClientes = true;
       this.clientes = [];
-      this.clienteSeleccionado = null;
+      this.clienteSeleccionado = '';
       
       this.depositoChequeService.obtenerSociosNegocio(codEmpresa)
         .pipe(finalize(() => this.cargandoClientes = false))
@@ -298,6 +315,197 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
           }
         });
     }
+  }
+
+  // Método para cargar documentos cuando cambia el cliente
+  onClienteChange(event: any): void {
+    const codCliente = event.value;
+    const codEmpresa = this.empresaSeleccionada;
+
+    if (codCliente && codEmpresa) {
+      this.cargandoClientes = true;
+      this.documentos = [];
+      this.totalMontoDocumentos = 0;
+      
+      this.depositoChequeService.obtenerDocumentosPorCliente(codEmpresa, codCliente)
+        .pipe(finalize(() => this.cargandoClientes = false))
+        .subscribe({
+          next: (response) => {
+            if (response.data && response.data.length > 0) {
+              this.documentos = response.data.map(doc => ({
+                ...doc,
+                selected: false // Inicializamos la selección en false
+              }));
+              this.calcularTotales();
+            } else {
+              this.documentos = [];
+              this.messageService.add({
+                severity: 'info',
+                summary: 'Información',
+                detail: 'No hay documentos disponibles para este cliente'
+              });
+            }
+          },
+          error: (error) => {
+            this.documentos = [];
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al cargar documentos: ' + error.message
+            });
+          }
+        });
+    }
+  }
+
+  // Métodos para manejo de documentos
+  onDocumentSelectChange(documento: NotaRemision): void {
+    this.calcularTotales();
+  }
+
+  toggleDocumentSelection(documento: NotaRemision): void {
+    documento.selected = !documento.selected;
+    this.calcularTotales();
+  }
+
+  toggleAllDocuments(event: any): void {
+    const selectAll = event.checked;
+    this.documentos.forEach(doc => doc.selected = selectAll);
+    this.calcularTotales();
+  }
+
+  get allDocumentsSelected(): boolean {
+    return this.documentos.length > 0 && this.documentos.every(doc => doc.selected);
+  }
+
+  getSelectedDocumentos(): NotaRemision[] {
+    return this.documentos.filter(doc => doc.selected);
+  }
+
+  calcularTotales(): void {
+    // Calcular el total de los documentos seleccionados
+    this.totalMontoDocumentos = this.getSelectedDocumentos().reduce((sum, doc) => {
+      return sum + (doc.totalMonto || 0);
+    }, 0);
+
+    // Verificar si el total de documentos seleccionados + a cuenta es igual al importe del depósito
+    const importeDeposito = this.depositoSeleccionado?.importe || 0;
+    const totalCalculado = this.totalMontoDocumentos + (this.aCuenta || 0);
+    
+    // Permitimos un margen de error muy pequeño por posibles problemas de redondeo
+    const EPSILON = 0.01;
+    this.importesValidos = Math.abs(importeDeposito - totalCalculado) < EPSILON;
+  }
+
+  // Método para actualizar el depósito con los nuevos documentos y a cuenta
+  actualizarDeposito(): void {
+    const selectedDocs = this.getSelectedDocumentos();
+    
+    // Validaciones
+    if (selectedDocs.length === 0 && this.aCuenta <= 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debe seleccionar al menos un documento o ingresar un valor en "A Cuenta"'
+      });
+      return;
+    }
+
+    if (!this.importesValidos) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El total de documentos seleccionados más el monto a cuenta debe ser igual al importe del depósito'
+      });
+      return;
+    }
+
+    this.guardandoCliente = true;
+
+    // Crear el objeto con la información actualizada del depósito
+    const depositoActualizado: DepositoCheque = {
+      idDeposito: this.depositoSeleccionado.idDeposito,
+      codEmpresa: this.empresaSeleccionada,
+      codCliente: this.clienteSeleccionado,
+      idBxC: this.depositoSeleccionado.idBxC,
+      importe: this.depositoSeleccionado.importe, // Mantenemos el importe original
+      aCuenta: this.aCuenta,
+      moneda: this.depositoSeleccionado.moneda,
+      fotoPath: this.depositoSeleccionado.fotoPath,
+      audUsuario: this.getUser()
+    };
+
+    // Primero actualizamos la información básica del depósito
+    this.depositoChequeService.registrarDepositoCheque(
+      //{
+      //idDeposito: depositoActualizado.idDeposito ?? 0,
+      //codCliente: depositoActualizado.codCliente ?? '' ,
+      //importe: depositoActualizado.importe,
+      //aCuenta: depositoActualizado.aCuenta
+    //}
+    depositoActualizado, new File([], 'empty.txt')
+  )
+      .pipe(finalize(() => this.guardandoCliente = false))
+      .subscribe({
+        next: (response) => {
+          // Crear un array de observables para las notas de remisión
+          const notasRemisionObservables = selectedDocs.map((doc) => {
+            const notaRemision = {
+              idNR: 0, // Nuevo registro
+              idDeposito: depositoActualizado.idDeposito,
+              docNum: doc.docNum,
+              fecha: doc.fecha,
+              numFact: doc.numFact,
+              totalMonto: doc.totalMonto,
+              saldoPendiente: doc.saldoPendiente,
+              audUsuario: this.getUser()
+            };
+            // Devuelve el observable sin suscribirse
+            return this.depositoChequeService.registroNotaRemision(notaRemision);
+          });
+          
+          // Usar forkJoin para ejecutar todas las solicitudes en paralelo
+          if (notasRemisionObservables.length > 0) {
+            forkJoin(notasRemisionObservables).subscribe({
+              next: (results) => {
+                console.log('Todas las notas de remisión registradas correctamente', results);
+              },
+              error: (error) => {
+                console.error('Error al registrar notas de remisión', error);
+                this.messageService.add({
+                  severity: 'warn',
+                  summary: 'Advertencia',
+                  detail: 'El depósito se actualizó pero hubo problemas al registrar algunos documentos'
+                });
+              }
+            });
+          }
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Depósito actualizado correctamente'
+          });
+          
+          // Cerrar el diálogo
+          this.mostrarDialogoCliente = false;
+          
+          // Refrescar la lista de depósitos
+          this.buscar();
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al actualizar depósito: ' + error.message
+          });
+        }
+      });
+  }
+
+  // Obtener el usuario actual
+  getUser(): number {
+    return this.loginService.codUsuario;
   }
 
   // Método para actualizar el cliente del depósito

@@ -1,0 +1,9 @@
+/* Estilos para filas seleccionadas en la tabla de documentos */
+.selected-row {
+    background-color: #e3f2fd !important; /* Color azul claro para rows seleccionados */
+}
+
+.p-dialog .p-dialog-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}

@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../../interfaces/ApiResponse';
 import { Empresa } from '../../interfaces/Empresa';
 import { SocioNegocio } from '../../interfaces/SocioNegocio';
-import { ChBanco } from '../../interfaces/ChBanco';
 import { BancoXCuenta } from '../../interfaces/BancoXCuenta';
 
 
@@ -227,10 +226,21 @@ export class DepositoChequeService {
             );
     }
 
-    // Método para actualizar el cliente de un depósito
-    actualizarClienteDeposito(datos: { idDeposito: number, codCliente: number }): Observable<any> {
-        return this.http.put<any>(`${this.baseUrl}/api/depositos-cheque/actualizar-cliente`, datos)
+    
+
+    // Método para actualizar el cliente y detalles de un depósito
+    actualizarClienteDeposito(datos: { 
+        idDeposito: number, 
+        codCliente: string | number,
+        importe?: number,
+        aCuenta?: number
+    }): Observable<ApiResponse<void>> {
+        // Cambiamos a un endpoint específico para actualización y usamos POST en lugar de PUT
+        const url = `${this.baseUrl}${this.endpoint}/registro`;
+        return this.http.post<ApiResponse<void>>(url, datos)
             .pipe(
+                retry(2),
+                timeout(this.timeoutMs),
                 catchError(this.handleError)
             );
     }

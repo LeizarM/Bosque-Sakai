@@ -157,7 +157,7 @@
 </div>
 
 <!-- Diálogo para actualizar cliente -->
-<p-dialog header="Actualizar Cliente" [(visible)]="mostrarDialogoCliente" [style]="{width: '500px'}" 
+<p-dialog header="Actualizar Depósito" [(visible)]="mostrarDialogoCliente" [style]="{width: '700px'}" 
           [modal]="true" [closable]="true" [closeOnEscape]="true" [dismissableMask]="false">
     <div class="p-fluid">
         <!-- Información del depósito (solo lectura) -->
@@ -217,10 +217,119 @@
             <p-dropdown id="cliente" [(ngModel)]="clienteSeleccionado" 
                        [options]="clientes" optionLabel="nombreCompleto" optionValue="codCliente"
                        placeholder="Seleccione un cliente" [disabled]="cargandoClientes"
-                       [filter]="true" filterBy="nombreCompleto" styleClass="w-full"></p-dropdown>
+                       [filter]="true" filterBy="nombreCompleto" styleClass="w-full"
+                       (onChange)="onClienteChange($event)"></p-dropdown>
             <small *ngIf="cargandoClientes" class="text-primary">
                 <i class="pi pi-spin pi-spinner mr-1"></i>Cargando clientes...
             </small>
+        </div>
+        
+        <!-- Campo A Cuenta -->
+        <div class="field mb-4">
+            <label for="aCuenta" class="font-medium text-900">A Cuenta</label>
+            <p-inputNumber id="aCuenta" 
+                          [(ngModel)]="aCuenta"
+                          mode="decimal" 
+                          [minFractionDigits]="2" 
+                          [maxFractionDigits]="2"
+                          placeholder="0.00"
+                          styleClass="w-full"
+                          (onInput)="calcularTotales()"></p-inputNumber>
+        </div>
+        
+        <!-- Tabla de documentos disponibles -->
+        <div class="field mb-4" *ngIf="documentos && documentos.length > 0">
+            <label class="font-medium text-900 mb-2">Documentos Disponibles</label>
+            <p-table [value]="documentos" dataKey="docNum" styleClass="p-datatable-sm p-datatable-striped">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <div class="flex align-items-center justify-content-center">
+                                <p-checkbox
+                                    [binary]="true"
+                                    [ngModel]="allDocumentsSelected"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onChange)="toggleAllDocuments($event)">
+                                </p-checkbox>
+                            </div>
+                        </th>
+                        <th>Número de Documento</th>
+                        <th>Num. Factura</th>
+                        <th>Fecha</th>
+                        <th class="text-right">Total (Bs)</th>
+                        <th class="text-right">Saldo</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-documento>
+                    <tr [ngClass]="{'selected-row': documento.selected}">
+                        <td>
+                            <div class="flex align-items-center justify-content-center">
+                                <p-checkbox 
+                                    [binary]="true"
+                                    [(ngModel)]="documento.selected"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onClick)="$event.stopPropagation()"
+                                    (onChange)="onDocumentSelectChange(documento)">
+                                </p-checkbox>
+                            </div>
+                        </td>
+                        <td (click)="toggleDocumentSelection(documento)">{{documento.docNum}}</td>
+                        <td (click)="toggleDocumentSelection(documento)">{{documento.numFact}}</td>
+                        <td (click)="toggleDocumentSelection(documento)">{{documento.fecha | date:'dd/MM/yyyy'}}</td>
+                        <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.totalMonto | number}}</td>
+                        <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.saldoPendiente | number}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6" class="text-center">No hay documentos disponibles</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary" *ngIf="documentos.length > 0">
+                    <div class="flex justify-content-between">
+                        <div>
+                            <strong>Total de documentos:</strong> {{documentos.length}}
+                        </div>
+                        <div>
+                            <strong>Documentos seleccionados:</strong> {{getSelectedDocumentos().length}} | 
+                            <strong>Total de documentos:</strong> {{totalMontoDocumentos | number}}
+                        </div>
+                    </div>
+                </ng-template>
+            </p-table>
+        </div>
+        
+        <!-- Resumen de Importes -->
+        <div class="field mb-4">
+            <div class="grid">
+                <div class="col-6">
+                    <label class="font-medium text-900">Total Documentos</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-md text-right">
+                        {{totalMontoDocumentos | number:'1.2-2'}} {{depositoSeleccionado?.moneda}}
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label class="font-medium text-900">A Cuenta</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-md text-right">
+                        {{aCuenta | number:'1.2-2'}} {{depositoSeleccionado?.moneda}}
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <label class="font-medium text-900">Importe del Depósito</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-lg font-bold text-right"
+                         [ngClass]="{'bg-red-100': !importesValidos, 'bg-green-100': importesValidos}">
+                        {{depositoSeleccionado?.importe | number:'1.2-2'}} {{depositoSeleccionado?.moneda}}
+                    </div>
+                    <small *ngIf="!importesValidos" class="p-error">
+                        <i class="pi pi-exclamation-triangle mr-1"></i>
+                        El total de documentos más el monto a cuenta debe ser igual al importe del depósito ({{totalMontoDocumentos + aCuenta | number:'1.2-2'}} ≠ {{depositoSeleccionado?.importe | number:'1.2-2'}})
+                    </small>
+                    <small *ngIf="importesValidos && (totalMontoDocumentos > 0 || aCuenta > 0)" class="text-green-600">
+                        <i class="pi pi-check-circle mr-1"></i>
+                        Valores correctamente distribuidos
+                    </small>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -229,7 +338,8 @@
                 class="p-button-text" (click)="mostrarDialogoCliente = false"></button>
         <button pButton pRipple label="Guardar" icon="pi pi-check" 
                 class="p-button-text" [loading]="guardandoCliente"
-                (click)="actualizarCliente()" [disabled]="!clienteSeleccionado"></button>
+                (click)="actualizarDeposito()" 
+                [disabled]="!clienteSeleccionado || (!getSelectedDocumentos().length && aCuenta <= 0) || !importesValidos"></button>
     </ng-template>
 </p-dialog>
 
