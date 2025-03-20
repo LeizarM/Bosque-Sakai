@@ -14,6 +14,7 @@ import autoTable from 'jspdf-autotable';
 import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
 import { NotaRemision } from 'src/app/protected/interfaces/NotaRemision';
 import { Empresa } from 'src/app/protected/interfaces/Empresa';
+import { BancoXCuenta } from 'src/app/protected/interfaces/BancoXCuenta';
 
 @Component({
   selector: 'app-view-deposito-por-identificar',
@@ -45,6 +46,11 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
   totalMontoDocumentos: number = 0;
   aCuenta: number = 0;
   importesValidos: boolean = false;
+
+  // Variables para bancos
+  bancos: BancoXCuenta[] = [];
+  bancoSeleccionado: number = 0;
+  cargandoBancos: boolean = false;
 
   constructor(
     private depositoChequeService: DepositoChequeService,
@@ -264,15 +270,17 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     this.depositoSeleccionado = deposito;
     this.empresaSeleccionada = deposito.codEmpresa;
     this.clienteSeleccionado = deposito.codCliente;
+    this.bancoSeleccionado = deposito.idBxC;
     this.aCuenta = 0;
     this.totalMontoDocumentos = 0;
     this.importesValidos = false;
     this.documentos = [];
     this.mostrarDialogoCliente = true;
     
-    // Si ya tenemos la empresa, cargamos los clientes
+    // Si ya tenemos la empresa, cargamos los clientes y bancos
     if (this.empresaSeleccionada) {
       this.cargarClientesPorEmpresa({ value: this.empresaSeleccionada });
+      this.cargarBancos(this.empresaSeleccionada);
       
       // Si ya tenemos el cliente, cargamos los documentos
       if (this.clienteSeleccionado) {
@@ -283,7 +291,20 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
 
   // Método para cargar los clientes de una empresa
   cargarClientesPorEmpresa(event: any): void {
-    const codEmpresa = event.value;
+    const valorOriginal = event.value;
+    this.documentos = [];
+    this.totalMontoDocumentos = 0;
+    this.aCuenta = 0;
+    this.importesValidos = false;
+    
+    // Manejamos el caso especial de Papirus (código 7)
+    let codEmpresa = valorOriginal;
+    if (valorOriginal === 7) {
+      codEmpresa = 1;  // Usamos codEmpresa = 1 para cargar los datos
+    }
+    
+    // Cargar los bancos para la empresa seleccionada
+    this.cargarBancos(valorOriginal);
     
     if (codEmpresa) {
       this.cargandoClientes = true;
@@ -315,6 +336,45 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
           }
         });
     }
+  }
+
+  // Método para cargar los bancos disponibles para una empresa
+  cargarBancos(codEmpresa: number): void {
+    this.cargandoBancos = true;
+    this.bancos = [];
+    
+    this.depositoChequeService.obtenerBancos(codEmpresa)
+      .pipe(finalize(() => this.cargandoBancos = false))
+      .subscribe({
+        next: (response) => {
+          if (response.data && response.data.length > 0) {
+            this.bancos = response.data;
+            
+            // Si estamos editando y ya hay un banco seleccionado, lo mantenemos
+            if (this.depositoSeleccionado && this.depositoSeleccionado.idBxC) {
+              const bancoExistente = this.bancos.find(b => b.idBxC === this.depositoSeleccionado.idBxC);
+              if (bancoExistente) {
+                this.bancoSeleccionado = bancoExistente.idBxC ?? 0;
+              } else if (this.bancos.length > 0) {
+                // Si el banco anterior no está disponible, seleccionamos el primero
+                this.bancoSeleccionado = this.bancos[0].idBxC ?? 0;
+              }
+            }
+          } else {
+            this.bancos = [];
+            this.bancoSeleccionado = 0;
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar bancos: ' + error.message
+          });
+          this.bancos = [];
+          this.bancoSeleccionado = 0;
+        }
+      });
   }
 
   // Método para cargar documentos cuando cambia el cliente
@@ -427,8 +487,8 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
       idDeposito: this.depositoSeleccionado.idDeposito,
       codEmpresa: this.empresaSeleccionada,
       codCliente: this.clienteSeleccionado,
-      idBxC: this.depositoSeleccionado.idBxC,
-      importe: this.depositoSeleccionado.importe, // Mantenemos el importe original
+      idBxC: this.bancoSeleccionado,  // Incluimos el banco seleccionado
+      importe: this.depositoSeleccionado.importe,
       aCuenta: this.aCuenta,
       moneda: this.depositoSeleccionado.moneda,
       fotoPath: this.depositoSeleccionado.fotoPath,
@@ -437,15 +497,13 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
 
     // Primero actualizamos la información básica del depósito
     this.depositoChequeService.registrarDepositoCheque(
-      //{
-      //idDeposito: depositoActualizado.idDeposito ?? 0,
-      //codCliente: depositoActualizado.codCliente ?? '' ,
-      //importe: depositoActualizado.importe,
-      //aCuenta: depositoActualizado.aCuenta
-    //}
-    depositoActualizado, new File([], 'empty.txt')
-  )
-      .pipe(finalize(() => this.guardandoCliente = false))
+      depositoActualizado, new File([], 'empty.txt')
+    )
+      .pipe(finalize(() => {
+        this.guardandoCliente = false;
+        // Aseguramos que la tabla se recarga después de la actualización, independientemente del éxito o error
+        this.buscar();
+      }))
       .subscribe({
         next: (response) => {
           // Crear un array de observables para las notas de remisión
@@ -457,6 +515,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
               fecha: doc.fecha,
               numFact: doc.numFact,
               totalMonto: doc.totalMonto,
+              estado: 1,
               saldoPendiente: doc.saldoPendiente,
               audUsuario: this.getUser()
             };
@@ -529,7 +588,11 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
 
     // Llamada al servicio para actualizar (debes implementar este método en tu servicio)
     this.depositoChequeService.actualizarClienteDeposito(actualizacion as any)
-      .pipe(finalize(() => this.guardandoCliente = false))
+      .pipe(finalize(() => {
+        this.guardandoCliente = false;
+        // Aseguramos que la tabla se recarga después de la actualización, independientemente del éxito o error
+        this.buscar();
+      }))
       .subscribe({
         next: (response) => {
           this.messageService.add({

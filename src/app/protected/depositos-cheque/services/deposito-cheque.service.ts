@@ -28,11 +28,20 @@ export class DepositoChequeService {
      * Registra un nuevo depósito de cheque
      * @param depositoCheque Datos del depósito a registrar
      */
-    registrarDepositoCheque(depositoCheque: DepositoCheque, file: File): Observable<ApiResponse<void>> {
+    registrarDepositoCheque(depositoCheque: DepositoCheque, file?: File): Observable<ApiResponse<void>> {
         const url = `${this.baseUrl}${this.endpoint}/registro`;
         
         const formData = new FormData();
-        formData.append('file', file);
+        
+        // Si hay un archivo, lo agregamos. Si no, enviamos un archivo vacío
+        if (file && file.size > 0) {
+            formData.append('file', file);
+        } else {
+            // Crear un archivo vacío con un contenido mínimo
+            const emptyBlob = new Blob([''], { type: 'text/plain' });
+            formData.append('file', emptyBlob, 'empty.txt');
+        }
+        
         formData.append('depositoCheque', JSON.stringify(depositoCheque));
         
         return this.http.post<ApiResponse<void>>(url, formData)
