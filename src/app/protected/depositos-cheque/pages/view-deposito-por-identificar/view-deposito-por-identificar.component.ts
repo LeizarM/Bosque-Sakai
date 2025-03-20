@@ -76,16 +76,66 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (response) => {
-          if (response.data) {
+          if (response && response.data) {
             this.depositos = response.data;
+            
+            // Si no hay datos y las fechas no son de hoy, intentar buscar con la fecha actual
+            if (this.depositos.length === 0) {
+              const today = new Date();
+              const startIsToday = this.isSameDay(this.fechaInicio, today);
+              const endIsToday = this.isSameDay(this.fechaFin, today);
+              
+              if (!startIsToday || !endIsToday) {
+                this.buscarConFechaActual();
+              }
+            }
+          } else {
+            // Si response o response.data son nulos
+            this.depositos = [];
+            // Intentar buscar con la fecha actual
+            this.buscarConFechaActual();
           }
         },
         error: (error) => {
+          this.depositos = [];
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
             detail: 'Error al cargar depósitos por identificar: ' + error.message
           });
+        }
+      });
+  }
+
+  // Método para verificar si dos fechas son el mismo día
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
+  }
+
+  // Método para buscar con la fecha actual
+  private buscarConFechaActual(): void {
+    // Establecemos fecha actual para ambos campos
+    const today = new Date();
+    this.fechaInicio = today;
+    this.fechaFin = today;
+    
+    this.loading = true;
+    
+    this.depositoChequeService.obtenerDepositosXIdentificar(0, today, today, '')
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response) => {
+          if (response && response.data) {
+            this.depositos = response.data;
+          } else {
+            this.depositos = [];
+          }
+        },
+        error: (error) => {
+          this.depositos = [];
+          // No mostramos mensaje de error para no saturar al usuario
         }
       });
   }
@@ -399,11 +449,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
               this.calcularTotales();
             } else {
               this.documentos = [];
-              this.messageService.add({
-                severity: 'info',
-                summary: 'Información',
-                detail: 'No hay documentos disponibles para este cliente'
-              });
+              // Eliminamos el mensaje informativo
             }
           },
           error: (error) => {
@@ -501,7 +547,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     )
       .pipe(finalize(() => {
         this.guardandoCliente = false;
-        // Aseguramos que la tabla se recarga después de la actualización, independientemente del éxito o error
+        // Aseguramos que la tabla se recarga después de la actualización
         this.buscar();
       }))
       .subscribe({
@@ -548,9 +594,6 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
           
           // Cerrar el diálogo
           this.mostrarDialogoCliente = false;
-          
-          // Refrescar la lista de depósitos
-          this.buscar();
         },
         error: (error) => {
           this.messageService.add({
@@ -590,7 +633,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     this.depositoChequeService.actualizarClienteDeposito(actualizacion as any)
       .pipe(finalize(() => {
         this.guardandoCliente = false;
-        // Aseguramos que la tabla se recarga después de la actualización, independientemente del éxito o error
+        // Aseguramos que la tabla se recarga después de la actualización
         this.buscar();
       }))
       .subscribe({
@@ -611,9 +654,6 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
           
           // Cerrar el diálogo
           this.mostrarDialogoCliente = false;
-          
-          // Refrescar la lista de depósitos
-          this.buscar();
         },
         error: (error) => {
           this.messageService.add({
