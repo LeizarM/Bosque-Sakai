@@ -74,7 +74,7 @@
             <!-- Results Table - Modified to show only specific columns -->
             <p-table [value]="depositos" 
                      [loading]="loading" 
-                     styleClass="p-datatable-sm" 
+                     styleClass="p-datatable-sm p-datatable-striped" 
                      [paginator]="true" 
                      [rows]="10" 
                      [rowsPerPageOptions]="[5,10,25,50]"
@@ -84,31 +84,41 @@
                      responsiveLayout="scroll">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="idDeposito" style="width: 70px">ID <p-sortIcon field="idDeposito"></p-sortIcon></th>
+                        <th pSortableColumn="idDeposito" style="width: 70px" class="text-center">ID <p-sortIcon field="idDeposito"></p-sortIcon></th>
                         <th pSortableColumn="codCliente">Cliente <p-sortIcon field="codCliente"></p-sortIcon></th>
                         <th pSortableColumn="nombreEmpresa">Empresa <p-sortIcon field="nombreEmpresa"></p-sortIcon></th>
                         <th pSortableColumn="nombreBanco">Banco <p-sortIcon field="nombreBanco"></p-sortIcon></th>
-                        <th pSortableColumn="importe">Importe <p-sortIcon field="importe"></p-sortIcon></th>
-                        <th pSortableColumn="moneda" style="width: 100px">Moneda <p-sortIcon field="moneda"></p-sortIcon></th>
-                        <th pSortableColumn="fechaI">Fecha <p-sortIcon field="fechaI"></p-sortIcon></th>
-                        <th pSortableColumn="esPendiente">Estado <p-sortIcon field="esPendiente"></p-sortIcon></th>
+                        <th pSortableColumn="importe" class="text-right">Importe <p-sortIcon field="importe"></p-sortIcon></th>
+                        <th pSortableColumn="moneda" style="width: 100px" class="text-center">Moneda <p-sortIcon field="moneda"></p-sortIcon></th>
+                        <th pSortableColumn="fechaI" style="width: 110px" class="text-center">Fecha <p-sortIcon field="fechaI"></p-sortIcon></th>
+                        <th pSortableColumn="esPendiente" style="width: 120px" class="text-center">Estado <p-sortIcon field="esPendiente"></p-sortIcon></th>
                         <th pSortableColumn="obs">Observaciones <p-sortIcon field="obs"></p-sortIcon></th>
-                        <th style="width: 150px">Acciones</th>
+                        <th style="width: 120px" class="text-center">Acciones</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-deposito>
                     <tr>
-                        <td>{{deposito.idDeposito}}</td>
+                        <td class="text-center font-medium">{{deposito.idDeposito}}</td>
                         <td>
-                            <span class="text-900">{{deposito.codCliente}}</span>
+                            <span class="text-900 font-medium">{{deposito.codCliente}}</span>
                         </td>
                         <td>{{deposito.nombreEmpresa}}</td>
                         <td>{{deposito.nombreBanco}}</td>
-                        <td>{{deposito.importe | number }}</td>
-                        <td>{{deposito.moneda}}</td>
-                        <td>{{deposito.fechaI | date:'dd/MM/yyyy'}}</td>   
-                        <td>{{deposito.esPendiente}}</td>
-                        <td>{{deposito.obs}}</td>
+                        <td class="text-right font-medium">{{deposito.importe | number:'1.2-2'}}</td>
+                        <td class="text-center">{{deposito.moneda}}</td>
+                        <td class="text-center">{{deposito.fechaI | date:'dd/MM/yyyy'}}</td>   
+                        <td class="text-center">
+                            <span *ngIf="deposito.esPendiente === 'Pendiente'" class="status-badge status-pending">
+                                <i class="pi pi-clock mr-1"></i>Pendiente
+                            </span>
+                            <span *ngIf="deposito.esPendiente === 'Verificado'" class="status-badge status-verified">
+                                <i class="pi pi-check-circle mr-1"></i>Verificado
+                            </span>
+                            <span *ngIf="deposito.esPendiente !== 'Pendiente' && deposito.esPendiente !== 'Verificado'" class="status-badge">
+                                {{deposito.esPendiente}}
+                            </span>
+                        </td>
+                        <td class="truncate-text">{{deposito.obs}}</td>
                         <td>
                             <div class="flex gap-2 justify-content-center">
                                 <button *ngIf="deposito.esPendiente !== 'Verificado'" pButton pRipple 
@@ -130,7 +140,7 @@
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
                     <tr>
-                        <td colspan="9">
+                        <td colspan="10">
                             <div class="flex flex-column align-items-center p-4">
                                 <i class="pi pi-search text-400 text-3xl mb-3"></i>
                                 <span class="text-700">No se encontraron depósitos por identificar</span>
@@ -140,7 +150,7 @@
                 </ng-template>
                 <ng-template pTemplate="loadingbody">
                     <tr>
-                        <td colspan="9">
+                        <td colspan="10">
                             <div class="flex justify-content-center align-items-center p-3">
                                 <i class="pi pi-spin pi-spinner mr-2"></i>
                                 <span>Cargando datos...</span>
@@ -149,6 +159,39 @@
                     </tr>
                 </ng-template>
             </p-table>
+
+            <!-- Add these style tags at the end of your component -->
+            <style>
+                .status-badge {
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 2rem;
+                    font-size: 0.875rem;
+                    display: inline-flex;
+                    align-items: center;
+                    white-space: nowrap;
+                }
+                .status-pending {
+                    background-color: #FEF0CD;
+                    color: #B78103;
+                }
+                .status-verified {
+                    background-color: #D1FAE5;
+                    color: #047857;
+                }
+                .truncate-text {
+                    max-width: 150px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                :host ::ng-deep .p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+                    background-color: #f9fafb;
+                }
+                :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+                    background-color: #f8fafc;
+                    font-weight: 600;
+                }
+            </style>
         </div>
     </div>
 </div>
