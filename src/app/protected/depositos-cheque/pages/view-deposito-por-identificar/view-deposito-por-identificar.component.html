@@ -91,6 +91,7 @@
                         <th pSortableColumn="importe">Importe <p-sortIcon field="importe"></p-sortIcon></th>
                         <th pSortableColumn="moneda" style="width: 100px">Moneda <p-sortIcon field="moneda"></p-sortIcon></th>
                         <th pSortableColumn="fechaI">Fecha <p-sortIcon field="fechaI"></p-sortIcon></th>
+                        <th pSortableColumn="esPendiente">Estado <p-sortIcon field="esPendiente"></p-sortIcon></th>
                         <th pSortableColumn="obs">Observaciones <p-sortIcon field="obs"></p-sortIcon></th>
                         <th style="width: 150px">Acciones</th>
                     </tr>
@@ -105,23 +106,24 @@
                         <td>{{deposito.nombreBanco}}</td>
                         <td>{{deposito.importe | number }}</td>
                         <td>{{deposito.moneda}}</td>
-                        <td>{{deposito.fechaI | date:'dd/MM/yyyy'}}</td>
+                        <td>{{deposito.fechaI | date:'dd/MM/yyyy'}}</td>   
+                        <td>{{deposito.esPendiente}}</td>
                         <td>{{deposito.obs}}</td>
                         <td>
                             <div class="flex gap-2 justify-content-center">
-                                <button pButton pRipple 
+                                <button *ngIf="deposito.esPendiente !== 'Verificado'" pButton pRipple 
                                         type="button"
                                         icon="pi pi-user-edit" 
                                         class="p-button-text p-button-sm p-button-warning" 
                                         (click)="abrirDialogoActualizarCliente(deposito)" 
                                         pTooltip="Actualizar Cliente"></button>
+                                
                                 <button pButton pRipple 
                                         type="button"
-                                        icon="pi pi-image" 
+                                        icon="pi pi-file-pdf" 
                                         class="p-button-text p-button-sm" 
-                                        (click)="descargarImagen(deposito)" 
-                                        pTooltip="Descargar Imagen"></button>
-                               
+                                        (click)="descargarPdf(deposito)" 
+                                        pTooltip="Descargar PDF"></button>
                             </div>
                         </td>
                     </tr>
@@ -180,7 +182,7 @@
                 <div class="col-6 mb-3">
                     <label class="block text-sm font-medium text-700 mb-1">Importe</label>
                     <div class="info-field font-medium text-primary-800">
-                        {{depositoSeleccionado?.importe | number:'1.2-2'}} {{depositoSeleccionado?.moneda}}
+                        {{depositoSeleccionado?.importe | number}} {{depositoSeleccionado?.moneda}}
                     </div>
                 </div>
                 
@@ -210,7 +212,7 @@
                 <label for="empresa" class="font-medium text-700 mb-2 block">Empresa:</label>
                 <p-dropdown id="empresa" [(ngModel)]="empresaSeleccionada" 
                           [options]="empresas" optionLabel="nombre" optionValue="codEmpresa"
-                          placeholder="Seleccione una empresa" [disabled]="cargandoClientes"
+                          placeholder="Seleccione una empresa" [disabled]="true"
                           (onChange)="cargarClientesPorEmpresa($event)" styleClass="w-full"></p-dropdown>
             </div>
             
@@ -320,13 +322,13 @@
                 <div class="col-6">
                     <label class="font-medium text-700 block mb-2">Total Documentos</label>
                     <div class="p-inputtext p-component p-filled surface-100 text-md text-right">
-                        {{totalMontoDocumentos | number:'1.2-2'}} {{depositoSeleccionado?.moneda}}
+                        {{totalMontoDocumentos | number}} {{depositoSeleccionado?.moneda}}
                     </div>
                 </div>
                 <div class="col-6">
                     <label class="font-medium text-700 block mb-2">A Cuenta</label>
                     <div class="p-inputtext p-component p-filled surface-100 text-md text-right">
-                        {{aCuenta | number:'1.2-2'}} {{depositoSeleccionado?.moneda}}
+                        {{aCuenta | number }} {{depositoSeleccionado?.moneda}}
                     </div>
                 </div>
                 <div class="col-12 mt-3">

@@ -138,7 +138,7 @@ export class RegistrarDepositoIdentificarComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.depositoForm.valid && this.selectedFile) {
+    if (this.depositoForm.valid) {
       this.loading = true;
       const formValue = this.depositoForm.value;
 
@@ -153,7 +153,7 @@ export class RegistrarDepositoIdentificarComponent implements OnInit {
         audUsuario: this.getUser()
       };
 
-      this.depositoChequeService.registrarDepositoCheque(depositoPorIdentificar, this.selectedFile)
+      this.depositoChequeService.registrarDepositoCheque(depositoPorIdentificar, this.selectedFile ?? undefined)
         .pipe(finalize(() => this.loading = false))
         .subscribe({
           next: (response) => {
@@ -173,14 +173,6 @@ export class RegistrarDepositoIdentificarComponent implements OnInit {
           }
         });
     } else {
-      if (!this.selectedFile) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Debe seleccionar una imagen del depósito'
-        });
-      }
-
       this.markFormGroupTouched(this.depositoForm);
     }
   }
