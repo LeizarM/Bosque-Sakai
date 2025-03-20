@@ -227,6 +227,14 @@ export class DepositoChequeService {
             );
     }
 
+    // Método para actualizar el cliente de un depósito
+    actualizarClienteDeposito(datos: { idDeposito: number, codCliente: number }): Observable<any> {
+        return this.http.put<any>(`${this.baseUrl}/api/depositos-cheque/actualizar-cliente`, datos)
+            .pipe(
+                catchError(this.handleError)
+            );
+    }
+
     /**
      * Manejo centralizado de errores
      */

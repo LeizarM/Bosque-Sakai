@@ -9,6 +9,10 @@ import { LoginService } from 'src/app/auth/services/login.service';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+// Imports adicionales necesarios
+import { Empresa } from 'src/app/protected/interfaces/Empresa';
+import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
+
 @Component({
   selector: 'app-view-deposito-por-identificar',
   templateUrl: './view-deposito-por-identificar.component.html',
@@ -24,6 +28,16 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
   fechaInicio: Date = new Date();
   fechaFin: Date = new Date();
 
+  // Variables para el diálogo de actualización de cliente
+  mostrarDialogoCliente: boolean = false;
+  depositoSeleccionado: any = null;
+  empresas: Empresa[] = [];
+  clientes: SocioNegocio[] = [];
+  empresaSeleccionada: number | null = null;
+  clienteSeleccionado: string | null = null;
+  cargandoClientes: boolean = false;
+  guardandoCliente: boolean = false;
+
   constructor(
     private depositoChequeService: DepositoChequeService,
     private messageService: MessageService,
@@ -34,6 +48,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     // Set default dates (today for both)
     this.fechaInicio = new Date();
     this.fechaFin = new Date();
+    this.cargarEmpresas();
   }
 
   buscar(): void {
@@ -215,5 +230,127 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
         detail: 'Error al generar PDF'
       });
     }
+  }
+
+  // Método para cargar las empresas disponibles
+  cargarEmpresas(): void {
+    this.depositoChequeService.obtenerEmpresas()
+      .subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.empresas = response.data;
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar empresas: ' + error.message
+          });
+        }
+      });
+  }
+
+  // Método para abrir el diálogo de actualización de cliente
+  abrirDialogoActualizarCliente(deposito: any): void {
+    this.depositoSeleccionado = deposito;
+    this.empresaSeleccionada = deposito.codEmpresa;
+    this.clienteSeleccionado = deposito.codCliente;
+    this.mostrarDialogoCliente = true;
+    
+    // Si ya tenemos la empresa, cargamos los clientes
+    if (this.empresaSeleccionada) {
+      this.cargarClientesPorEmpresa({ value: this.empresaSeleccionada });
+    }
+  }
+
+  // Método para cargar los clientes de una empresa
+  cargarClientesPorEmpresa(event: any): void {
+    const codEmpresa = event.value;
+    
+    if (codEmpresa) {
+      this.cargandoClientes = true;
+      this.clientes = [];
+      this.clienteSeleccionado = null;
+      
+      this.depositoChequeService.obtenerSociosNegocio(codEmpresa)
+        .pipe(finalize(() => this.cargandoClientes = false))
+        .subscribe({
+          next: (response) => {
+            if (response.data && response.data.length > 0) {
+              this.clientes = response.data;
+              
+              // Si estamos editando y el cliente actual pertenece a esta empresa, lo seleccionamos
+              if (this.depositoSeleccionado && this.depositoSeleccionado.codCliente) {
+                const clienteExistente = this.clientes.find(c => c.codCliente === this.depositoSeleccionado.codCliente);
+                if (clienteExistente) {
+                  this.clienteSeleccionado = clienteExistente.codCliente ?? '';
+                }
+              }
+            }
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al cargar clientes: ' + error.message
+            });
+          }
+        });
+    }
+  }
+
+  // Método para actualizar el cliente del depósito
+  actualizarCliente(): void {
+    if (!this.depositoSeleccionado || !this.clienteSeleccionado) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debe seleccionar un cliente'
+      });
+      return;
+    }
+
+    this.guardandoCliente = true;
+
+    // Objeto con la información a actualizar
+    const actualizacion = {
+      idDeposito: this.depositoSeleccionado.idDeposito,
+      codCliente: this.clienteSeleccionado
+    };
+
+    // Llamada al servicio para actualizar (debes implementar este método en tu servicio)
+    this.depositoChequeService.actualizarClienteDeposito(actualizacion as any)
+      .pipe(finalize(() => this.guardandoCliente = false))
+      .subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Cliente actualizado correctamente'
+          });
+          
+          // Actualizar la información en la lista
+          this.depositoSeleccionado.codCliente = this.clienteSeleccionado;
+          // Obtener el nombre del cliente seleccionado para actualizar la UI
+          const clienteInfo = this.clientes.find(c => c.codCliente === this.clienteSeleccionado);
+          if (clienteInfo) {
+            this.depositoSeleccionado.nombreCliente = clienteInfo.nombreCompleto;
+          }
+          
+          // Cerrar el diálogo
+          this.mostrarDialogoCliente = false;
+          
+          // Refrescar la lista de depósitos
+          this.buscar();
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al actualizar cliente: ' + error.message
+          });
+        }
+      });
   }
 }

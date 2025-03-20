@@ -90,8 +90,9 @@
                         <th pSortableColumn="nombreBanco">Banco <p-sortIcon field="nombreBanco"></p-sortIcon></th>
                         <th pSortableColumn="importe">Importe <p-sortIcon field="importe"></p-sortIcon></th>
                         <th pSortableColumn="moneda" style="width: 100px">Moneda <p-sortIcon field="moneda"></p-sortIcon></th>
+                        <th pSortableColumn="fechaI">Fecha <p-sortIcon field="fechaI"></p-sortIcon></th>
                         <th pSortableColumn="obs">Observaciones <p-sortIcon field="obs"></p-sortIcon></th>
-                        <th style="width: 110px">Acciones</th>
+                        <th style="width: 150px">Acciones</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-deposito>
@@ -102,11 +103,18 @@
                         </td>
                         <td>{{deposito.nombreEmpresa}}</td>
                         <td>{{deposito.nombreBanco}}</td>
-                        <td>{{deposito.importe | number }}<td>
+                        <td>{{deposito.importe | number }}</td>
                         <td>{{deposito.moneda}}</td>
+                        <td>{{deposito.fechaI | date:'dd/MM/yyyy'}}</td>
                         <td>{{deposito.obs}}</td>
                         <td>
                             <div class="flex gap-2 justify-content-center">
+                                <button pButton pRipple 
+                                        type="button"
+                                        icon="pi pi-user-edit" 
+                                        class="p-button-text p-button-sm p-button-warning" 
+                                        (click)="abrirDialogoActualizarCliente(deposito)" 
+                                        pTooltip="Actualizar Cliente"></button>
                                 <button pButton pRipple 
                                         type="button"
                                         icon="pi pi-image" 
@@ -147,6 +155,83 @@
         </div>
     </div>
 </div>
+
+<!-- Diálogo para actualizar cliente -->
+<p-dialog header="Actualizar Cliente" [(visible)]="mostrarDialogoCliente" [style]="{width: '500px'}" 
+          [modal]="true" [closable]="true" [closeOnEscape]="true" [dismissableMask]="false">
+    <div class="p-fluid">
+        <!-- Información del depósito (solo lectura) -->
+        <div class="card mb-3">
+            <h5 class="text-lg font-medium text-800 mb-3">Información del Depósito</h5>
+            <div class="grid">
+                <div class="col-6 mb-2">
+                    <label class="block text-sm font-medium text-700 mb-1">ID Depósito</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-md">
+                        {{depositoSeleccionado?.idDeposito || '-'}}
+                    </div>
+                </div>
+                
+                <div class="col-6 mb-2">
+                    <label class="block text-sm font-medium text-700 mb-1">Banco</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-md">
+                        {{depositoSeleccionado?.nombreBanco || '-'}}
+                    </div>
+                </div>
+                
+                <div class="col-6 mb-2">
+                    <label class="block text-sm font-medium text-700 mb-1">Importe</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-md">
+                        {{depositoSeleccionado?.importe | number}} {{depositoSeleccionado?.moneda}}
+                    </div>
+                </div>
+                
+                <div class="col-6 mb-2">
+                    <label class="block text-sm font-medium text-700 mb-1">Fecha</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-md">
+                        {{depositoSeleccionado?.fechaI | date:'dd/MM/yyyy'}}
+                    </div>
+                </div>
+                
+                <div class="col-12 mb-2">
+                    <label class="block text-sm font-medium text-700 mb-1">Observaciones</label>
+                    <div class="p-inputtext p-component p-filled bg-gray-100 text-md" style="min-height: 40px">
+                        {{depositoSeleccionado?.obs || 'Sin observaciones'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Campos editables -->
+        <h5 class="text-lg font-medium text-800 mb-3">Asignar Cliente</h5>
+        
+        <div class="field mb-4">
+            <label for="empresa" class="font-medium text-900">Empresa</label>
+            <p-dropdown id="empresa" [(ngModel)]="empresaSeleccionada" 
+                       [options]="empresas" optionLabel="nombre" optionValue="codEmpresa"
+                       placeholder="Seleccione una empresa" [disabled]="cargandoClientes"
+                       (onChange)="cargarClientesPorEmpresa($event)" styleClass="w-full"></p-dropdown>
+        </div>
+        
+        <div class="field mb-4">
+            <label for="cliente" class="font-medium text-900">Cliente</label>
+            <p-dropdown id="cliente" [(ngModel)]="clienteSeleccionado" 
+                       [options]="clientes" optionLabel="nombreCompleto" optionValue="codCliente"
+                       placeholder="Seleccione un cliente" [disabled]="cargandoClientes"
+                       [filter]="true" filterBy="nombreCompleto" styleClass="w-full"></p-dropdown>
+            <small *ngIf="cargandoClientes" class="text-primary">
+                <i class="pi pi-spin pi-spinner mr-1"></i>Cargando clientes...
+            </small>
+        </div>
+    </div>
+    
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" 
+                class="p-button-text" (click)="mostrarDialogoCliente = false"></button>
+        <button pButton pRipple label="Guardar" icon="pi pi-check" 
+                class="p-button-text" [loading]="guardandoCliente"
+                (click)="actualizarCliente()" [disabled]="!clienteSeleccionado"></button>
+    </ng-template>
+</p-dialog>
 
 <!-- Toast messages -->
 <p-toast position="top-right"></p-toast>
