@@ -256,7 +256,61 @@
         <div class="field mb-4 mt-3" *ngIf="documentos && documentos.length > 0">
             <label class="font-medium text-700 mb-2 block">Documentos Disponibles</label>
             <p-table [value]="documentos" dataKey="docNum" styleClass="p-datatable-sm p-datatable-striped">
-                <!-- ...existing table content... -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <div class="flex align-items-center justify-content-center">
+                                <p-checkbox
+                                    [binary]="true"
+                                    [ngModel]="allDocumentsSelected"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onChange)="toggleAllDocuments($event)">
+                                </p-checkbox>
+                            </div>
+                        </th>
+                        <th>Número de Documento</th>
+                        <th>Num. Factura</th>
+                        <th>Fecha</th>
+                        <th class="text-right">Total (Bs)</th>
+                        <th class="text-right">Saldo</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-documento>
+                    <tr [ngClass]="{'selected-row': documento.selected}">
+                        <td>
+                            <div class="flex align-items-center justify-content-center">
+                                <p-checkbox 
+                                    [binary]="true"
+                                    [(ngModel)]="documento.selected"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (onClick)="$event.stopPropagation()"
+                                    (onChange)="onDocumentSelectChange(documento)">
+                                </p-checkbox>
+                            </div>
+                        </td>
+                        <td (click)="toggleDocumentSelection(documento)">{{documento.docNum}}</td>
+                        <td (click)="toggleDocumentSelection(documento)">{{documento.numFact}}</td>
+                        <td (click)="toggleDocumentSelection(documento)">{{documento.fecha | date:'dd/MM/yyyy'}}</td>
+                        <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.totalMonto | number}}</td>
+                        <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.saldoPendiente | number}}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="6" class="text-center">No hay documentos disponibles</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="summary" *ngIf="documentos.length > 0">
+                    <div class="flex justify-content-between">
+                        <div>
+                            <strong>Total de documentos:</strong> {{documentos.length}}
+                        </div>
+                        <div>
+                            <strong>Documentos seleccionados:</strong> {{getSelectedDocumentos().length}} | 
+                            <strong>Total de documentos:</strong> {{totalMontoDocumentos | number}}
+                        </div>
+                    </div>
+                </ng-template>
             </p-table>
         </div>
         
