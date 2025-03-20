@@ -98,11 +98,14 @@ export class RegistrarDepositoIdentificarComponent implements OnInit {
   onEmpresaChange(event: any): void {
     // Nos aseguramos que, en el caso de papirus, el valor se ajuste a 1
     this.bancos = [];
-    if (event.value === 7) {
-      event.value = 1;
+    let codEmpresa = event.value;
+    
+    /* if (codEmpresa === 7) {
+      codEmpresa = 1;
+      // Actualizamos el valor en el formulario sin emitir un nuevo evento
+      this.depositoForm.get('codEmpresa')?.setValue(codEmpresa, { emitEvent: false });
     }
-    const codEmpresa = event.value;
-
+ */
     if (codEmpresa) {
       this.cargarBancos(codEmpresa);
     }

@@ -390,10 +390,13 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
 
   // Método para cargar los bancos disponibles para una empresa
   cargarBancos(codEmpresa: number): void {
+    // Manejamos el caso especial de Papirus (código 7)
+    let empresaCodigo = codEmpresa;
+    
     this.cargandoBancos = true;
     this.bancos = [];
     
-    this.depositoChequeService.obtenerBancos(codEmpresa)
+    this.depositoChequeService.obtenerBancos(empresaCodigo)
       .pipe(finalize(() => this.cargandoBancos = false))
       .subscribe({
         next: (response) => {
@@ -536,8 +539,10 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
       idBxC: this.bancoSeleccionado,  // Incluimos el banco seleccionado
       importe: this.depositoSeleccionado.importe,
       aCuenta: this.aCuenta,
+      estado : 1,
       moneda: this.depositoSeleccionado.moneda,
       fotoPath: this.depositoSeleccionado.fotoPath,
+      obs: this.depositoSeleccionado.obs,
       audUsuario: this.getUser()
     };
 
