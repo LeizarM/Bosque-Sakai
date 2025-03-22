@@ -28,6 +28,8 @@ export interface DepositoCheque {
     fechasDeDepositos?: string;
     numeroDeFacturas?: string;
     totalMontos?: string;
+
+    estadoFiltro?: string;
 }
 
 // Converts JSON strings to/from your types

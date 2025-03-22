@@ -89,9 +89,21 @@
                                 styleClass="w-full"></p-dropdown>
                 </div>
                 
+                <!-- Estado Field - Modified to use normal label -->
+                <div class="field col-12 md:col-4 lg:col-3 mb-3">
+                    <label for="estado" class="block text-900 font-medium mb-2">Estado</label>
+                    <p-dropdown id="estado" 
+                                [options]="estadosDeposito" 
+                                [(ngModel)]="selectedEstado" 
+                                optionLabel="label" 
+                                optionValue="value"
+                                [disabled]="loading"
+                                styleClass="w-full"></p-dropdown>
+                </div>
+                
                 <!-- Search Button - more subtle -->
                 <div class="field col-12 md:col-4 lg:col-6 mb-3 flex align-items-end">
-                    <p-button label="Buscar" 
+                    <p-button label="Buscar/Actualizar" 
                              icon="pi pi-search" 
                              styleClass="w-auto ml-auto" 
                              [loading]="loading"
@@ -226,7 +238,7 @@
     </div>
 </div>
 
-<!-- Modal Dialog for Editing Transaction Number - improved with more context -->
+<!-- Modal Dialog for Editing Transaction Number - now with reactive forms -->
 <p-dialog header="Editar Número de Transacción" 
           [(visible)]="showEditModal" 
           [modal]="true" 
@@ -235,31 +247,38 @@
           [resizable]="false"
           [closeOnEscape]="false"
           [closable]="false">
-    <div class="p-fluid">
+    <form [formGroup]="editForm" class="p-fluid">
         <div class="field">
             <label for="editIdDeposito" class="font-medium text-900">ID Depósito</label>
-            <input type="text" pInputText id="editIdDeposito" [value]="editingDeposito?.idDeposito" readonly class="p-inputtext-sm" />
+            <input type="text" pInputText id="editIdDeposito" formControlName="idDeposito" readonly class="p-inputtext-sm" />
         </div>
         <div class="field">
             <label for="editCliente" class="font-medium text-900">Cliente</label>
-            <input type="text" pInputText id="editCliente" [value]="editingDeposito?.codCliente" readonly class="p-inputtext-sm" />
+            <input type="text" pInputText id="editCliente" formControlName="codCliente" readonly class="p-inputtext-sm" />
         </div>
         <div class="field">
             <label for="editBanco" class="font-medium text-900">Banco</label>
-            <input type="text" pInputText id="editBanco" [value]="editingDeposito?.nombreBanco" readonly class="p-inputtext-sm" />
+            <p-dropdown id="editBanco" 
+                      [options]="bancosModal" 
+                      formControlName="idBxC"
+                      optionLabel="nombreBanco" 
+                      optionValue="idBxC"
+                      placeholder="Seleccione un banco"
+                      [autoDisplayFirst]="false"
+                      styleClass="p-inputtext-sm"></p-dropdown>
         </div>
         <div class="field">
             <label for="editImporte" class="font-medium text-900">Importe</label>
-            <input type="text" pInputText id="editImporte" [value]="editingDeposito?.importe | number:'1.2-2'" readonly class="p-inputtext-sm" />
+            <input type="text" pInputText id="editImporte" formControlName="importe" readonly class="p-inputtext-sm" />
         </div>
         <div class="field">
             <label for="editTransaccionNum" class="font-medium text-900">Número de Transacción</label>
-            <input type="text" pInputText id="editTransaccionNum" [(ngModel)]="editingTransaccionNum" class="p-inputtext-sm" />
+            <input type="text" pInputText id="editTransaccionNum" formControlName="nroTransaccion" class="p-inputtext-sm" />
         </div>
-    </div>
+    </form>
     <ng-template pTemplate="footer">
         <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" [disabled]="updating" (click)="closeModal()"></button>
-        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" [disabled]="updating" [loading]="updating" (click)="saveTransaccionNum()"></button>
+        <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" [disabled]="updating || editForm.invalid" [loading]="updating" (click)="saveTransaccionNum()"></button>
     </ng-template>
 </p-dialog>
 

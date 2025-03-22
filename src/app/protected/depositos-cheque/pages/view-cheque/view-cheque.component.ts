@@ -8,6 +8,7 @@ import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
 import { Empresa } from 'src/app/protected/interfaces/Empresa';
 import { BancoXCuenta } from 'src/app/protected/interfaces/BancoXCuenta';
 import { LoginService } from 'src/app/auth/services/login.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 // Try an alternative approach for importing jspdf and autotable
 import { jsPDF } from 'jspdf';
@@ -35,6 +36,15 @@ export class ViewChequeComponent implements OnInit {
   fechaInicio: Date = new Date();
   fechaFin: Date = new Date();
   codEmpresa: number = 1; // Default company code
+  
+  // Add estados dropdown options
+  estadosDeposito = [
+    { label: 'Todos', value: 'Todos' },
+    { label: 'Verificado', value: 'Verificado' },
+    { label: 'Pendiente', value: 'Pendiente' },
+    { label: 'Rechazado', value: 'Rechazado' }
+  ];
+  selectedEstado: string = 'Todos'; // Default value
 
   // Add these properties to your component class
   editingDeposito: any = null;
@@ -44,10 +54,20 @@ export class ViewChequeComponent implements OnInit {
   showEditModal: boolean = false;
   updating: boolean = false;
 
+  // Add this property for editing banco
+  editingBancoId: number  = 0;
+
+  // Add this property for banks in the edit modal
+  bancosModal: BancoXCuenta[] = [];
+
+  // Add form group
+  editForm!: FormGroup;
+
   constructor(
     private depositoChequeService: DepositoChequeService,
     private messageService: MessageService,
     private loginService: LoginService,
+    private fb: FormBuilder,
   ) { }
 
   ngOnInit() {
@@ -56,6 +76,9 @@ export class ViewChequeComponent implements OnInit {
     // Set default dates (today for both)
     this.fechaInicio = new Date();
     this.fechaFin = new Date();
+
+    // Initialize the form
+    this.initEditForm();
   }
 
   cargarEmpresas(): void {
@@ -65,9 +88,16 @@ export class ViewChequeComponent implements OnInit {
       .subscribe({
         next: (response) => {
           if (response.data) {
-            this.empresas = response.data;
+            // Add "Todos" option at the beginning of the array
+            const todosOption: Empresa = {
+              codEmpresa: 0,
+              codEmpresaBosque: 0,
+              nombre: 'Todos',
+            };
+            
+            this.empresas = [todosOption, ...response.data];
             if (this.empresas.length > 0) {
-              this.selectedEmpresa = this.empresas[0].codEmpresaBosque || 1;
+              this.selectedEmpresa = this.empresas[0].codEmpresaBosque || 0;
               this.codEmpresa = this.selectedEmpresa;
               this.cargarBancos();
               this.cargarSociosNegocio();
@@ -155,23 +185,42 @@ export class ViewChequeComponent implements OnInit {
   cargarDepositos(): void {
     this.loading = true;
     // Use selected criteria for search
-    const idBxC = this.selectedBanco || 0;
+    const idBxC = this.selectedBanco;
     const clienteCod = this.selectedCliente || '';
+    const estado = this.selectedEstado === 'Todos' ? '' : this.selectedEstado;
+    const coEmpresa = this.selectedEmpresa; // Get selected empresa ID
     
     console.log(idBxC);
-
+    console.log(this.fechaInicio);
+    console.log(this.fechaFin);
+    console.log(clienteCod);
+    console.log(estado);
+    console.log('Empresa seleccionada:', coEmpresa);
 
     this.depositoChequeService.obtenerDepositos(
-      idBxC, 
+      this.codEmpresa,
+      idBxC ?? 0, 
       this.fechaInicio, 
       this.fechaFin, 
-      clienteCod
+      clienteCod,
+      estado,
+      
     )
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: (response) => {
+          if(response == null){
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Advertencia',
+              detail: 'No se encontraron depósitos'
+            });
+            this.depositos = [];
+          }
           if (response.data) {
             this.depositos = response.data;
+          }else{
+            this.depositos = [];
           }
         },
         error: (error) => {
@@ -253,13 +302,60 @@ export class ViewChequeComponent implements OnInit {
   /**
    * Opens the modal for editing transaction number
    */
-  openEditModal(deposito: any): void {
+  openEditModal(deposito: DepositoCheque): void {
     console.log('Editando número de transacción para depósito ID:', deposito.idDeposito);
+    console.log('Deposit object:', deposito); // Debug log to see all properties
+    
     this.editingDeposito = deposito;
     this.editingTransaccionNum = deposito.nroTransaccion || '';
+    
+    // Show the modal immediately to ensure UI doesn't break
     this.showEditModal = true;
-  }
+    
+    // Extract the company ID from the deposit or use a default
+    // The API response might have the company ID in different properties
+    const empresaId = deposito.codEmpresa ||  1;
+    
+    // Load banks for this deposit's empresa
+    this.loading = true;
+    console.log("el idBxC:  ",deposito.idBxC);
+    this.depositoChequeService.obtenerBancos(empresaId)
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: (response) => {
+          if (response && response.data) {
+            this.bancosModal = response.data;
+            // Now set the selected bank ID
+            this.editingBancoId = deposito.idBxC!;
+          } else {
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Advertencia',
+              detail: 'No se pudieron cargar los bancos para esta empresa'
+            });
+            this.bancosModal = []; // Ensure we have an empty array at minimum
+          }
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al cargar bancos para el depósito: ' + (error.message || 'Error desconocido')
+          });
+          this.bancosModal = []; // Ensure we have an empty array at minimum
+        }
+      });
 
+    // Reset form and set values
+    this.editForm.reset();
+    this.editForm.patchValue({
+      idDeposito: deposito.idDeposito,
+      codCliente: deposito.codCliente,
+      idBxC: deposito.idBxC, // Make sure this property matches your data structure
+      importe: deposito.importe,
+      nroTransaccion: deposito.nroTransaccion
+    });
+  }
 
   rechazarDeposito(deposito: DepositoCheque): void {
     deposito.fechaI = undefined;
@@ -287,8 +383,6 @@ export class ViewChequeComponent implements OnInit {
     });
   }
 
-
-
   /**
    * Closes the edit modal
    */
@@ -297,22 +391,30 @@ export class ViewChequeComponent implements OnInit {
     this.showEditModal = false;
     this.editingDeposito = null;
     this.editingTransaccionNum = '';
+    this.editingBancoId = 0;
+    this.bancosModal = []; // Clear modal banks
   }
 
   /**
-   * Saves the updated transaction number
+   * Saves the updated transaction number and bank
    */
   saveTransaccionNum(): void {
-    if (!this.editingDeposito) return;
+    if (this.editForm.invalid) {
+      return;
+    }
     
-    console.log(`Actualizando depósito ID: ${this.editingDeposito.idDeposito}`);
-    console.log(`Número de transacción anterior: ${this.editingDeposito.nroTransaccion}`);
-    console.log(`Número de transacción nuevo: ${this.editingTransaccionNum}`);
+    this.updating = true;
     
-    // Create deposit object for API call
+    const formData = this.editForm.getRawValue();
+    
+    // Use the values from the form instead of component properties
+    // Rest of your code using formData.idBxC and formData.nroTransaccion
+    // ...
+
     const deposito: DepositoCheque = {
-      idDeposito: this.editingDeposito.idDeposito,
-      nroTransaccion: this.editingTransaccionNum,
+      idDeposito: formData.idDeposito,
+      nroTransaccion: formData.nroTransaccion,
+      idBxC: formData.idBxC ?? 0,
       audUsuario: this.loginService.codUsuario
     };
     
@@ -321,23 +423,34 @@ export class ViewChequeComponent implements OnInit {
       .pipe(finalize(() => this.updating = false))
       .subscribe({
         next: (response) => {
-          // Only update local object if the API call succeeded
-          this.editingDeposito.nroTransaccion = this.editingTransaccionNum;
+          // Update local object if the API call succeeded
+          this.editingDeposito.nroTransaccion = formData.nroTransaccion;
+          this.editingDeposito.idBxC = formData.idBxC;
+          
+          // Also update the bank name in the UI
+          if (formData.idBxC) {
+            const selectedBank = this.bancos.find(b => b.idBxC === formData.idBxC);
+            if (selectedBank) {
+              this.editingDeposito.nombreBanco = selectedBank.nombreBanco;
+            }
+          }
+          
           this.messageService.add({
             severity: 'success', 
             summary: 'Éxito', 
-            detail: 'Número de transacción actualizado correctamente'
+            detail: 'Información actualizada correctamente'
           });
           this.showEditModal = false;
           this.editingDeposito = null;
           this.editingTransaccionNum = '';
+          this.editingBancoId = 0;
         },
         error: (error) => {
-          console.error('Error updating transaction number:', error);
+          console.error('Error updating deposit information:', error);
           this.messageService.add({
             severity: 'error', 
             summary: 'Error', 
-            detail: 'No se pudo actualizar el número de transacción. Por favor, inténtelo de nuevo.'
+            detail: 'No se pudo actualizar la información. Por favor, inténtelo de nuevo.'
           });
           // Don't close the modal on error so user can try again
         }
@@ -466,5 +579,16 @@ export class ViewChequeComponent implements OnInit {
         detail: 'Error al generar PDF'
       });
     }
+  }
+
+  // Method to initialize the form
+  private initEditForm(): void {
+    this.editForm = this.fb.group({
+      idDeposito: [{value: '', disabled: true}],
+      codCliente: [{value: '', disabled: true}],
+      idBxC: ['', Validators.required],
+      importe: [{value: '', disabled: true}],
+      nroTransaccion: ['', Validators.required]
+    });
   }
 }

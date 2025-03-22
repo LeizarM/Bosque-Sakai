@@ -151,13 +151,15 @@ export class DepositoChequeService {
     /**
      * Obtiene la lista de depósitos
      */
-    obtenerDepositos( idBxC: number, fechaInicio: Date, fechaFin: Date, codCliente: string ): Observable<ApiResponse<DepositoCheque[]>> {
+    obtenerDepositos( codEmpresa: number, idBxC: number, fechaInicio: Date, fechaFin: Date, codCliente: string, estadoFiltro : string ): Observable<ApiResponse<DepositoCheque[]>> {
         
         const deposito : DepositoCheque = {
+            codEmpresa,
             idBxC,
             fechaInicio,
             fechaFin,
-            codCliente
+            codCliente,
+            estadoFiltro,
         }
 
         
