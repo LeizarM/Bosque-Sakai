@@ -3,6 +3,12 @@ export interface UsuarioBtn {
   codBtn?:      number;
   nivelAcceso?: number;
   audUsuario?:  number;
+  
+  
+  // variables de apoyo
+  boton?: string;
+  permiso?: number;
+  pertenVist?:number;
 }
 
 // Converts JSON strings to/from your types

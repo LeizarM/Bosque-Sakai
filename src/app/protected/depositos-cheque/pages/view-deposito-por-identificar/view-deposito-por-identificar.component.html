@@ -227,7 +227,8 @@
                           (onChange)="cargarClientesPorEmpresa($event)" styleClass="w-full"></p-dropdown>
             </div>
             
-            <div class="field col-12 md:col-6 mb-3">
+            <!-- Cliente dropdown moved below Empresa -->
+            <div class="field col-12 mb-3">
                 <label for="cliente" class="font-medium text-700 mb-2 block">Cliente</label>
                 <p-dropdown id="cliente" [(ngModel)]="clienteSeleccionado" 
                           [options]="clientes" optionLabel="nombreCompleto" optionValue="codCliente"

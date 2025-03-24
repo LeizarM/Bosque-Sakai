@@ -197,12 +197,15 @@
                                 <button pButton pRipple 
                                         type="button"
                                         icon="pi pi-pencil" 
+                                        *ngIf="puedeEditar()"
                                         class="p-button-text p-button-sm" 
                                         (click)="openEditModal(deposito)" 
+                                        
                                         pTooltip="Editar Transacción"></button>
                                 <button pButton pRipple 
                                         type="button"
                                         icon="pi pi-times" 
+                                        *ngIf="puedeRechazar()"
                                         class="p-button-text p-button-sm" 
                                         (click)="rechazarDeposito(deposito)" 
                                         pTooltip="Rechazar Deposito"></button>

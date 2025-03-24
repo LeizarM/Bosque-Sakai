@@ -79,6 +79,9 @@ export class ViewChequeComponent implements OnInit {
 
     // Initialize the form
     this.initEditForm();
+    this.loginService.cargarPermisos().subscribe(() => {
+      console.log('Permisos de botones cargados');
+    });
   }
 
   cargarEmpresas(): void {
@@ -190,12 +193,12 @@ export class ViewChequeComponent implements OnInit {
     const estado = this.selectedEstado === 'Todos' ? '' : this.selectedEstado;
     const coEmpresa = this.selectedEmpresa; // Get selected empresa ID
     
-    console.log(idBxC);
+    /* console.log(idBxC);
     console.log(this.fechaInicio);
     console.log(this.fechaFin);
     console.log(clienteCod);
     console.log(estado);
-    console.log('Empresa seleccionada:', coEmpresa);
+    console.log('Empresa seleccionada:', coEmpresa); */
 
     this.depositoChequeService.obtenerDepositos(
       this.codEmpresa,
@@ -590,5 +593,14 @@ export class ViewChequeComponent implements OnInit {
       importe: [{value: '', disabled: true}],
       nroTransaccion: ['', Validators.required]
     });
+  }
+
+
+  puedeEditar(): boolean {
+    return this.loginService.estaAutorizadoSync('btnNroTransac');
+  }
+  
+  puedeRechazar(): boolean {
+    return this.loginService.estaAutorizadoSync('btnRechazado');
   }
 }

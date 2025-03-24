@@ -5,27 +5,27 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment.development';
 
 import { Login } from '../interface/Login';
+import { UsuarioBtn } from 'src/app/protected/interfaces/UsuarioBtn';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
-
   private baseUrl: string = environment.baseUrl;
   private _usuario!: Login;
   private _token!: string;
-
+  // Propiedad para almacenar los botones autorizados
+  private _botonesAutorizados: UsuarioBtn[] = [];
+  private _botonesCargados: boolean = false;
 
   constructor(private http: HttpClient) { }
 
-
-
-   /**
-    * ==========================================
-    * ========== PROCEDIMIENTOS ================
-    * ==========================================
-    */
+  /**
+   * ==========================================
+   * ========== PROCEDIMIENTOS ================
+   * ==========================================
+   */
 
   /**
    * Para verificar las credenciales del usuario
@@ -58,7 +58,7 @@ export class LoginService {
   }
 
   /**
-   * Procedimiento para cambiar la contraseña del usuario
+   * Procedimiento para cambiar la contraseña del usuario
    * @param login
    * @returns
    */
@@ -77,8 +77,6 @@ export class LoginService {
         map(resp => resp),
         catchError(err => of(err.error))
       );
-
-
   }
 
   /**
@@ -190,6 +188,9 @@ export class LoginService {
     this._token = '';
     this._usuario = {};
     localStorage.clear();
+    // Limpiar también los permisos de botones
+    this._botonesAutorizados = [];
+    this._botonesCargados = false;
   }
 
   /**
@@ -268,5 +269,90 @@ export class LoginService {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     return JSON.parse(jsonPayload).exp;
+  }
+
+  /**
+   * Verifica si un botón está autorizado para el usuario actual
+   * @param nombreBtn Nombre del botón a verificar
+   * @returns Observable<boolean> que indica si el botón está autorizado
+   */
+  esAutorizado(nombreBtn: string): Observable<boolean> {
+    // Si es administrador, siempre retorna true
+    if (this.tipoUsuario === 'ROLE_ADM') return of(true);
+    
+    // Si ya tenemos los permisos en caché, retornamos inmediatamente
+    if (this._botonesCargados) {
+      return of(this._botonesAutorizados.some(btn => btn.boton === nombreBtn && btn.permiso === 1));
+    }
+    
+    // Si no tenemos los permisos, los solicitamos
+    const url = `${this.baseUrl}/view/vistaBtn`;
+    const cabecera = new HttpHeaders().set('Content-Type', 'application/json');
+    const data = {
+      "codUsuario": this.codUsuario
+    };
+    
+    return this.http.post<UsuarioBtn[]>(url, data, { headers: cabecera })
+      .pipe(
+        map(permisos => {
+          // Guardamos los permisos en caché
+          this._botonesAutorizados = permisos;
+          this._botonesCargados = true;
+          // Verificamos si el botón existe y tiene permiso
+          return permisos.some(btn => btn.boton === nombreBtn && btn.permiso === 1);
+        }),
+        catchError(err => {
+          console.error('Error al obtener permisos de botones:', err);
+          return of(false); // En caso de error, no damos permiso
+        })
+      );
+  }
+
+  /**
+   * Método sincrónico para verificar si un botón está autorizado
+   * Solo funciona después de haber cargado los permisos con cargarPermisos()
+   * @param nombreBtn Nombre del botón a verificar
+   * @returns boolean que indica si el botón está autorizado
+   */
+  estaAutorizadoSync(nombreBtn: string): boolean {
+    // Si es administrador, siempre retorna true
+    if (this.tipoUsuario === 'ROLE_ADM') return true;
+    
+    // Verificamos si el botón existe y tiene permiso
+    if (this._botonesCargados) {
+      return this._botonesAutorizados.some(btn => btn.boton === nombreBtn && btn.permiso === 1);
+    }
+    
+    // Si no hay datos cargados, negamos acceso
+    return false;
+  }
+
+  /**
+   * Método para precargar todos los permisos
+   * @returns Observable<UsuarioBtn[]> con la lista de permisos
+   */
+  cargarPermisos(): Observable<UsuarioBtn[]> {
+    // Si ya están cargados, retornamos el valor en caché
+    if (this._botonesCargados) {
+      return of(this._botonesAutorizados);
+    }
+    
+    const url = `${this.baseUrl}/view/vistaBtn`;
+    const cabecera = new HttpHeaders().set('Content-Type', 'application/json');
+    const data = {
+      "codUsuario": this.codUsuario
+    };
+    
+    return this.http.post<UsuarioBtn[]>(url, data, { headers: cabecera })
+      .pipe(
+        tap(permisos => {
+          this._botonesAutorizados = permisos;
+          this._botonesCargados = true;
+        }),
+        catchError(err => {
+          console.error('Error al obtener permisos de botones:', err);
+          return of([]);
+        })
+      );
   }
 }
