@@ -68,3 +68,33 @@
     color: #721c24 !important;
     transition: background-color 0.3s;
 }
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+.status-pending {
+    background-color: #FEF0CD;
+    color: #B78103;
+}
+.status-verified {
+    background-color: #D1FAE5;
+    color: #047857;
+}
+.truncate-text {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+:host ::ng-deep .p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    background-color: #f8fafc;
+    font-weight: 600;
+}

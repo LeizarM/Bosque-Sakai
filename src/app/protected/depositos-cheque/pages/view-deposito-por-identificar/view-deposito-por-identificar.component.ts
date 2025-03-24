@@ -52,6 +52,10 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
   bancoSeleccionado: number = 0;
   cargandoBancos: boolean = false;
 
+  // Variables para manejo de archivos
+  selectedFile: File | null = null;
+  imageRequired: boolean = true; // Imagen obligatoria
+
   constructor(
     private depositoChequeService: DepositoChequeService,
     private messageService: MessageService,
@@ -325,6 +329,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     this.totalMontoDocumentos = 0;
     this.importesValidos = false;
     this.documentos = [];
+    this.selectedFile = null; // Reiniciamos la selección de archivo
     this.mostrarDialogoCliente = true;
     
     // Si ya tenemos la empresa, cargamos los clientes y bancos
@@ -336,6 +341,37 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
       if (this.clienteSeleccionado) {
         this.onClienteChange({ value: this.clienteSeleccionado });
       }
+    }
+  }
+
+  // Manejar la selección de archivos
+  onFileSelect(event: any): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      
+      // Validar tipo de archivo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Formato de archivo no válido. Solo se permiten JPG, JPEG y PNG.'
+        });
+        return;
+      }
+      
+      // Validar tamaño (5MB máximo)
+      const maxSize = 5 * 1024 * 1024; // 5MB en bytes
+      if (file.size > maxSize) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'El archivo es demasiado grande. El tamaño máximo permitido es 5MB.'
+        });
+        return;
+      }
+      
+      this.selectedFile = file;
     }
   }
 
@@ -529,6 +565,16 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
       return;
     }
 
+    // Validación de imagen obligatoria
+    if (this.imageRequired && !this.selectedFile && !this.depositoSeleccionado?.fotoPath) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Debe seleccionar una imagen para el depósito'
+      });
+      return;
+    }
+
     this.guardandoCliente = true;
 
     // Crear el objeto con la información actualizada del depósito
@@ -546,9 +592,12 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
       audUsuario: this.getUser()
     };
 
+    // Creamos un archivo vacío si no hay uno seleccionado pero ya existe uno en el servidor
+    const fileToUpload = this.selectedFile || new File([], 'empty.txt');
+
     // Primero actualizamos la información básica del depósito
     this.depositoChequeService.registrarDepositoCheque(
-      depositoActualizado, new File([], 'empty.txt')
+      depositoActualizado, fileToUpload
     )
       .pipe(finalize(() => {
         this.guardandoCliente = false;

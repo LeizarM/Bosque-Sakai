@@ -160,38 +160,6 @@
                 </ng-template>
             </p-table>
 
-            <!-- Add these style tags at the end of your component -->
-            <style>
-                .status-badge {
-                    padding: 0.25rem 0.5rem;
-                    border-radius: 2rem;
-                    font-size: 0.875rem;
-                    display: inline-flex;
-                    align-items: center;
-                    white-space: nowrap;
-                }
-                .status-pending {
-                    background-color: #FEF0CD;
-                    color: #B78103;
-                }
-                .status-verified {
-                    background-color: #D1FAE5;
-                    color: #047857;
-                }
-                .truncate-text {
-                    max-width: 150px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-                :host ::ng-deep .p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
-                    background-color: #f9fafb;
-                }
-                :host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
-                    background-color: #f8fafc;
-                    font-weight: 600;
-                }
-            </style>
         </div>
     </div>
 </div>
@@ -294,6 +262,39 @@
                              placeholder="0.00"
                              styleClass="w-full"
                              (onInput)="calcularTotales()"></p-inputNumber>
+            </div>
+            
+            <!-- Imagen del Depósito - Nuevo campo -->
+            <div class="field col-12 mb-3">
+                <label for="fotoPath" class="font-medium text-700 mb-2 block">Imagen del Depósito</label>
+                <input
+                    type="file"
+                    id="fotoPath"
+                    accept="image/jpeg,image/png,image/jpg"
+                    class="hidden"
+                    (change)="onFileSelect($event)"
+                    #fileInput
+                />
+                <button
+                    pButton
+                    type="button"
+                    [label]="selectedFile ? 'Cambiar Imagen' : 'Seleccionar Imagen'"
+                    icon="pi pi-upload"
+                    class="p-button-rounded p-button-secondary w-full"
+                    (click)="fileInput.click()"
+                ></button>
+                <small class="block mt-1" *ngIf="selectedFile" style="color: #00796b;">
+                    Archivo seleccionado: {{ selectedFile.name }}
+                </small>
+                <small class="block mt-1" *ngIf="depositoSeleccionado?.fotoPath && !selectedFile" style="color: #607D8B;">
+                    Imagen actual: {{ depositoSeleccionado.fotoPath }}
+                </small>
+                <small class="block text-gray-500 mt-1">
+                    Formatos permitidos: JPG, JPEG, PNG. Tamaño máximo: 5MB
+                </small>
+                <small *ngIf="imageRequired && !selectedFile && !depositoSeleccionado?.fotoPath" class="p-error block mt-1">
+                    <i class="pi pi-exclamation-circle mr-1"></i>Debe seleccionar una imagen
+                </small>
             </div>
         </div>
         
@@ -399,7 +400,7 @@
         <button pButton pRipple label="Guardar" icon="pi pi-check" 
                 class="p-button-primary ml-2" [loading]="guardandoCliente"
                 (click)="actualizarDeposito()" 
-                [disabled]="!clienteSeleccionado || (!getSelectedDocumentos().length && aCuenta <= 0) || !importesValidos"></button>
+                [disabled]="!clienteSeleccionado || (!getSelectedDocumentos().length && aCuenta <= 0) || !importesValidos || (imageRequired && !selectedFile && !depositoSeleccionado?.fotoPath)"></button>
     </ng-template>
 </p-dialog>
 
