@@ -43,7 +43,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
   
   // Variables para la selección de documentos y a cuenta
   documentos: NotaRemision[] = [];
-  totalMontoDocumentos: number = 0;
+  saldoMontoDocumentos: number = 0;
   aCuenta: number = 0;
   importesValidos: boolean = false;
 
@@ -326,7 +326,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     this.clienteSeleccionado = deposito.codCliente;
     this.bancoSeleccionado = deposito.idBxC;
     this.aCuenta = 0;
-    this.totalMontoDocumentos = 0;
+    this.saldoMontoDocumentos = 0;
     this.importesValidos = false;
     this.documentos = [];
     this.selectedFile = null; // Reiniciamos la selección de archivo
@@ -379,7 +379,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
   cargarClientesPorEmpresa(event: any): void {
     const valorOriginal = event.value;
     this.documentos = [];
-    this.totalMontoDocumentos = 0;
+    this.saldoMontoDocumentos = 0;
     this.aCuenta = 0;
     this.importesValidos = false;
     
@@ -474,7 +474,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     if (codCliente && codEmpresa) {
       this.cargandoClientes = true;
       this.documentos = [];
-      this.totalMontoDocumentos = 0;
+      this.saldoMontoDocumentos = 0;
       
       this.depositoChequeService.obtenerDocumentosPorCliente(codEmpresa, codCliente)
         .pipe(finalize(() => this.cargandoClientes = false))
@@ -529,13 +529,13 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
 
   calcularTotales(): void {
     // Calcular el total de los documentos seleccionados
-    this.totalMontoDocumentos = this.getSelectedDocumentos().reduce((sum, doc) => {
-      return sum + (doc.totalMonto || 0);
+    this.saldoMontoDocumentos = this.getSelectedDocumentos().reduce((sum, doc) => {
+      return sum + (doc.saldoPendiente || 0);
     }, 0);
 
     // Verificar si el total de documentos seleccionados + a cuenta es igual al importe del depósito
     const importeDeposito = this.depositoSeleccionado?.importe || 0;
-    const totalCalculado = this.totalMontoDocumentos + (this.aCuenta || 0);
+    const totalCalculado = this.saldoMontoDocumentos + (this.aCuenta || 0);
     
     // Permitimos un margen de error muy pequeño por posibles problemas de redondeo
     const EPSILON = 0.01;

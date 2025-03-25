@@ -30,7 +30,7 @@ export class RegistrarChequeComponent implements OnInit {
   clientes: SocioNegocio[] = [];
   bancos: ChBanco[] = [];
   documentos: NotaRemision[] = [];
-  totalMontoDocumentos: number = 0;
+  saldoMontoDocumentos: number = 0;
 
   monedas = [
     { label: 'Bolivianos', value: 'BS' },
@@ -120,7 +120,7 @@ export class RegistrarChequeComponent implements OnInit {
     // Nos aseguramos que, en el caso de papirus, el valor se ajuste a 1
     this.bancos = [];
     this.documentos = [];
-    this.totalMontoDocumentos = 0;
+    this.saldoMontoDocumentos = 0;
     this.chequeForm.get('importe')?.setValue(0);
     this.chequeForm.get('aCuenta')?.setValue(0);
 
@@ -169,7 +169,7 @@ export class RegistrarChequeComponent implements OnInit {
     if (codCliente && codEmpresa) {
       this.loading = true;
       this.documentos = [];
-      this.totalMontoDocumentos = 0;
+      this.saldoMontoDocumentos = 0;
       this.chequeForm.get('importe')?.setValue(0);
       this.chequeForm.get('aCuenta')?.setValue(0);
 
@@ -223,15 +223,15 @@ export class RegistrarChequeComponent implements OnInit {
    */
   calcularTotales(): void {
     // Calcular el total de los documentos seleccionados
-    this.totalMontoDocumentos = this.getSelectedDocumentos().reduce((sum, doc) => {
-      return sum + (doc.totalMonto || 0);
+    this.saldoMontoDocumentos = this.getSelectedDocumentos().reduce((sum, doc) => {
+      return sum + (doc.saldoPendiente || 0);
     }, 0);
 
     // Obtener el valor de a cuenta del formulario
     const aCuenta = this.chequeForm.get('aCuenta')?.value || 0;
 
     // Calcular el importe total (documentos + a cuenta)
-    const importeTotal = this.totalMontoDocumentos + aCuenta;
+    const importeTotal = this.saldoMontoDocumentos + aCuenta;
 
     // Actualizar el importe total en el formulario
     this.chequeForm.get('importe')?.setValue(importeTotal);
@@ -373,7 +373,7 @@ export class RegistrarChequeComponent implements OnInit {
     this.selectedFile = null;
     this.clientes = [];
     this.documentos = [];
-    this.totalMontoDocumentos = 0;
+    this.saldoMontoDocumentos = 0;
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {

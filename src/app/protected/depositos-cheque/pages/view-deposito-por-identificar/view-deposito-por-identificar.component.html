@@ -118,7 +118,7 @@
                                 {{deposito.esPendiente}}
                             </span>
                         </td>
-                        <td class="truncate-text">{{deposito.obs}}</td>
+                        <td>{{deposito.obs}}</td>
                         <td>
                             <div class="flex gap-2 justify-content-center">
                                 <button *ngIf="deposito.esPendiente !== 'Verificado'" pButton pRipple 
@@ -354,7 +354,7 @@
                         </div>
                         <div>
                             <strong>Documentos seleccionados:</strong> {{getSelectedDocumentos().length}} | 
-                            <strong>Total de documentos:</strong> {{totalMontoDocumentos | number}}
+                            <strong>Total de documentos:</strong> {{saldoMontoDocumentos | number}}
                         </div>
                     </div>
                 </ng-template>
@@ -367,7 +367,7 @@
                 <div class="col-6">
                     <label class="font-medium text-700 block mb-2">Total Documentos</label>
                     <div class="p-inputtext p-component p-filled surface-100 text-md text-right">
-                        {{totalMontoDocumentos | number}} {{depositoSeleccionado?.moneda}}
+                        {{saldoMontoDocumentos | number}} {{depositoSeleccionado?.moneda}}
                     </div>
                 </div>
                 <div class="col-6">
@@ -384,9 +384,9 @@
                     </div>
                     <small *ngIf="!importesValidos" class="p-error block mt-1">
                         <i class="pi pi-exclamation-triangle mr-1"></i>
-                        El total debe ser igual al importe ({{totalMontoDocumentos + aCuenta | number:'1.2-2'}} ≠ {{depositoSeleccionado?.importe | number:'1.2-2'}})
+                        El total debe ser igual al importe ({{saldoMontoDocumentos + aCuenta | number:'1.2-2'}} ≠ {{depositoSeleccionado?.importe | number:'1.2-2'}})
                     </small>
-                    <small *ngIf="importesValidos && (totalMontoDocumentos > 0 || aCuenta > 0)" class="text-green-600 block mt-1">
+                    <small *ngIf="importesValidos && (saldoMontoDocumentos > 0 || aCuenta > 0)" class="text-green-600 block mt-1">
                         <i class="pi pi-check-circle mr-1"></i>
                         Valores correctamente distribuidos
                     </small>
