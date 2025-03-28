@@ -54,7 +54,9 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
 
   // Variables para manejo de archivos
   selectedFile: File | null = null;
+  imagePreviewUrl: string | null = null;
   imageRequired: boolean = true; // Imagen obligatoria
+  isDragging: boolean = false;
 
   constructor(
     private depositoChequeService: DepositoChequeService,
@@ -330,6 +332,7 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     this.importesValidos = false;
     this.documentos = [];
     this.selectedFile = null; // Reiniciamos la selección de archivo
+    this.imagePreviewUrl = null; // También reiniciamos la URL de vista previa
     this.mostrarDialogoCliente = true;
     
     // Si ya tenemos la empresa, cargamos los clientes y bancos
@@ -344,34 +347,78 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     }
   }
 
+  /**
+   * Maneja el evento dragover para mostrar feedback visual
+   */
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  /**
+   * Maneja el evento dragleave para quitar el feedback visual
+   */
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  /**
+   * Maneja el evento drop para procesar la imagen arrastrada
+   */
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+    
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.processFile(files[0]);
+    }
+  }
+
+  /**
+   * Procesa el archivo seleccionado, ya sea por input o por drag & drop
+   */
+  processFile(file: File): void {
+    // Validar tipo de archivo
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Formato de archivo no válido. Solo se permiten JPG, JPEG y PNG.'
+      });
+      return;
+    }
+    
+    // Validar tamaño (5MB máximo)
+    const maxSize = 5 * 1024 * 1024; // 5MB en bytes
+    if (file.size > maxSize) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El archivo es demasiado grande. El tamaño máximo permitido es 5MB.'
+      });
+      return;
+    }
+    
+    this.selectedFile = file;
+    
+    // Crear vista previa
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.imagePreviewUrl = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
   // Manejar la selección de archivos
   onFileSelect(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      
-      // Validar tipo de archivo
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-      if (!allowedTypes.includes(file.type)) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Formato de archivo no válido. Solo se permiten JPG, JPEG y PNG.'
-        });
-        return;
-      }
-      
-      // Validar tamaño (5MB máximo)
-      const maxSize = 5 * 1024 * 1024; // 5MB en bytes
-      if (file.size > maxSize) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'El archivo es demasiado grande. El tamaño máximo permitido es 5MB.'
-        });
-        return;
-      }
-      
-      this.selectedFile = file;
+      this.processFile(event.target.files[0]);
     }
   }
 
