@@ -131,7 +131,23 @@
                   <td (click)="toggleDocumentSelection(documento)">{{documento.fecha | date:'dd/MM/yyyy'}}</td>
                   <td (click)="toggleDocumentSelection(documento)">{{documento.nombreCliente}}</td>
                   <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.totalMonto | number}}</td>
-                  <td (click)="toggleDocumentSelection(documento)" class="text-right">{{documento.saldoPendiente | number}}</td>
+                  <td class="text-right">
+                    <p-inputNumber 
+                      *ngIf="documento.selected"
+                      [(ngModel)]="documento.saldoPendiente" 
+                      [ngModelOptions]="{standalone: true}"
+                      [min]="0"
+                      [max]="documento.saldoPendienteOriginal"
+                      [minFractionDigits]="2"
+                      [maxFractionDigits]="2"
+                      mode="decimal" 
+                      (onInput)="onSaldoPendienteChange(documento)"
+                      (blur)="validateSaldoPendiente(documento)"
+                      [style]="{'width':'100%'}"
+                      styleClass="p-text-right">
+                    </p-inputNumber>
+                    <span *ngIf="!documento.selected">{{documento.saldoPendiente | number}}</span>
+                  </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">
@@ -265,4 +281,3 @@
       </form>
     </div>
     <p-toast position="top-right"></p-toast>
- 

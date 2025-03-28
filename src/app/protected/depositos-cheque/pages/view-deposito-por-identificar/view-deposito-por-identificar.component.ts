@@ -483,7 +483,8 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
             if (response.data && response.data.length > 0) {
               this.documentos = response.data.map(doc => ({
                 ...doc,
-                selected: false // Inicializamos la selección en false
+                selected: false, // Inicializamos la selección en false
+                saldoPendienteOriginal: doc.saldoPendiente // Guardamos el valor original
               }));
               this.calcularTotales();
             } else {
@@ -540,6 +541,36 @@ export class ViewDepositoPorIdentificarComponent implements OnInit {
     // Permitimos un margen de error muy pequeño por posibles problemas de redondeo
     const EPSILON = 0.01;
     this.importesValidos = Math.abs(importeDeposito - totalCalculado) < EPSILON;
+  }
+
+  /**
+   * Maneja los cambios en el valor del saldo pendiente
+   */
+  onSaldoPendienteChange(documento: NotaRemision): void {
+    this.validateSaldoPendiente(documento);
+    this.calcularTotales();
+  }
+
+  /**
+   * Valida que el saldo pendiente ingresado no sea mayor al original
+   */
+  validateSaldoPendiente(documento: NotaRemision): void {
+    // Si el valor es mayor al original, restauramos al valor original
+    if (documento.saldoPendiente! > documento.saldoPendienteOriginal!) {
+      documento.saldoPendiente = documento.saldoPendienteOriginal;
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'El valor no puede ser mayor al saldo pendiente original'
+      });
+    }
+    
+    // Si el valor es negativo, lo establecemos a 0
+    if (documento.saldoPendiente! < 0) {
+      documento.saldoPendiente = 0;
+    }
+    
+    this.calcularTotales();
   }
 
   // Método para actualizar el depósito con los nuevos documentos y a cuenta

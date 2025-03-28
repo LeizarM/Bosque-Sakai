@@ -180,7 +180,8 @@ export class RegistrarChequeComponent implements OnInit {
             if (response.data && response.data.length > 0) {
               this.documentos = response.data.map(doc => ({
                 ...doc,
-                selected: false // Inicializamos la selección en false
+                selected: false, // Inicializamos la selección en false
+                saldoPendienteOriginal: doc.saldoPendiente // Guardamos el valor original
               }));
             } else {
               this.documentos = [];
@@ -450,6 +451,36 @@ export class RegistrarChequeComponent implements OnInit {
   toggleAllDocuments(event: any): void {
     const selectAll = event.checked;
     this.documentos.forEach(doc => doc.selected = selectAll);
+    this.calcularTotales();
+  }
+
+  /**
+   * Maneja los cambios en el valor del saldo pendiente
+   */
+  onSaldoPendienteChange(documento: NotaRemision): void {
+    this.validateSaldoPendiente(documento);
+    this.calcularTotales();
+  }
+
+  /**
+   * Valida que el saldo pendiente ingresado no sea mayor al original
+   */
+  validateSaldoPendiente(documento: NotaRemision): void {
+    // Si el valor es mayor al original, restauramos al valor original
+    if (documento.saldoPendiente! > documento.saldoPendienteOriginal!) {
+      documento.saldoPendiente = documento.saldoPendienteOriginal;
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: 'El valor no puede ser mayor al saldo pendiente original'
+      });
+    }
+    
+    // Si el valor es negativo, lo establecemos a 0
+    if (documento.saldoPendiente! < 0) {
+      documento.saldoPendiente = 0;
+    }
+    
     this.calcularTotales();
   }
 }

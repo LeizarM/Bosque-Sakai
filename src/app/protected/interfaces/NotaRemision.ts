@@ -19,6 +19,7 @@ export interface NotaRemision {
     // Campo adicional para manejar el monto a cuenta en la UI
     aCuenta?: number;
     selected?: boolean;
+    saldoPendienteOriginal?: number;
 }
 
 // Converts JSON strings to/from your types
