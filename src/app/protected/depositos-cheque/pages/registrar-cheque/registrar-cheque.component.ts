@@ -24,7 +24,9 @@ export class RegistrarChequeComponent implements OnInit {
   depositSearchForm!: FormGroup;
   depositList: DepositoCheque[] = [];
   selectedFile: File | null = null;
+  imagePreviewUrl: string | null = null;
   loading: boolean = false;
+  isDragging: boolean = false;
 
   empresas: Empresa[] = [];
   clientes: SocioNegocio[] = [];
@@ -238,29 +240,74 @@ export class RegistrarChequeComponent implements OnInit {
     this.chequeForm.get('importe')?.setValue(importeTotal);
   }
 
-  onFileSelect(event: any): void {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      const maxSize = 5 * 1024 * 1024; // 5MB
+  /**
+   * Maneja el evento dragover para mostrar feedback visual
+   */
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
 
-      if (validTypes.includes(file.type)) {
-        if (file.size <= maxSize) {
-          this.selectedFile = file;
-        } else {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'El archivo no debe superar los 5MB'
-          });
-        }
+  /**
+   * Maneja el evento dragleave para quitar el feedback visual
+   */
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  /**
+   * Maneja el evento drop para procesar la imagen arrastrada
+   */
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+    
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.processFile(files[0]);
+    }
+  }
+
+  /**
+   * Procesa el archivo seleccionado, ya sea por input o por drag & drop
+   */
+  processFile(file: File): void {
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (validTypes.includes(file.type)) {
+      if (file.size <= maxSize) {
+        this.selectedFile = file;
+        
+        // Create image preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.imagePreviewUrl = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
       } else {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Solo se permiten archivos JPG, JPEG o PNG'
+          detail: 'El archivo no debe superar los 5MB'
         });
       }
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Solo se permiten archivos JPG, JPEG o PNG'
+      });
+    }
+  }
+
+  onFileSelect(event: any): void {
+    if (event.target.files && event.target.files.length > 0) {
+      this.processFile(event.target.files[0]);
     }
   }
 
@@ -363,8 +410,6 @@ export class RegistrarChequeComponent implements OnInit {
     }
   }
 
-
-  
   private resetForm(): void {
     this.chequeForm.reset({
       moneda: 'BS',
@@ -372,6 +417,7 @@ export class RegistrarChequeComponent implements OnInit {
       importe: 0
     });
     this.selectedFile = null;
+    this.imagePreviewUrl = null;
     this.clientes = [];
     this.documentos = [];
     this.saldoMontoDocumentos = 0;
