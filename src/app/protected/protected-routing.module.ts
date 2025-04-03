@@ -19,6 +19,7 @@ import { ViewChequeComponent } from './depositos-cheque/pages/view-cheque/view-c
 import { UsuarioComponent } from './usuarios/pages/usuario.component';
 import { RegistrarDepositoIdentificarComponent } from './depositos-cheque/pages/registrar-deposito-identificar/registrar-deposito-identificar.component';
 import { ViewDepositoPorIdentificarComponent } from './depositos-cheque/pages/view-deposito-por-identificar/view-deposito-por-identificar.component';
+import { ViewCombustibleControlComponent } from './combustible-control/pages/view-combustible-control/view-combustible-control.component';
 
 
  const routes: Routes = [
@@ -110,6 +111,10 @@ import { ViewDepositoPorIdentificarComponent } from './depositos-cheque/pages/vi
         path: 'tdep_DepositoIde/View',
         component: ViewDepositoPorIdentificarComponent
 
+      },
+      {
+        path: 'tgas_ControlCombustible/View',
+        component: ViewCombustibleControlComponent
       },
       {
         path: '**',

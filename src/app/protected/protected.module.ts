@@ -16,6 +16,8 @@ import { RrhhModule } from './rrhh/rrhh.module';
 import { SharedModule } from './shared/shared.module';
 import { DepositosChequeModule } from './depositos-cheque/DepositosCheque.module';
 import { UsuarioModule } from './usuarios/usuario.module';
+import { CombustibleControlModule } from './combustible-control/CombustibleControl.module';
+
 
 
 
@@ -40,6 +42,7 @@ import { UsuarioModule } from './usuarios/usuario.module';
         EntregasModule,
         DepositosChequeModule,
         UsuarioModule,
+       CombustibleControlModule,
 
 
     ]

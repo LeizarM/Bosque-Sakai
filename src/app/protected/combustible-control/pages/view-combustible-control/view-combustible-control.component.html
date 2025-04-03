@@ -1,0 +1,105 @@
+<div class="surface-card p-4 shadow-2 border-round">
+  <div class="text-3xl font-medium text-900 mb-4">Control de Combustible</div>
+  
+  <!-- Selector de vehículo -->
+  <div class="p-fluid mb-4">
+    <div class="field">
+      <label for="vehiculo" class="block text-900 font-medium mb-2">Seleccione un vehículo:</label>
+      <p-dropdown 
+        *ngIf="!cargando"
+        [options]="vehiculos" 
+        [(ngModel)]="vehiculoSeleccionado" 
+        optionLabel="coche" 
+        placeholder="Seleccione un vehículo" 
+        [showClear]="true"
+        [filter]="true" 
+        filterBy="coche"
+        (onChange)="onVehiculoSeleccionado($event.value)"
+        styleClass="w-full">
+      </p-dropdown>
+      <div *ngIf="cargando" class="p-input-filled p-2 border-1 border-round surface-200 flex align-items-center justify-content-center">
+        <i class="pi pi-spin pi-spinner mr-2"></i>
+        <span>Cargando vehículos...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="p-4 mb-4 border-round bg-pink-50 text-pink-900">
+    <i class="pi pi-exclamation-circle mr-2"></i>
+    <span>{{error}}</span>
+  </div>
+
+  <!-- Historial de combustible -->
+  <div *ngIf="vehiculoSeleccionado" class="surface-card p-4 border-round shadow-1">
+    <div class="text-xl text-primary font-medium mb-3">Historial de Combustible - {{vehiculoSeleccionado.coche}}</div>
+
+    <!-- Mensaje de carga historial -->
+    <div *ngIf="cargandoHistorial" class="flex align-items-center justify-content-center py-4">
+      <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="4" fill="var(--surface-ground)"></p-progressSpinner>
+      <span class="ml-2">Cargando historial...</span>
+    </div>
+
+    <!-- Mensaje de error historial -->
+    <div *ngIf="errorHistorial" class="p-4 mb-4 border-round bg-pink-50 text-pink-900">
+      <i class="pi pi-exclamation-circle mr-2"></i>
+      <span>{{errorHistorial}}</span>
+    </div>
+
+    <!-- Tabla de historial -->
+    <p-table 
+      *ngIf="!cargandoHistorial && historialRegistros.length > 0" 
+      [value]="historialRegistros"
+      [paginator]="true" 
+      [rows]="30"
+      [showCurrentPageReport]="true" 
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowHover]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+      [rowsPerPageOptions]="[10, 30, 50, 100]"
+      styleClass="p-datatable-gridlines">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 5%">#</th>
+          <th pSortableColumn="fecha" style="width: 15%">Fecha <p-sortIcon field="fecha"></p-sortIcon></th>
+          <th pSortableColumn="litros" style="width: 15%">Litros <p-sortIcon field="litros"></p-sortIcon></th>
+          <th pSortableColumn="importe" style="width: 15%">Importe <p-sortIcon field="importe"></p-sortIcon></th>
+          <th pSortableColumn="kilometraje" style="width: 20%">Kilometraje <p-sortIcon field="kilometraje"></p-sortIcon></th>
+          <th pSortableColumn="diferencia" style="width: 30%">Total Recorrido <p-sortIcon field="diferencia"></p-sortIcon></th>
+          <th pSortableColumn="tipo Combustible" style="width: 30%">Tipo Combustible <p-sortIcon field="tipoCombustible"></p-sortIcon></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-registro let-i="rowIndex">
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ formatDate(registro.fecha) }}</td>
+          <td>{{ registro.litros | number:'1.2-2' }} L</td>
+          <td>{{ registro.importe | number }}</td>
+          <td>{{ registro.kilometraje | number:'1.0-0' }} km</td>
+          <td>{{ registro.diferencia | number:'1.0-0' }} km</td>
+          <td>{{ registro.tipoCombustible }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-4">
+            No se encontraron registros de combustible para este vehículo.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Mensaje cuando no hay registros -->
+    <div *ngIf="!cargandoHistorial && historialRegistros.length === 0 && !errorHistorial" class="p-4 text-center text-600">
+      <i class="pi pi-inbox text-5xl mb-3"></i>
+      <div>No hay registros de combustible disponibles para este vehículo.</div>
+    </div>
+  </div>
+
+  <!-- Información cuando no hay selección -->
+  <div *ngIf="vehiculos.length > 0 && !vehiculoSeleccionado" class="p-4 text-center text-600">
+    <i class="pi pi-car text-5xl mb-3"></i>
+    <div>Seleccione un vehículo para ver sus detalles</div>
+  </div>
+</div>
