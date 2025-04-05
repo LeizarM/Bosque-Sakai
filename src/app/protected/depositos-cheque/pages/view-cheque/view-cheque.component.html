@@ -207,8 +207,8 @@
                                         icon="pi pi-times" 
                                         *ngIf="puedeRechazar()"
                                         class="p-button-text p-button-sm" 
-                                        (click)="rechazarDeposito(deposito)" 
-                                        pTooltip="Rechazar Deposito"></button>
+                                        (click)="rechazarDeposito(deposito, $event)" 
+                                        pTooltip="Rechazar Depósito"></button>
                             </div>
                             <div class="text-center text-500 text-sm" *ngIf="deposito.esPendiente === 'Rechazado'">
                                 <i class="pi pi-lock mr-1"></i>Sin acciones disponibles
@@ -284,6 +284,9 @@
         <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-text" [disabled]="updating || editForm.invalid" [loading]="updating" (click)="saveTransaccionNum()"></button>
     </ng-template>
 </p-dialog>
+
+<!-- Replace the confirmation dialog with confirm popup -->
+<p-confirmPopup></p-confirmPopup>
 
 <!-- Toast messages with more subtle styling -->
 <p-toast position="top-right"></p-toast>

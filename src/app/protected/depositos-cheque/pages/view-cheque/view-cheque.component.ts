@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DepositoCheque } from 'src/app/protected/interfaces/DepositoCheque';
 import { DepositoChequeService } from '../../services/deposito-cheque.service';
-import { MessageService } from 'primeng/api';
+// Add ConfirmationService to imports
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { finalize } from 'rxjs';
 import { ChBanco } from 'src/app/protected/interfaces/ChBanco';
 import { SocioNegocio } from 'src/app/protected/interfaces/SocioNegocio';
@@ -18,7 +19,8 @@ import autoTable from 'jspdf-autotable';
   selector: 'app-view-cheque',
   templateUrl: './view-cheque.component.html',
   styleUrls: ['./view-cheque.component.css'],
-  providers: [MessageService]
+  // Add ConfirmationService to providers
+  providers: [MessageService, ConfirmationService]
 })
 export class ViewChequeComponent implements OnInit {
 
@@ -68,6 +70,8 @@ export class ViewChequeComponent implements OnInit {
     private messageService: MessageService,
     private loginService: LoginService,
     private fb: FormBuilder,
+    // Add ConfirmationService to constructor
+    private confirmationService: ConfirmationService,
   ) { }
 
   ngOnInit() {
@@ -360,29 +364,46 @@ export class ViewChequeComponent implements OnInit {
     });
   }
 
-  rechazarDeposito(deposito: DepositoCheque): void {
-    deposito.fechaI = undefined;
-    console.log(deposito);
-    this.loading = true;
-    this.depositoChequeService.rechazarDeposito(deposito)
-       .pipe(finalize(() => this.loading = false))
-       .subscribe({
-         next: () => {
-          this.messageService.add({
-             severity:'success',
-             summary: 'Rechazado',
-             detail: 'El depósito ha sido rechazado'
-           });
-           this.cargarDepositos();
-          
-           },
-         error: (error) => {
-          this.messageService.add({
-             severity: 'error',
-             summary: 'Error',
-             detail: 'Error al rechazar el depósito:'+ error.message
-           });
-          }       
+  rechazarDeposito(deposito: DepositoCheque, event: Event): void {
+    // Show a better styled confirmation popup
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `¿Está seguro que desea rechazar el depósito #${deposito.idDeposito}?`,
+      header: 'Confirmar Rechazo',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger p-button-sm',
+      rejectButtonStyleClass: 'p-button-outlined p-button-sm',
+      acceptLabel: 'Sí, rechazar',
+      rejectLabel: 'Cancelar',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
+      defaultFocus: 'reject', // Focus on reject by default for safety
+      accept: () => {
+        // Proceed with rejection only if confirmed
+        deposito.fechaI = undefined;
+        this.loading = true;
+        this.depositoChequeService.rechazarDeposito(deposito)
+          .pipe(finalize(() => this.loading = false))
+          .subscribe({
+            next: () => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Depósito Rechazado',
+                detail: `El depósito #${deposito.idDeposito} ha sido rechazado exitosamente`,
+                life: 3000
+              });
+              this.cargarDepositos();
+            },
+            error: (error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Error al rechazar el depósito: ' + error.message,
+                life: 5000
+              });
+            }
+          });
+      }
     });
   }
 
